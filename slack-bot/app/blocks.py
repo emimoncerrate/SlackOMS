@@ -21,7 +21,7 @@ def create_trade_modal(symbol: str = "", trigger_id: str = "") -> Dict:
         "callback_id": "trade_modal_submit",
         "title": {
             "type": "plain_text",
-            "text": "Execute Paper Trade"
+            "text": "Emily's Trading Bot"
         },
         "submit": {
             "type": "plain_text",
