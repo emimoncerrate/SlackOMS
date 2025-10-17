@@ -9,6 +9,11 @@ from app.blocks import create_trade_modal, create_help_message
 
 logger = logging.getLogger(__name__)
 
+# Allowed channels where bot commands work
+ALLOWED_CHANNELS = [
+    "C09LMSYFH1S",  # Trading channel
+]
+
 
 def register_command_handlers(app: App):
     """Register all slash command handlers"""
@@ -24,12 +29,28 @@ def register_command_handlers(app: App):
         # Acknowledge command immediately (Slack requires response within 3 seconds)
         ack()
         
+        # Get channel and user info
+        channel_id = command["channel_id"]
+        user_id = command["user_id"]
+        
+        # Check if command is from allowed channel
+        if channel_id not in ALLOWED_CHANNELS:
+            logger.warning(f"User {user_id} tried to use /trade in unauthorized channel {channel_id}")
+            try:
+                client.chat_postEphemeral(
+                    channel=channel_id,
+                    user=user_id,
+                    text="⚠️ This bot is only available in the designated trading channel."
+                )
+            except Exception as e:
+                logger.error(f"Error sending channel restriction message: {e}")
+            return
+        
         # Extract symbol from command text (optional)
         symbol = command.get("text", "").strip().upper()
         
         # Get trigger_id to open modal
         trigger_id = command["trigger_id"]
-        user_id = command["user_id"]
         
         logger.info(f"User {user_id} initiated /trade command with symbol: {symbol}")
         
@@ -69,6 +90,19 @@ def register_command_handlers(app: App):
         
         user_id = command["user_id"]
         channel_id = command["channel_id"]
+        
+        # Check if command is from allowed channel
+        if channel_id not in ALLOWED_CHANNELS:
+            logger.warning(f"User {user_id} tried to use /trade-help in unauthorized channel {channel_id}")
+            try:
+                client.chat_postEphemeral(
+                    channel=channel_id,
+                    user=user_id,
+                    text="⚠️ This bot is only available in the designated trading channel."
+                )
+            except Exception as e:
+                logger.error(f"Error sending channel restriction message: {e}")
+            return
         
         logger.info(f"User {user_id} requested help")
         
