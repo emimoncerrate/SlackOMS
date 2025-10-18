@@ -627,10 +627,8 @@ class InteractiveActionHandler:
                 'quantity': trade.quantity,
                 'trade_type': trade.trade_type.value,
                 'price': float(trade.price),
-                'gmv': gmv_value,  # Add GMV field
+                'gmv': gmv_value,
                 'status': trade.status.value,
-                'risk_level': trade.risk_level.value if hasattr(trade, 'risk_level') else 'MEDIUM',
-                'risk_analysis': trade.risk_analysis if hasattr(trade, 'risk_analysis') else {},
                 'alpaca_order_id': None,
                 'executed_at': None
             }

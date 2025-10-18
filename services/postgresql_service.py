@@ -50,12 +50,11 @@ class Trade(Base):
     user_id = Column(String, nullable=False)
     symbol = Column(String, nullable=False)
     quantity = Column(Integer, nullable=False)
+    side = Column(String, nullable=False)  # buy, sell (legacy column)
     trade_type = Column(String, nullable=False)  # BUY, SELL
     price = Column(Numeric(15, 4), nullable=False)
     gmv = Column(Numeric(15, 4), nullable=False)  # Gross Market Value
     status = Column(String, nullable=False, default='PENDING')
-    risk_level = Column(String, nullable=False, default='MEDIUM')
-    risk_analysis = Column(JSON, default={})
     alpaca_order_id = Column(String)
     executed_at = Column(DateTime(timezone=True))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -142,16 +141,21 @@ class PostgreSQLService:
             with self.engine.connect() as connection:
                 # Migration 1: Add missing columns to trades table
                 migrations = [
+                    ("side", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS side VARCHAR(10) NOT NULL DEFAULT 'buy';"),
                     ("trade_type", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS trade_type VARCHAR(10) NOT NULL DEFAULT 'buy';"),
                     ("price", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS price NUMERIC(15, 4) NOT NULL DEFAULT 0.0;"),
                     ("gmv", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS gmv NUMERIC(15, 4) NOT NULL DEFAULT 0.0;"),
                     ("status", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS status VARCHAR(20) NOT NULL DEFAULT 'PENDING';"),
-                    ("risk_level", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS risk_level VARCHAR(20) NOT NULL DEFAULT 'MEDIUM';"),
-                    ("risk_analysis", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS risk_analysis JSON DEFAULT '{}';"),
                     ("alpaca_order_id", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS alpaca_order_id VARCHAR(255);"),
                     ("executed_at", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS executed_at TIMESTAMPTZ;"),
                     ("created_at", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW();"),
                     ("updated_at", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();"),
+                ]
+                
+                # Migration 2: Drop unused risk analysis columns
+                drop_migrations = [
+                    ("risk_level", "ALTER TABLE trades DROP COLUMN IF EXISTS risk_level;"),
+                    ("risk_analysis", "ALTER TABLE trades DROP COLUMN IF EXISTS risk_analysis;"),
                 ]
                 
                 for col_name, sql in migrations:
@@ -161,6 +165,15 @@ class PostgreSQLService:
                         logger.info(f"Migration: {col_name} column added/verified")
                     except Exception as e:
                         logger.warning(f"Migration for {col_name} skipped: {e}")
+                        connection.rollback()
+                
+                for col_name, sql in drop_migrations:
+                    try:
+                        connection.execute(text(sql))
+                        connection.commit()
+                        logger.info(f"Migration: {col_name} column dropped")
+                    except Exception as e:
+                        logger.warning(f"Migration drop for {col_name} skipped: {e}")
                         connection.rollback()
                     
         except Exception as e:
@@ -233,17 +246,20 @@ class PostgreSQLService:
         """Create a new trade."""
         with self.get_session() as session:
             try:
+                # side is the legacy lowercase version (buy/sell), trade_type is uppercase (BUY/SELL)
+                trade_type = trade_data['trade_type']
+                side = trade_type.lower() if trade_type else 'buy'
+                
                 trade = Trade(
                     trade_id=trade_data['trade_id'],
                     user_id=trade_data['user_id'],
                     symbol=trade_data['symbol'],
                     quantity=trade_data['quantity'],
-                    trade_type=trade_data['trade_type'],
+                    side=side,  # Add side field
+                    trade_type=trade_type,
                     price=Decimal(str(trade_data['price'])),
-                    gmv=Decimal(str(trade_data.get('gmv', trade_data['quantity'] * trade_data['price']))),  # Add GMV
+                    gmv=Decimal(str(trade_data.get('gmv', trade_data['quantity'] * trade_data['price']))),
                     status=trade_data.get('status', 'PENDING'),
-                    risk_level=trade_data.get('risk_level', 'MEDIUM'),
-                    risk_analysis=trade_data.get('risk_analysis', {}),
                     alpaca_order_id=trade_data.get('alpaca_order_id'),
                     executed_at=trade_data.get('executed_at')
                 )
@@ -420,12 +436,11 @@ class PostgreSQLService:
             'user_id': trade.user_id,
             'symbol': trade.symbol,
             'quantity': trade.quantity,
+            'side': trade.side,
             'trade_type': trade.trade_type,
             'price': float(trade.price),
             'gmv': float(trade.gmv),
             'status': trade.status,
-            'risk_level': trade.risk_level,
-            'risk_analysis': trade.risk_analysis,
             'alpaca_order_id': trade.alpaca_order_id,
             'executed_at': trade.executed_at.isoformat() if trade.executed_at else None,
             'created_at': trade.created_at.isoformat() if trade.created_at else None,
