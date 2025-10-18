@@ -617,6 +617,9 @@ class InteractiveActionHandler:
             alpaca_service = get_alpaca_service()
             
             # Log trade to database first (convert to dict for PostgreSQL)
+            # Calculate GMV (Gross Market Value)
+            gmv_value = float(trade.quantity * trade.price)
+            
             trade_data = {
                 'trade_id': trade.trade_id,
                 'user_id': trade.user_id,
@@ -624,6 +627,7 @@ class InteractiveActionHandler:
                 'quantity': trade.quantity,
                 'trade_type': trade.trade_type.value,
                 'price': float(trade.price),
+                'gmv': gmv_value,  # Add GMV field
                 'status': trade.status.value,
                 'risk_level': trade.risk_level.value if hasattr(trade, 'risk_level') else 'MEDIUM',
                 'risk_analysis': trade.risk_analysis if hasattr(trade, 'risk_analysis') else {},

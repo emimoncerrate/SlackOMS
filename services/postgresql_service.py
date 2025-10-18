@@ -52,6 +52,7 @@ class Trade(Base):
     quantity = Column(Integer, nullable=False)
     trade_type = Column(String, nullable=False)  # BUY, SELL
     price = Column(Numeric(15, 4), nullable=False)
+    gmv = Column(Numeric(15, 4), nullable=False)  # Gross Market Value
     status = Column(String, nullable=False, default='PENDING')
     risk_level = Column(String, nullable=False, default='MEDIUM')
     risk_analysis = Column(JSON, default={})
@@ -143,6 +144,7 @@ class PostgreSQLService:
                 migrations = [
                     ("trade_type", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS trade_type VARCHAR(10) NOT NULL DEFAULT 'buy';"),
                     ("price", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS price NUMERIC(15, 4) NOT NULL DEFAULT 0.0;"),
+                    ("gmv", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS gmv NUMERIC(15, 4) NOT NULL DEFAULT 0.0;"),
                     ("status", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS status VARCHAR(20) NOT NULL DEFAULT 'PENDING';"),
                     ("risk_level", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS risk_level VARCHAR(20) NOT NULL DEFAULT 'MEDIUM';"),
                     ("risk_analysis", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS risk_analysis JSON DEFAULT '{}';"),
@@ -238,6 +240,7 @@ class PostgreSQLService:
                     quantity=trade_data['quantity'],
                     trade_type=trade_data['trade_type'],
                     price=Decimal(str(trade_data['price'])),
+                    gmv=Decimal(str(trade_data.get('gmv', trade_data['quantity'] * trade_data['price']))),  # Add GMV
                     status=trade_data.get('status', 'PENDING'),
                     risk_level=trade_data.get('risk_level', 'MEDIUM'),
                     risk_analysis=trade_data.get('risk_analysis', {}),
@@ -419,6 +422,7 @@ class PostgreSQLService:
             'quantity': trade.quantity,
             'trade_type': trade.trade_type,
             'price': float(trade.price),
+            'gmv': float(trade.gmv),
             'status': trade.status,
             'risk_level': trade.risk_level,
             'risk_analysis': trade.risk_analysis,
