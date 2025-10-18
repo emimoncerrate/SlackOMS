@@ -989,6 +989,25 @@ async def slack_events(request: Request, background_tasks: BackgroundTasks):
         body = await request.body()
         headers = dict(request.headers)
         
+        # Parse JSON body for Slack challenge verification
+        try:
+            body_json = json.loads(body.decode('utf-8'))
+            
+            # Handle Slack URL verification challenge
+            if body_json.get('type') == 'url_verification':
+                challenge = body_json.get('challenge')
+                logger.info(f"[{request_id}] Slack URL verification challenge received")
+                print(f"🔍 SLACK CHALLENGE: Responding with challenge: {challenge}")
+                return JSONResponse(
+                    status_code=200,
+                    content={"challenge": challenge}
+                )
+        except json.JSONDecodeError:
+            # Not JSON, continue with normal processing
+            pass
+        except Exception as e:
+            logger.warning(f"[{request_id}] Error parsing JSON for challenge: {e}")
+        
         # Validate request size
         if len(body) > 1024 * 1024:  # 1MB limit
             logger.warning(f"[{request_id}] Request body too large: {len(body)} bytes")
