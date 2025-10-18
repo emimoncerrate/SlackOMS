@@ -11,8 +11,7 @@ import logging
 from typing import Optional, Dict, Any, List
 from dataclasses import dataclass, field
 from enum import Enum
-import boto3
-from botocore.exceptions import ClientError, NoCredentialsError
+# Removed boto3 imports - using PostgreSQL instead of DynamoDB
 
 
 class Environment(Enum):
@@ -54,45 +53,47 @@ class SlackConfig:
 
 
 @dataclass
-class AWSConfig:
-    """AWS service configuration settings."""
-    region: str = "us-east-1"
-    dynamodb_table_prefix: str = "jain-trading-bot"
-    bedrock_model_id: str = "anthropic.claude-3-sonnet-20240229-v1:0"
-    lambda_function_name: Optional[str] = None
-    api_gateway_stage: str = "prod"
-    
-    # DynamoDB table names
-    trades_table: str = field(init=False)
-    positions_table: str = field(init=False)
-    channels_table: str = field(init=False)
+class DatabaseConfig:
+    """PostgreSQL database configuration settings."""
+    database_url: str
+    pool_size: int = 5
+    max_overflow: int = 10
+    pool_pre_ping: bool = True
+    echo_sql: bool = False
     
     def __post_init__(self):
-        """Initialize derived configuration values."""
-        self.trades_table = f"{self.dynamodb_table_prefix}-trades"
-        self.positions_table = f"{self.dynamodb_table_prefix}-positions"
-        self.channels_table = f"{self.dynamodb_table_prefix}-channels"
-    
-    def validate_aws_credentials(self) -> bool:
-        """
-        Validate AWS credentials and permissions.
+        """Validate database configuration."""
+        if not self.database_url:
+            raise ValueError("Database URL is required")
         
-        Returns:
-            bool: True if credentials are valid and have required permissions
-        """
-        try:
-            # Test DynamoDB access
-            dynamodb = boto3.client('dynamodb', region_name=self.region)
-            dynamodb.list_tables()
-            
-            # Test Bedrock access
-            bedrock = boto3.client('bedrock', region_name=self.region)
-            bedrock.list_foundation_models()
-            
-            return True
-        except (NoCredentialsError, ClientError) as e:
-            logging.error(f"AWS credentials validation failed: {e}")
-            return False
+        if not self.database_url.startswith(('postgresql://', 'postgres://')):
+            raise ValueError("Database URL must be a PostgreSQL connection string")
+        
+        if self.pool_size <= 0:
+            raise ValueError("Pool size must be positive")
+        
+        if self.max_overflow < 0:
+            raise ValueError("Max overflow cannot be negative")
+
+
+@dataclass
+class AlpacaConfig:
+    """Alpaca trading API configuration."""
+    api_key: str
+    secret_key: str
+    base_url: str = "https://paper-api.alpaca.markets"  # Paper trading by default
+    data_url: str = "https://data.alpaca.markets"
+    
+    def __post_init__(self):
+        """Validate Alpaca configuration."""
+        if not self.api_key:
+            raise ValueError("Alpaca API key is required")
+        
+        if not self.secret_key:
+            raise ValueError("Alpaca secret key is required")
+        
+        if not self.base_url:
+            raise ValueError("Alpaca base URL is required")
 
 
 @dataclass
@@ -166,8 +167,9 @@ class AppConfig:
     environment: Environment
     log_level: LogLevel
     slack: SlackConfig
-    aws: AWSConfig
+    database: DatabaseConfig
     market_data: MarketDataConfig
+    alpaca: AlpacaConfig
     trading: TradingConfig
     security: SecurityConfig
     
@@ -189,9 +191,6 @@ class AppConfig:
             
             if self.log_level == LogLevel.DEBUG:
                 logging.warning("Debug logging enabled in production environment")
-            
-            if not self.aws.validate_aws_credentials():
-                raise ValueError("Invalid AWS credentials for production environment")
         
         elif self.environment == Environment.DEVELOPMENT:
             if not self.trading.mock_execution_enabled:
@@ -330,13 +329,21 @@ class ConfigurationManager:
                 oauth_redirect_url=os.getenv('SLACK_OAUTH_REDIRECT_URL')
             )
             
-            # Load AWS configuration
-            aws_config = AWSConfig(
-                region=os.getenv('AWS_REGION', 'us-east-1'),
-                dynamodb_table_prefix=os.getenv('DYNAMODB_TABLE_PREFIX', 'jain-trading-bot'),
-                bedrock_model_id=os.getenv('BEDROCK_MODEL_ID', 'anthropic.claude-3-sonnet-20240229-v1:0'),
-                lambda_function_name=os.getenv('AWS_LAMBDA_FUNCTION_NAME'),
-                api_gateway_stage=os.getenv('API_GATEWAY_STAGE', 'prod')
+            # Load database configuration
+            database_config = DatabaseConfig(
+                database_url=self._get_required_env('DATABASE_URL'),
+                pool_size=int(os.getenv('DB_POOL_SIZE', '5')),
+                max_overflow=int(os.getenv('DB_MAX_OVERFLOW', '10')),
+                pool_pre_ping=os.getenv('DB_POOL_PRE_PING', 'true').lower() == 'true',
+                echo_sql=os.getenv('DB_ECHO_SQL', 'false').lower() == 'true'
+            )
+            
+            # Load Alpaca configuration
+            alpaca_config = AlpacaConfig(
+                api_key=self._get_required_env('ALPACA_API_KEY'),
+                secret_key=self._get_required_env('ALPACA_SECRET_KEY'),
+                base_url=os.getenv('ALPACA_BASE_URL', 'https://paper-api.alpaca.markets'),
+                data_url=os.getenv('ALPACA_DATA_URL', 'https://data.alpaca.markets')
             )
             
             # Load market data configuration
@@ -375,8 +382,9 @@ class ConfigurationManager:
                 environment=environment,
                 log_level=log_level,
                 slack=slack_config,
-                aws=aws_config,
+                database=database_config,
                 market_data=market_data_config,
+                alpaca=alpaca_config,
                 trading=trading_config,
                 security=security_config,
                 debug_mode=debug_mode

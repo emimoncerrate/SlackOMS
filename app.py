@@ -31,11 +31,12 @@ from slack_bolt import App
 from slack_bolt.adapter.aws_lambda import SlackRequestHandler
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 
-# FastAPI for local development server
+# FastAPI for web service deployment
 from fastapi import FastAPI, Request, HTTPException, BackgroundTasks
 from fastapi.responses import JSONResponse, PlainTextResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
+from slack_bolt.adapter.fastapi import SlackRequestHandler
 import uvicorn
 
 # Application modules
@@ -1323,7 +1324,9 @@ def main():
             logger.error("- SLACK_BOT_TOKEN")
             logger.error("- SLACK_SIGNING_SECRET")
             logger.error("- FINNHUB_API_KEY")
-            logger.error("- AWS credentials (if using AWS services)")
+            logger.error("- ALPACA_API_KEY")
+            logger.error("- ALPACA_SECRET_KEY")
+            logger.error("- DATABASE_URL")
             sys.exit(1)
         
         logger.info("✅ Environment validation passed")
@@ -1366,7 +1369,7 @@ def main():
             run_socket_mode()
         else:
             logger.info("🌐 Using HTTP server mode")
-            port = int(os.getenv('PORT', 3000))
+            port = int(os.getenv('PORT', 8080))  # Render uses port 8080
             host = os.getenv('HOST', '0.0.0.0')
             logger.info(f"Server will start on {host}:{port}")
             run_http_server(host=host, port=port)
@@ -1411,7 +1414,10 @@ def validate_startup_requirements() -> bool:
         required_vars = [
             'SLACK_BOT_TOKEN',
             'SLACK_SIGNING_SECRET',
-            'FINNHUB_API_KEY'
+            'FINNHUB_API_KEY',
+            'ALPACA_API_KEY',
+            'ALPACA_SECRET_KEY',
+            'DATABASE_URL'
         ]
         
         missing_vars = []
@@ -1434,30 +1440,7 @@ def validate_startup_requirements() -> bool:
         logger.error(f"Startup validation error: {e}")
         return False
 
-# Application entry point with validation
-def create_health_check_server():
-    """Create a simple health check server for cloud deployment"""
-    from flask import Flask
-    import threading
-    
-    health_app = Flask(__name__)
-    
-    @health_app.route('/health')
-    def health_check():
-        return {'status': 'healthy', 'service': 'slack-trading-bot'}, 200
-    
-    @health_app.route('/')
-    def root():
-        return {'message': 'Slack Trading Bot is running!', 'status': 'active'}, 200
-    
-    # Run health server in background thread
-    def run_health_server():
-        port = int(os.getenv('PORT', 8080))
-        health_app.run(host='0.0.0.0', port=port, debug=False)
-    
-    health_thread = threading.Thread(target=run_health_server, daemon=True)
-    health_thread.start()
-    logger.info(f"Health check server started on port {os.getenv('PORT', 8080)}")
+# Health check is handled by FastAPI endpoints
 
 if __name__ == "__main__":
     # Perform startup validation
@@ -1465,9 +1448,7 @@ if __name__ == "__main__":
         logger.error("❌ Startup validation failed")
         sys.exit(1)
     
-    # Start health check server for cloud deployment
-    if os.getenv('ENVIRONMENT') == 'production':
-        create_health_check_server()
+    # FastAPI handles health checks via /health endpoint
     
     # Start the application
     main()

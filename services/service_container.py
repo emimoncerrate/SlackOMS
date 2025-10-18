@@ -19,7 +19,7 @@ import inspect
 
 # Import all services
 from services.auth import AuthService
-from services.database import DatabaseService
+from services.postgresql_service import PostgreSQLService
 from services.market_data import MarketDataService
 from services.risk_analysis import RiskAnalysisService
 from services.trading_api import TradingAPIService
@@ -554,9 +554,15 @@ def get_container() -> ServiceContainer:
 def _configure_default_services(container: ServiceContainer) -> None:
     """Configure default services in the container."""
     
-    # Database service (highest priority - other services depend on it)
+    # PostgreSQL Database service (highest priority - other services depend on it)
+    def create_postgresql_service():
+        from config.settings import get_config
+        config = get_config()
+        return PostgreSQLService(config.database.database_url)
+    
     container.register(
-        DatabaseService,
+        PostgreSQLService,
+        factory=create_postgresql_service,
         startup_priority=10,
         shutdown_priority=90,
         health_check=lambda service: service.health_check() if hasattr(service, 'health_check') else True
@@ -597,7 +603,7 @@ def _configure_default_services(container: ServiceContainer) -> None:
     # Auth service (depends on database)
     container.register(
         AuthService,
-        dependencies=[DatabaseService],
+        dependencies=[PostgreSQLService],
         startup_priority=50,
         shutdown_priority=50,
         health_check=lambda service: service.health_check() if hasattr(service, 'health_check') else True
@@ -617,7 +623,7 @@ def _configure_default_services(container: ServiceContainer) -> None:
         
         container.register(
             UserAccountManager,
-            dependencies=[DatabaseService],
+            dependencies=[PostgreSQLService],
             startup_priority=45,
             shutdown_priority=55,
             health_check=lambda service: True
@@ -637,9 +643,9 @@ def get_auth_service() -> AuthService:
     return get_container().get(AuthService)
 
 
-def get_database_service() -> DatabaseService:
-    """Get the database service."""
-    return get_container().get(DatabaseService)
+def get_database_service() -> PostgreSQLService:
+    """Get the PostgreSQL database service."""
+    return get_container().get(PostgreSQLService)
 
 
 def get_market_data_service() -> MarketDataService:

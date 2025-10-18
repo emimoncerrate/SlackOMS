@@ -2,8 +2,9 @@
 slack-bolt==1.18.0
 slack-sdk==3.23.0
 
-# Web framework for health checks
-flask==2.3.3
+# Web framework for HTTP endpoints
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
 
 # Environment and configuration
 python-dotenv==1.0.0
@@ -17,14 +18,15 @@ httpx==0.25.0
 pandas==2.1.1
 numpy==1.25.2
 
-# Database
-boto3==1.28.85
-redis==5.0.1
+# Database - PostgreSQL
+psycopg2-binary==2.9.7
+sqlalchemy==2.0.23
+alembic==1.12.1
 
-# Market data
+# Market data (Required)
 finnhub-python==2.4.18
 
-# Trading APIs
+# Trading APIs (Required)
 alpaca-trade-api==3.0.2
 
 # Utilities
