@@ -20,7 +20,7 @@ sqlalchemy==2.0.36
 finnhub-python==2.4.25
 
 # Utilities
-structlog==24.5.0
+structlog==25.4.0
 python-dateutil==2.9.0
 
 # Note: Removed alpaca-trade-api due to Python 3.13 compatibility issues
