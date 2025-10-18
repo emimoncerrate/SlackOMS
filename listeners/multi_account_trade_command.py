@@ -1215,9 +1215,11 @@ async def _fetch_and_update_price(symbol: str, view_id: str, client: WebClient) 
             values = current_view.get("state", {}).get("values", {})
             
             # Extract current quantity from modal state
+            # Check both 'value' (user typed) and 'initial_value' (pre-filled)
             qty_block = values.get("qty_shares_block", {})
-            current_quantity = qty_block.get("shares_input", {}).get("value", "1")
-            if not current_quantity or current_quantity.strip() == "":
+            shares_input = qty_block.get("shares_input", {})
+            current_quantity = shares_input.get("value") or shares_input.get("initial_value", "1")
+            if not current_quantity or str(current_quantity).strip() == "":
                 current_quantity = "1"
             print(f"✅ BUY PRICE FETCH: Current quantity in modal: {current_quantity}")
         except Exception as e:
@@ -1266,9 +1268,11 @@ async def _fetch_and_update_sell_price(symbol: str, view_id: str, client: WebCli
             values = current_view.get("state", {}).get("values", {})
             
             # Extract current quantity from modal state
+            # Check both 'value' (user typed) and 'initial_value' (pre-filled)
             qty_block = values.get("qty_shares_block", {})
-            current_quantity = qty_block.get("shares_input", {}).get("value", "1")
-            if not current_quantity or current_quantity.strip() == "":
+            shares_input = qty_block.get("shares_input", {})
+            current_quantity = shares_input.get("value") or shares_input.get("initial_value", "1")
+            if not current_quantity or str(current_quantity).strip() == "":
                 current_quantity = "1"
             print(f"✅ SELL PRICE FETCH: Current quantity in modal: {current_quantity}")
         except Exception as e:
@@ -1317,9 +1321,11 @@ async def _fetch_and_update_buy_price(symbol: str, view_id: str, client: WebClie
             values = current_view.get("state", {}).get("values", {})
             
             # Extract current quantity from modal state
+            # Check both 'value' (user typed) and 'initial_value' (pre-filled)
             qty_block = values.get("qty_shares_block", {})
-            current_quantity = qty_block.get("shares_input", {}).get("value", "1")
-            if not current_quantity or current_quantity.strip() == "":
+            shares_input = qty_block.get("shares_input", {})
+            current_quantity = shares_input.get("value") or shares_input.get("initial_value", "1")
+            if not current_quantity or str(current_quantity).strip() == "":
                 current_quantity = "1"
             print(f"✅ BUY PRICE FETCH: Current quantity in modal: {current_quantity}")
         except Exception as e:
