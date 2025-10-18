@@ -616,8 +616,21 @@ class InteractiveActionHandler:
             db_service = get_database_service()
             alpaca_service = get_alpaca_service()
             
-            # Log trade to database first
-            await db_service.log_trade(trade)
+            # Log trade to database first (convert to dict for PostgreSQL)
+            trade_data = {
+                'trade_id': trade.trade_id,
+                'user_id': trade.user_id,
+                'symbol': trade.symbol,
+                'quantity': trade.quantity,
+                'trade_type': trade.trade_type.value,
+                'price': float(trade.price),
+                'status': trade.status.value,
+                'risk_level': trade.risk_level.value if hasattr(trade, 'risk_level') else 'MEDIUM',
+                'risk_analysis': trade.risk_analysis if hasattr(trade, 'risk_analysis') else {},
+                'alpaca_order_id': None,
+                'executed_at': None
+            }
+            db_service.create_trade(trade_data)
             
             # Execute trade with enhanced Alpaca integration
             execution_result = await self._execute_trade_with_alpaca(trade, alpaca_service)
@@ -629,13 +642,13 @@ class InteractiveActionHandler:
                 trade.execution_price = execution_result.execution_price
                 trade.execution_timestamp = execution_result.execution_timestamp
                 
-                # Update position
-                await db_service.update_position(
-                    trade.user_id,
-                    trade.symbol,
-                    trade.quantity,
-                    execution_result.execution_price or trade.price,
-                    trade.trade_id
+                # Update position (PostgreSQL version uses different signature)
+                db_service.update_position(
+                    user_id=trade.user_id,
+                    symbol=trade.symbol,
+                    quantity_change=trade.quantity if trade.trade_type == TradeType.BUY else -trade.quantity,
+                    price=float(execution_result.execution_price or trade.price),
+                    trade_type=trade.trade_type.value
                 )
                 
                 # Send success notification
