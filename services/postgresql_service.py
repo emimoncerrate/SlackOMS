@@ -140,9 +140,9 @@ class PostgreSQLService:
             
             with self.engine.connect() as connection:
                 # Migration 1: Add missing columns to trades table
+                # Note: side column already exists as ENUM, we just ensure other columns exist
                 migrations = [
-                    ("side", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS side VARCHAR(10) NOT NULL DEFAULT 'buy';"),
-                    ("trade_type", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS trade_type VARCHAR(10) NOT NULL DEFAULT 'buy';"),
+                    ("trade_type", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS trade_type VARCHAR(10) NOT NULL DEFAULT 'BUY';"),
                     ("price", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS price NUMERIC(15, 4) NOT NULL DEFAULT 0.0;"),
                     ("gmv", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS gmv NUMERIC(15, 4) NOT NULL DEFAULT 0.0;"),
                     ("status", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS status VARCHAR(20) NOT NULL DEFAULT 'PENDING';"),
@@ -246,20 +246,19 @@ class PostgreSQLService:
         """Create a new trade."""
         with self.get_session() as session:
             try:
-                # side is the legacy lowercase version (buy/sell), trade_type is uppercase (BUY/SELL)
-                trade_type = trade_data['trade_type']
-                side = trade_type.lower() if trade_type else 'buy'
+                # Both side and trade_type should be uppercase (BUY/SELL) - it's an ENUM
+                trade_type = trade_data['trade_type'].upper() if isinstance(trade_data['trade_type'], str) else str(trade_data['trade_type'])
                 
                 trade = Trade(
                     trade_id=trade_data['trade_id'],
                     user_id=trade_data['user_id'],
                     symbol=trade_data['symbol'],
                     quantity=trade_data['quantity'],
-                    side=side,  # Add side field
+                    side=trade_type,  # side and trade_type are the same (uppercase BUY/SELL)
                     trade_type=trade_type,
                     price=Decimal(str(trade_data['price'])),
                     gmv=Decimal(str(trade_data.get('gmv', trade_data['quantity'] * trade_data['price']))),
-                    status=trade_data.get('status', 'PENDING'),
+                    status=trade_data.get('status', 'PENDING').upper(),
                     alpaca_order_id=trade_data.get('alpaca_order_id'),
                     executed_at=trade_data.get('executed_at')
                 )
