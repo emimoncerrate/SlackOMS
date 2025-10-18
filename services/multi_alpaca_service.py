@@ -174,7 +174,7 @@ class MultiAlpacaService:
             account_id: Account identifier
             
         Returns:
-            Optional[tradeapi.REST]: API client if available
+            Optional[SimpleAlpacaClient]: API client if available
         """
         return self.api_clients.get(account_id)
     
