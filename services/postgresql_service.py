@@ -139,16 +139,27 @@ class PostgreSQLService:
             from sqlalchemy import text
             
             with self.engine.connect() as connection:
-                # Migration: Add trade_type column if it doesn't exist
-                try:
-                    connection.execute(text("""
-                        ALTER TABLE trades 
-                        ADD COLUMN IF NOT EXISTS trade_type VARCHAR(10) NOT NULL DEFAULT 'buy';
-                    """))
-                    connection.commit()
-                    logger.info("Migration: trade_type column added/verified")
-                except Exception as e:
-                    logger.warning(f"Migration skipped (may already exist): {e}")
+                # Migration 1: Add missing columns to trades table
+                migrations = [
+                    ("trade_type", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS trade_type VARCHAR(10) NOT NULL DEFAULT 'buy';"),
+                    ("price", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS price NUMERIC(15, 4) NOT NULL DEFAULT 0.0;"),
+                    ("status", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS status VARCHAR(20) NOT NULL DEFAULT 'PENDING';"),
+                    ("risk_level", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS risk_level VARCHAR(20) NOT NULL DEFAULT 'MEDIUM';"),
+                    ("risk_analysis", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS risk_analysis JSON DEFAULT '{}';"),
+                    ("alpaca_order_id", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS alpaca_order_id VARCHAR(255);"),
+                    ("executed_at", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS executed_at TIMESTAMPTZ;"),
+                    ("created_at", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW();"),
+                    ("updated_at", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();"),
+                ]
+                
+                for col_name, sql in migrations:
+                    try:
+                        connection.execute(text(sql))
+                        connection.commit()
+                        logger.info(f"Migration: {col_name} column added/verified")
+                    except Exception as e:
+                        logger.warning(f"Migration for {col_name} skipped: {e}")
+                        connection.rollback()
                     
         except Exception as e:
             logger.error(f"Error running migrations: {e}")
