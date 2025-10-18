@@ -310,28 +310,28 @@ class AlpacaService:
                 symbol=symbol.upper(),
                 qty=quantity,
                 side=side.lower(),
-                type=order_type.lower(),
+                order_type=order_type.lower(),
                 time_in_force=time_in_force.lower()
             )
             
-            logger.info(f"✅ Order submitted successfully - Order ID: {order.id}")
-            logger.info(f"   Status: {order.status}")
+            if not order:
+                logger.error("❌ Alpaca API returned None - order submission failed")
+                return None
+            
+            logger.info(f"✅ Order submitted successfully - Order ID: {order.get('id', 'unknown')}")
+            logger.info(f"   Status: {order.get('status', 'unknown')}")
             
             return {
-                'order_id': order.id,
-                'symbol': order.symbol,
-                'quantity': int(order.qty),
-                'side': order.side,
-                'type': order.type,
-                'status': order.status,
-                'submitted_at': order.submitted_at.isoformat() if order.submitted_at else None,
-                'filled_avg_price': float(order.filled_avg_price) if order.filled_avg_price else None
+                'order_id': order.get('id'),
+                'symbol': order.get('symbol'),
+                'quantity': int(order.get('qty', 0)),
+                'side': order.get('side'),
+                'type': order.get('type'),
+                'status': order.get('status'),
+                'submitted_at': order.get('submitted_at'),
+                'filled_avg_price': float(order.get('filled_avg_price')) if order.get('filled_avg_price') else None
             }
             
-        except Exception as e:
-            if "API" in str(e) or "401" in str(e) or "403" in str(e):
-                logger.error(f"❌ Alpaca API Error submitting order: {e}")
-                return None
         except Exception as e:
             logger.error(f"❌ Error submitting order: {e}")
             return None
