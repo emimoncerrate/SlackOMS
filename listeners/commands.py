@@ -978,7 +978,6 @@ def register_command_handlers(app: App, service_container: Optional['ServiceCont
             register_account_management_commands(app)
             
             logger.info("✅ Multi-account commands registered successfully")
-            return  # Skip regular trade command registration
             
         except Exception as e:
             logger.error(f"❌ Failed to register multi-account commands: {e}")
@@ -986,7 +985,75 @@ def register_command_handlers(app: App, service_container: Optional['ServiceCont
             logger.error(f"❌ No trade command will be available!")
             # Don't register any fallback - force multi-account system to work
     
-    # Add a simple positions command
+    # Register common commands (help, status, positions) - these should always be available
+    @app.command("/help")
+    async def handle_help_command(ack, body, client, context):
+        """Handle the /help slash command."""
+        try:
+            print("🔍 HELP COMMAND DEBUG: Starting help command")
+            logger.info("🔍 HELP COMMAND DEBUG: Starting help command")
+            
+            await ack()  # Acknowledge immediately
+            print("🔍 HELP COMMAND DEBUG: ACK sent")
+            
+            await command_handler.process_command(
+                CommandType.HELP, body, client, ack, context
+            )
+            print("🔍 HELP COMMAND DEBUG: Command processed successfully")
+            
+        except Exception as e:
+            print(f"❌ HELP COMMAND ERROR: {e}")
+            logger.error(f"❌ HELP COMMAND ERROR: {e}")
+            logger.error(f"❌ HELP COMMAND TRACEBACK: {traceback.format_exc()}")
+            
+            try:
+                await ack()  # Try to ack if not already done
+            except:
+                pass
+                
+            try:
+                await client.chat_postEphemeral(
+                    channel=body.get("channel_id"),
+                    user=body.get("user_id"),
+                    text=f"❌ Help command failed: {str(e)}\n\nPlease contact support."
+                )
+            except Exception as post_error:
+                print(f"❌ Failed to send error message: {post_error}")
+    
+    @app.command("/status")
+    async def handle_status_command(ack, body, client, context):
+        """Handle the /status slash command."""
+        try:
+            print("🔍 STATUS COMMAND DEBUG: Starting status command")
+            logger.info("🔍 STATUS COMMAND DEBUG: Starting status command")
+            
+            await ack()  # Acknowledge immediately
+            print("🔍 STATUS COMMAND DEBUG: ACK sent")
+            
+            await command_handler.process_command(
+                CommandType.STATUS, body, client, ack, context
+            )
+            print("🔍 STATUS COMMAND DEBUG: Command processed successfully")
+            
+        except Exception as e:
+            print(f"❌ STATUS COMMAND ERROR: {e}")
+            logger.error(f"❌ STATUS COMMAND ERROR: {e}")
+            logger.error(f"❌ STATUS COMMAND TRACEBACK: {traceback.format_exc()}")
+            
+            try:
+                await ack()  # Try to ack if not already done
+            except:
+                pass
+                
+            try:
+                await client.chat_postEphemeral(
+                    channel=body.get("channel_id"),
+                    user=body.get("user_id"),
+                    text=f"❌ Status command failed: {str(e)}\n\nPlease contact support."
+                )
+            except Exception as post_error:
+                print(f"❌ Failed to send error message: {post_error}")
+
     @app.command("/positions")
     def handle_positions_command(ack, body, client, context):
         """Quick positions check command."""
