@@ -987,17 +987,36 @@ def register_command_handlers(app: App, service_container: Optional['ServiceCont
     
     # Register common commands (help, status, positions) - these should always be available
     @app.command("/help")
-    async def handle_help_command(ack, body, client, context):
+    def handle_help_command(ack, body, client, context):
         """Handle the /help slash command."""
         try:
             print("🔍 HELP COMMAND DEBUG: Starting help command")
             logger.info("🔍 HELP COMMAND DEBUG: Starting help command")
             
-            await ack()  # Acknowledge immediately
+            ack()  # Acknowledge immediately
             print("🔍 HELP COMMAND DEBUG: ACK sent")
             
-            await command_handler.process_command(
-                CommandType.HELP, body, client, ack, context
+            # Simple help response
+            help_text = (
+                "🤖 *Jain Global Trading Bot Help*\n\n"
+                "*Available Commands:*\n"
+                "• `/buy` - Execute buy orders with interactive interface\n"
+                "• `/sell` - Execute sell orders with interactive interface\n"
+                "• `/positions` - View your current positions\n"
+                "• `/portfolio` - View portfolio dashboard (App Home)\n"
+                "• `/help` - Show this help message\n"
+                "• `/status` - Show system and user status\n\n"
+                "*Command Examples:*\n"
+                "• `/buy AAPL 100` - Buy 100 shares of Apple\n"
+                "• `/sell TSLA 50` - Sell 50 shares of Tesla\n"
+                "• `/buy MSFT` - Buy 1 share of Microsoft (default)\n\n"
+                "*Need Help?* Contact your system administrator."
+            )
+            
+            client.chat_postEphemeral(
+                channel=body.get("channel_id"),
+                user=body.get("user_id"),
+                text=help_text
             )
             print("🔍 HELP COMMAND DEBUG: Command processed successfully")
             
@@ -1007,12 +1026,7 @@ def register_command_handlers(app: App, service_container: Optional['ServiceCont
             logger.error(f"❌ HELP COMMAND TRACEBACK: {traceback.format_exc()}")
             
             try:
-                await ack()  # Try to ack if not already done
-            except:
-                pass
-                
-            try:
-                await client.chat_postEphemeral(
+                client.chat_postEphemeral(
                     channel=body.get("channel_id"),
                     user=body.get("user_id"),
                     text=f"❌ Help command failed: {str(e)}\n\nPlease contact support."
