@@ -1268,6 +1268,41 @@ async def _fetch_and_update_sell_price(symbol: str, view_id: str, client: WebCli
         print(f"🚨 SELL PRICE FETCH: Traceback: {traceback.format_exc()}")
 
 
+async def _fetch_and_update_buy_price(symbol: str, view_id: str, client: WebClient) -> None:
+    """Fetch price and update buy modal in background."""
+    try:
+        print(f"🔄 BUY PRICE FETCH: Starting for {symbol}")
+        
+        # Import here to avoid circular imports
+        from services.service_container import get_market_data_service
+        
+        market_service = get_market_data_service()
+        print(f"✅ BUY PRICE FETCH: Market service obtained")
+        
+        # Get current price
+        quote = await market_service.get_quote(symbol)
+        current_price = float(quote.current_price)
+        print(f"✅ BUY PRICE FETCH: Got price ${current_price:.2f} for {symbol}")
+        
+        # Update the modal with the new price (buy modal)
+        updated_modal = _create_instant_buy_modal_with_price(symbol, "1", current_price)
+        
+        response = client.views_update(
+            view_id=view_id,
+            view=updated_modal
+        )
+        
+        if response.get("ok"):
+            print(f"✅ BUY PRICE FETCH: Modal updated with ${current_price:.2f}")
+        else:
+            print(f"❌ BUY PRICE FETCH: Modal update failed: {response}")
+            
+    except Exception as e:
+        print(f"❌ BUY PRICE FETCH: Error: {e}")
+        import traceback
+        print(f"🚨 BUY PRICE FETCH: Traceback: {traceback.format_exc()}")
+
+
 def _create_instant_buy_modal(symbol: str = "", quantity: str = "1") -> Dict[str, Any]:
     """Create a minimal instant modal for buy command that opens immediately."""
     return {
@@ -1564,92 +1599,69 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
         logger.info(f"⚡ Parse took: {(parse_time - parse_start)*1000:.2f}ms")
         
         # Send immediate ephemeral response, then open modal
-        # Skip modal entirely - use interactive message instead
         try:
-            # Get live price in background if symbol provided
-            price_text = "Loading price..."
-            if symbol:
-                try:
-                    # Quick price fetch
-                    from services.service_container import get_market_data_service
-                    market_service = get_market_data_service()
-                    
-                    import threading
-                    import asyncio
-                    
-                    def fetch_price():
-                        try:
-                            loop = asyncio.new_event_loop()
-                            asyncio.set_event_loop(loop)
-                            quote = loop.run_until_complete(market_service.get_quote(symbol))
-                            return f"${float(quote.current_price):.2f}"
-                        except:
-                            return "Price unavailable"
-                        finally:
-                            loop.close()
-                    
-                    # Try to get price quickly (timeout after 1 second)
-                    import concurrent.futures
-                    with concurrent.futures.ThreadPoolExecutor() as executor:
-                        future = executor.submit(fetch_price)
-                        try:
-                            price_text = future.result(timeout=1.0)  # 1 second timeout
-                        except concurrent.futures.TimeoutError:
-                            price_text = "Loading..."
-                            
-                except Exception as e:
-                    logger.warning(f"Quick price fetch failed: {e}")
-                    price_text = "Price unavailable"
-            
-            # Send interactive message immediately
-            message_start = time.time()
-            response = client.chat_postEphemeral(
+            # Send instant confirmation message
+            ephemeral_start = time.time()
+            client.chat_postEphemeral(
                 channel=body.get("channel_id"),
                 user=user_id,
-                text=f"🚀 Ready to trade {symbol.upper() if symbol else 'stock'}!",
-                blocks=[
-                    {
-                        "type": "section",
-                        "text": {
-                            "type": "mrkdwn", 
-                            "text": f"*📊 {symbol.upper() if symbol else 'Stock'} Trade*\n💰 Price: {price_text}\n📈 Quantity: {quantity} shares\n🎯 Action: Buy"
-                        }
-                    },
-                    {
-                        "type": "actions",
-                        "elements": [
-                            {
-                                "type": "button",
-                                "text": {"type": "plain_text", "text": f"✅ Execute Buy"},
-                                "style": "primary",
-                                "action_id": "execute_buy",
-                                "value": f"{symbol}|{quantity}|buy"
-                            },
-                            {
-                                "type": "button",
-                                "text": {"type": "plain_text", "text": "📝 Edit Details"},
-                                "action_id": "edit_trade",
-                                "value": f"{symbol}|{quantity}|buy"
-                            },
-                            {
-                                "type": "button",
-                                "text": {"type": "plain_text", "text": "❌ Cancel"},
-                                "action_id": "cancel_trade",
-                                "value": "cancel"
-                            }
-                        ]
-                    }
-                ]
+                text=f"🚀 Opening buy modal for {symbol.upper() if symbol else 'stock'} (qty: {quantity})..."
             )
-            message_time = time.time()
-            logger.info(f"⚡ Interactive message took: {(message_time - message_start)*1000:.2f}ms")
-            logger.info(f"⚡ TOTAL TIME: {(message_time - start_time)*1000:.2f}ms")
+            ephemeral_time = time.time()
+            logger.info(f"⚡ Ephemeral message took: {(ephemeral_time - ephemeral_start)*1000:.2f}ms")
             
-            if response.get("ok"):
-                logger.info("✅ INTERACTIVE MESSAGE SENT SUCCESSFULLY!")
-                logger.info(f"📊 Symbol: {symbol}, Quantity: {quantity}, Price: {price_text}")
-            else:
-                logger.error(f"❌ Interactive message failed: {response}")
+            # Create modal
+            modal_start = time.time()
+            modal_view = _create_instant_buy_modal(symbol, quantity)
+            modal_create_time = time.time()
+            logger.info(f"⚡ Modal creation took: {(modal_create_time - modal_start)*1000:.2f}ms")
+            
+            # Try to open modal (this might fail due to timing, but we already gave feedback)
+            api_start = time.time()
+            try:
+                response = client.views_open(trigger_id=trigger_id, view=modal_view)
+                api_time = time.time()
+                logger.info(f"⚡ Slack API call took: {(api_time - api_start)*1000:.2f}ms")
+                logger.info(f"⚡ TOTAL TIME: {(api_time - start_time)*1000:.2f}ms")
+                
+                if response.get("ok"):
+                    logger.info("✅ MODAL OPENED SUCCESSFULLY!")
+                    logger.info(f"📊 Symbol: {symbol}, Quantity: {quantity}")
+                    
+                    # If symbol is provided, fetch price in background and update modal
+                    if symbol:
+                        import threading
+                        import asyncio
+                        
+                        def fetch_and_update_price():
+                            try:
+                                asyncio.run(_fetch_and_update_buy_price(symbol, response["view"]["id"], client))
+                            except Exception as e:
+                                logger.error(f"❌ Background price fetch failed: {e}")
+                        
+                        thread = threading.Thread(target=fetch_and_update_price)
+                        thread.daemon = True
+                        thread.start()
+                        logger.info(f"🔄 Started background price fetch for {symbol}")
+                        
+                else:
+                    logger.error(f"❌ Modal failed to open: {response}")
+                    # Send follow-up message with manual trade option
+                    client.chat_postEphemeral(
+                        channel=body.get("channel_id"),
+                        user=user_id,
+                        text=f"⚠️ Modal timed out. Use `/buy {symbol} {quantity}` as alternative."
+                    )
+                    
+            except Exception as modal_error:
+                api_time = time.time()
+                logger.error(f"❌ Modal failed after {(api_time - start_time)*1000:.2f}ms: {modal_error}")
+                # Send follow-up message with manual trade option
+                client.chat_postEphemeral(
+                    channel=body.get("channel_id"),
+                    user=user_id,
+                    text=f"⚠️ Modal failed to open. Use `/buy {symbol} {quantity}` as alternative."
+                )
                 
         except Exception as e:
             error_time = time.time()
