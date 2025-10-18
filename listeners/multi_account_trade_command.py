@@ -1313,7 +1313,7 @@ def _create_instant_buy_modal(symbol: str = "", quantity: str = "1") -> Dict[str
     return {
         "type": "modal",
         "callback_id": "stock_trade_modal_interactive",
-        "title": {"type": "plain_text", "text": "Place Interactive Trade"},
+        "title": {"type": "plain_text", "text": "Emily's Trading Bot"},
         "submit": {"type": "plain_text", "text": "Execute Trade"},
         "close": {"type": "plain_text", "text": "Cancel"},
         "blocks": [
@@ -1414,6 +1414,20 @@ def _create_instant_buy_modal_with_price(symbol: str = "", quantity: str = "1", 
                 change_emoji = "📈"  # Default to positive
                 block["text"]["text"] = f"*Current Stock Price:* *${price:.2f}* {change_emoji}"
                 break
+        
+        # Calculate and populate initial GMV
+        if quantity and quantity.isdigit():
+            try:
+                qty_int = int(quantity)
+                calculated_gmv = qty_int * price
+                
+                # Find and update the GMV block
+                for block in modal["blocks"]:
+                    if block.get("block_id") == "gmv_block":
+                        block["element"]["initial_value"] = str(calculated_gmv)
+                        break
+            except:
+                pass
     
     return modal
 
@@ -1423,7 +1437,7 @@ def _create_instant_sell_modal(symbol: str = "", quantity: str = "1") -> Dict[st
     return {
         "type": "modal",
         "callback_id": "stock_trade_modal_interactive",
-        "title": {"type": "plain_text", "text": "Place Interactive Trade"},
+        "title": {"type": "plain_text", "text": "Emily's Trading Bot"},
         "submit": {"type": "plain_text", "text": "Execute Trade"},
         "close": {"type": "plain_text", "text": "Cancel"},
         "blocks": [
@@ -1524,6 +1538,20 @@ def _create_instant_sell_modal_with_price(symbol: str = "", quantity: str = "1",
                 change_emoji = "📉"  # Default to negative for sell
                 block["text"]["text"] = f"*Current Stock Price:* *${price:.2f}* {change_emoji}"
                 break
+        
+        # Calculate and populate initial GMV
+        if quantity and quantity.isdigit():
+            try:
+                qty_int = int(quantity)
+                calculated_gmv = qty_int * price
+                
+                # Find and update the GMV block
+                for block in modal["blocks"]:
+                    if block.get("block_id") == "gmv_block":
+                        block["element"]["initial_value"] = str(calculated_gmv)
+                        break
+            except:
+                pass
     
     return modal
 
