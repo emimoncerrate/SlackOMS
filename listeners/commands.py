@@ -1095,12 +1095,7 @@ def register_command_handlers(app: App, service_container: Optional['ServiceCont
             logger.error(f"❌ STATUS COMMAND TRACEBACK: {traceback.format_exc()}")
             
             try:
-                await ack()  # Try to ack if not already done
-            except:
-                pass
-                
-            try:
-                await client.chat_postEphemeral(
+                client.chat_postEphemeral(
                     channel=body.get("channel_id"),
                     user=body.get("user_id"),
                     text=f"❌ Status command failed: {str(e)}\n\nPlease contact support."
@@ -1211,12 +1206,7 @@ def register_command_handlers(app: App, service_container: Optional['ServiceCont
     
 
             try:
-                await ack()  # Try to ack if not already done
-            except:
-                pass
-                
-            try:
-                await client.chat_postEphemeral(
+                client.chat_postEphemeral(
                     channel=body.get("channel_id"),
                     user=body.get("user_id"),
                     text=f"❌ Status command failed: {str(e)}\n\nPlease contact support."
