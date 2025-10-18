@@ -1,0 +1,35 @@
+# Core Slack bot dependencies
+slack-bolt==1.18.0
+slack-sdk==3.23.0
+
+# Web framework for health checks
+flask==2.3.3
+
+# Environment and configuration
+python-dotenv==1.0.0
+
+# HTTP and async requests
+requests==2.31.0
+aiohttp==3.8.6
+httpx==0.25.0
+
+# Data processing
+pandas==2.1.1
+numpy==1.25.2
+
+# Database
+boto3==1.28.85
+redis==5.0.1
+
+# Market data
+finnhub-python==2.4.18
+
+# Trading APIs
+alpaca-trade-api==3.0.2
+
+# Utilities
+structlog==23.1.0
+python-dateutil==2.8.2
+
+# Production server
+gunicorn==21.2.0

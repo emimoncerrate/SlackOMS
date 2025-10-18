@@ -1,79 +1,62 @@
-# SlackOMS Quick Reference Card
+# 🚀 Quick Reference Card
 
-## 🚀 Your Deployed API
+## 📁 **Where to Find Things**
 
-**URL**: https://slackoms-api.onrender.com
+| What you need             | Where to find it          |
+| ------------------------- | ------------------------- |
+| **🚀 Setup Instructions** | `docs/setup/SETUP_LOG.md` |
+| **🗂️ Project Structure**  | `PROJECT_STRUCTURE.md`    |
+| **🔧 View Database**      | `tools/view_database.py`  |
+| **🧪 Run Tests**          | `tests/` folder           |
+| **📊 Fix Documentation**  | `docs/fixes/`             |
+| **📖 Guides**             | `docs/guides/`            |
+| **⚙️ Configuration**      | `.env` file               |
+| **🚀 Start Bot**          | `python app.py`           |
 
-**Status**: ✅ Active (confirmed October 14, 2025)
+## 🎯 **Common Commands**
 
-## 🔑 Authentication
-
-**API Key**: `a8GKxzV6Sispbga2VuE0XvPOVdtRLcL5hNoiXTPflxQ`
-
-⚠️ **ACTION REQUIRED**: Verify this matches `OMS_API_KEY` in Render Dashboard
-
-## 🧪 Quick Tests
-
-### Health Check
 ```bash
-curl https://slackoms-api.onrender.com/health
+# Start the bot
+python app.py
+
+# View database
+python tools/view_database.py
+
+# Setup DynamoDB
+./scripts/setup_local_dynamodb.sh
+
+# Create tables
+python scripts/create_dynamodb_tables.py --local
+
+# Run tests
+pytest tests/
+
+# Check Docker
+docker ps | grep dynamodb
 ```
 
-### Execute Trade
-```bash
-curl -X POST https://slackoms-api.onrender.com/api/v1/trade \
-  -H "X-API-Key: a8GKxzV6Sispbga2VuE0XvPOVdtRLcL5hNoiXTPflxQ" \
-  -H "Content-Type: application/json" \
-  -d '{"symbol":"AAPL","quantity":50,"gmv":8750.00,"side":"BUY","portfolio_name":"Test Portfolio","user_id":"U123"}'
-```
+## 📋 **File Organization**
 
-### List Trades
-```bash
-curl https://slackoms-api.onrender.com/api/v1/trades?limit=5 \
-  -H "X-API-Key: a8GKxzV6Sispbga2VuE0XvPOVdtRLcL5hNoiXTPflxQ"
-```
+- **Root**: Only essential files (app.py, .env, README.md, etc.)
+- **docs/**: All documentation organized by type
+- **tests/**: All test files moved here
+- **tools/**: Utility scripts and helpers
+- **logs/**: Log files (auto-created)
+- **Core folders**: services/, models/, listeners/, etc. (unchanged)
 
-## 🌐 Important URLs
+## 🎉 **Benefits of New Structure**
 
-| Resource | URL |
-|----------|-----|
-| API Base | https://slackoms-api.onrender.com |
-| Health Check | https://slackoms-api.onrender.com/health |
-| Interactive Docs | https://slackoms-api.onrender.com/docs |
-| Render Dashboard | https://dashboard.render.com |
+✅ **Clean root directory** - Only essential files visible  
+✅ **Organized documentation** - Easy to find guides and fixes  
+✅ **Separated tests** - All tests in one place  
+✅ **Utility tools** - Development helpers organized  
+✅ **Better navigation** - Logical folder structure  
+✅ **Professional appearance** - Production-ready organization
 
-## 📋 Current Status
+## 🔍 **Quick Navigation**
 
-- [x] Phase 1.1-1.7: OMS API Built and Tested Locally
-- [x] Phase 1.8: Deployed to Render
-- [ ] Verify API Key in Render Dashboard
-- [ ] Test Deployed API Works End-to-End
-- [ ] Phase 2: Build Slack Bot
-
-## 🎯 Next Immediate Step
-
-1. Open Render Dashboard: https://dashboard.render.com
-2. Click `slackoms-api` → **Environment** tab
-3. Verify `OMS_API_KEY` = `a8GKxzV6Sispbga2VuE0XvPOVdtRLcL5hNoiXTPflxQ`
-4. If it doesn't match, update it and wait for redeploy (~5 min)
-5. Run the "Execute Trade" test above
-6. ✅ When you get a successful response, you're ready for Phase 2!
-
-## 📚 Reference Files
-
-- `deployment_urls.txt` - Full deployment information
-- `RENDER_VERIFICATION_CHECKLIST.md` - Detailed verification steps
-- `oms-api/DEPLOYMENT.md` - Original deployment guide
-- `QUICKSTART.md` - Getting started guide
-
-## 🆘 Need Help?
-
-- Check Render Logs: Dashboard → slackoms-api → Logs
-- Review: `RENDER_VERIFICATION_CHECKLIST.md`
-- Test Local: `cd oms-api && ./run.sh`
-
----
-
-**Your Local API**: http://localhost:8001 (when running)
-**Production API**: https://slackoms-api.onrender.com
-
+- **Need help setting up?** → `docs/setup/SETUP_LOG.md`
+- **Want to understand the code?** → `PROJECT_STRUCTURE.md`
+- **Need to debug?** → `tools/view_database.py`
+- **Want to test?** → `tests/`
+- **Looking for a specific fix?** → `docs/fixes/`

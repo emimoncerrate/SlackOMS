@@ -1,9 +1,0 @@
-# Slack Bot requirements
-slack-bolt==1.21.2
-slack-sdk==3.34.0
-flask==3.1.0
-python-dotenv==1.0.1
-requests==2.32.3
-pydantic==2.10.4
-pydantic-settings==2.6.1
-
