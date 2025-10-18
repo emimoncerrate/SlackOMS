@@ -938,21 +938,31 @@ def register_command_handlers(app: App, service_container: Optional['ServiceCont
     # Check if multi-account system is available
     multi_account_available = False
     try:
+        logger.info("🔍 DEBUG: Checking multi-account system availability...")
+        
         # Check if multi-account services can be imported
         from services.multi_alpaca_service import MultiAlpacaService
         from services.user_account_manager import UserAccountManager
+        logger.info("🔍 DEBUG: Multi-account imports successful")
         
         # Try to get the services from container
         try:
             multi_alpaca = container.get(MultiAlpacaService)
             user_manager = container.get(UserAccountManager)
+            logger.info("🔍 DEBUG: Got services from container")
             
             # Check if the multi-alpaca service is available
-            if multi_alpaca.is_available():
+            is_available = multi_alpaca.is_available()
+            logger.info(f"🔍 DEBUG: multi_alpaca.is_available() = {is_available}")
+            
+            if is_available:
                 multi_account_available = True
                 logger.info("🏦 Multi-account system detected and available")
             else:
                 logger.info("📊 Multi-account services loaded but no accounts available")
+                # FORCE registration anyway - we want the commands even without accounts
+                multi_account_available = True
+                logger.info("🔍 DEBUG: Forcing multi-account registration anyway")
                 
         except Exception as service_error:
             logger.info(f"📋 Multi-account services not in container: {service_error}")
@@ -961,6 +971,8 @@ def register_command_handlers(app: App, service_container: Optional['ServiceCont
         logger.info(f"📦 Multi-account modules not available: {import_error}")
     except Exception as e:
         logger.warning(f"❌ Error checking multi-account system: {e}")
+    
+    logger.info(f"🔍 DEBUG: multi_account_available = {multi_account_available}")
     
     # Register appropriate command based on availability
     if multi_account_available:
