@@ -618,6 +618,7 @@ class InteractiveActionHandler:
             
             # Log trade to database first (convert to dict for PostgreSQL)
             # Calculate GMV (Gross Market Value)
+            from datetime import datetime
             gmv_value = float(trade.quantity * trade.price)
             
             trade_data = {
@@ -630,6 +631,7 @@ class InteractiveActionHandler:
                 'gmv': gmv_value,
                 'portfolio_name': getattr(trade, 'portfolio_name', 'personal'),  # Default to 'personal'
                 'status': trade.status.value,
+                'timestamp': datetime.utcnow(),  # Add current timestamp
                 'alpaca_order_id': None,
                 'executed_at': None
             }

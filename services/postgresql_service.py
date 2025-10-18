@@ -56,6 +56,7 @@ class Trade(Base):
     gmv = Column(Numeric(15, 4), nullable=False)  # Gross Market Value
     portfolio_name = Column(String, nullable=False, default='default')  # Portfolio name
     status = Column(String, nullable=False, default='PENDING')
+    timestamp = Column(DateTime(timezone=True), nullable=False, default=func.now())  # Trade timestamp
     alpaca_order_id = Column(String)
     executed_at = Column(DateTime(timezone=True))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -148,6 +149,7 @@ class PostgreSQLService:
                     ("gmv", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS gmv NUMERIC(15, 4) NOT NULL DEFAULT 0.0;"),
                     ("portfolio_name", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS portfolio_name VARCHAR(255) NOT NULL DEFAULT 'default';"),
                     ("status", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS status VARCHAR(20) NOT NULL DEFAULT 'PENDING';"),
+                    ("timestamp", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW();"),
                     ("alpaca_order_id", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS alpaca_order_id VARCHAR(255);"),
                     ("executed_at", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS executed_at TIMESTAMPTZ;"),
                     ("created_at", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW();"),
@@ -248,6 +250,8 @@ class PostgreSQLService:
         """Create a new trade."""
         with self.get_session() as session:
             try:
+                from datetime import datetime
+                
                 # Both side and trade_type should be uppercase (BUY/SELL) - it's an ENUM
                 trade_type = trade_data['trade_type'].upper() if isinstance(trade_data['trade_type'], str) else str(trade_data['trade_type'])
                 
@@ -260,8 +264,9 @@ class PostgreSQLService:
                     trade_type=trade_type,
                     price=Decimal(str(trade_data['price'])),
                     gmv=Decimal(str(trade_data.get('gmv', trade_data['quantity'] * trade_data['price']))),
-                    portfolio_name=trade_data.get('portfolio_name', 'default'),  # Add portfolio_name
+                    portfolio_name=trade_data.get('portfolio_name', 'default'),
                     status=trade_data.get('status', 'PENDING').upper(),
+                    timestamp=trade_data.get('timestamp', datetime.utcnow()),  # Add timestamp
                     alpaca_order_id=trade_data.get('alpaca_order_id'),
                     executed_at=trade_data.get('executed_at')
                 )
@@ -444,6 +449,7 @@ class PostgreSQLService:
             'gmv': float(trade.gmv),
             'portfolio_name': trade.portfolio_name,
             'status': trade.status,
+            'timestamp': trade.timestamp.isoformat() if trade.timestamp else None,
             'alpaca_order_id': trade.alpaca_order_id,
             'executed_at': trade.executed_at.isoformat() if trade.executed_at else None,
             'created_at': trade.created_at.isoformat() if trade.created_at else None,
