@@ -1,0 +1,35 @@
+# Render-optimized requirements (minimal for basic functionality)
+# Core Slack bot dependencies
+slack-bolt==1.18.0
+slack-sdk==3.23.0
+
+# Web framework for Render deployment
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+
+# Environment and configuration
+python-dotenv==1.0.0
+
+# HTTP requests
+requests==2.31.0
+
+# Database (PostgreSQL for Render)
+psycopg2-binary==2.9.7
+sqlalchemy==2.0.23
+
+# Optional: Market data (can be mocked)
+# finnhub-python==2.4.18
+
+# Optional: Trading APIs (can be mocked)
+# alpaca-trade-api==3.0.2
+
+# Optional: AWS services (can be mocked)
+# boto3==1.28.85
+
+# Utilities
+python-dateutil==2.8.2
+structlog==23.1.0
+
+# Data processing (lightweight versions)
+# pandas==2.1.1  # Optional for advanced features
+# numpy==1.25.2  # Optional for advanced features

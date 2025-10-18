@@ -1,23 +1,20 @@
-# Render.com Deployment Configuration - Jain Global Slack Trading Bot
-# Optimized for reliable deployment with minimal dependencies
+# Render.com Optimized Deployment Configuration
+# Simplified version for reliable deployment with minimal dependencies
 
 services:
   - type: web
     name: jain-trading-bot
     env: python
-    
-    # Use optimized version for Render deployment
     buildCommand: pip install -r render-requirements.txt
     startCommand: python render-app.py
+    plan: free  # 100% FREE tier
     
-    plan: free  # 100% FREE tier (750 hours/month)
-    
-    # Required environment variables
+    # Environment variables (set these in Render dashboard)
     envVars:
       - key: SLACK_BOT_TOKEN
-        sync: false  # Set in dashboard: xoxb-your-bot-token
+        sync: false  # Set manually: xoxb-your-bot-token
       - key: SLACK_SIGNING_SECRET
-        sync: false  # Set in dashboard: your-signing-secret
+        sync: false  # Set manually: your-signing-secret
       - key: ENVIRONMENT
         value: production
       - key: PORT
@@ -25,28 +22,28 @@ services:
       - key: HOST
         value: 0.0.0.0
       
-      # Optional: Enhanced functionality (add these for full features)
+      # Optional: Add these for enhanced functionality
       - key: FINNHUB_API_KEY
-        sync: false  # Optional: real market data
+        sync: false  # Optional: for real market data
       - key: ALPACA_API_KEY
-        sync: false  # Optional: real paper trading
+        sync: false  # Optional: for real paper trading
       - key: ALPACA_SECRET_KEY
-        sync: false  # Optional: real paper trading
+        sync: false  # Optional: for real paper trading
       - key: DATABASE_URL
-        sync: false  # Optional: PostgreSQL for persistence
+        sync: false  # Optional: will use PostgreSQL if available
     
-    # Health monitoring
+    # Health check endpoint
     healthCheckPath: /health
     
-    # Auto-deploy from main branch
+    # Auto-deploy from GitHub
     autoDeploy: true
     
-    # Optimize build performance
+    # Build settings
     buildFilter:
       paths:
         - render-app.py
         - render-requirements.txt
-        - render.yaml
+        - render-optimized.yaml
       ignoredPaths:
         - docs/**
         - tests/**
@@ -55,10 +52,10 @@ services:
         - "*.md"
 
 # Optional: Add PostgreSQL database for persistent storage
-# Uncomment and deploy to enable database features
+# Uncomment if you want to use a database instead of in-memory storage
 #
 # databases:
 #   - name: jain-trading-db
 #     databaseName: trading_bot
 #     user: trading_user
-#     plan: free  # Free PostgreSQL (1GB storage)
+#     plan: free
