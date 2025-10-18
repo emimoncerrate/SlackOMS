@@ -336,24 +336,31 @@ class RiskAnalysisService:
             'position_size_limit': 0.05  # 5% max single trade of portfolio
         }
         
-        self.logger.info("RiskAnalysisService initialized",
-                        model_id=self.config.aws.bedrock_model_id,
-                        region=self.config.aws.region)
+        # Use mock mode for local development (no AWS)
+        self.is_mock_mode = True
+        self.logger.info("RiskAnalysisService initialized in mock mode (no AWS Bedrock)")
     
     async def initialize(self) -> None:
         """Initialize async resources and AWS clients."""
         try:
-            # Check if we should use mock mode for development
-            if os.getenv('ENVIRONMENT') == 'development' and os.getenv('AWS_ACCESS_KEY_ID') == 'mock-access-key-id':
+            # Check if we should use mock mode (no AWS config or development environment)
+            if (os.getenv('ENVIRONMENT') == 'development' or 
+                not hasattr(self.config, 'aws') or 
+                os.getenv('AWS_ACCESS_KEY_ID') == 'mock-access-key-id'):
                 self.logger.info("RiskAnalysisService initialized in MOCK MODE for development")
                 self.is_mock_mode = True
                 return
             
             # Initialize Bedrock client
-            self.bedrock_client = boto3.client(
-                'bedrock-runtime',
-                region_name=self.config.aws.region
-            )
+            # Only initialize Bedrock if AWS config is available
+            if hasattr(self.config, 'aws'):
+                self.bedrock_client = boto3.client(
+                    'bedrock-runtime',
+                    region_name=self.config.aws.region
+                )
+            else:
+                self.is_mock_mode = True
+                self.logger.info("No AWS config found, using mock mode")
             
             # Skip Bedrock connectivity test for now - model access needs to be enabled
             self.logger.info("Skipping Bedrock connectivity test - model access needs to be enabled")

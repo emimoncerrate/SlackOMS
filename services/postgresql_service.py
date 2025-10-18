@@ -15,7 +15,8 @@ import json
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, Numeric, Text, Boolean, Index
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
-from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import JSON
 from sqlalchemy.sql import func
 import uuid
 
@@ -30,8 +31,8 @@ class User(Base):
     user_id = Column(String, primary_key=True)
     slack_user_id = Column(String, unique=True, nullable=False)
     role = Column(String, nullable=False, default='EXECUTION_TRADER')
-    profile = Column(JSONB, default={})
-    permissions = Column(JSONB, default=[])
+    profile = Column(JSON, default={})
+    permissions = Column(JSON, default=[])
     status = Column(String, default='ACTIVE')
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
@@ -53,7 +54,7 @@ class Trade(Base):
     price = Column(Numeric(15, 4), nullable=False)
     status = Column(String, nullable=False, default='PENDING')
     risk_level = Column(String, nullable=False, default='MEDIUM')
-    risk_analysis = Column(JSONB, default={})
+    risk_analysis = Column(JSON, default={})
     alpaca_order_id = Column(String)
     executed_at = Column(DateTime(timezone=True))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -93,8 +94,8 @@ class Channel(Base):
     channel_id = Column(String, primary_key=True)
     channel_name = Column(String, nullable=False)
     is_active = Column(Boolean, default=True)
-    permissions = Column(JSONB, default={})
-    settings = Column(JSONB, default={})
+    permissions = Column(JSON, default={})
+    settings = Column(JSON, default={})
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 

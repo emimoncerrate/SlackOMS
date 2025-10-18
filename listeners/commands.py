@@ -30,7 +30,7 @@ from slack_sdk.errors import SlackApiError
 
 # Import our services and models
 from services.auth import AuthService, AuthenticationError, AuthorizationError, SessionError, RateLimitError, SecurityViolationError
-from services.database import DatabaseService, DatabaseError, NotFoundError, ConflictError
+from services.postgresql_service import PostgreSQLService
 from services.service_container import ServiceContainer, get_container
 from models.user import User, UserRole, Permission
 from ui.trade_widget import TradeWidget, WidgetContext, WidgetState, UITheme
@@ -156,7 +156,7 @@ class CommandHandler:
     - Rate limiting and security controls
     """
     
-    def __init__(self, auth_service: AuthService, database_service: DatabaseService):
+    def __init__(self, auth_service: AuthService, database_service: PostgreSQLService):
         """
         Initialize command handler with required services.
         
@@ -908,7 +908,7 @@ class CommandHandler:
 _command_handler: Optional[CommandHandler] = None
 
 
-def initialize_command_handler(auth_service: AuthService, database_service: DatabaseService) -> None:
+def initialize_command_handler(auth_service: AuthService, database_service: PostgreSQLService) -> None:
     """Initialize global command handler instance."""
     global _command_handler
     _command_handler = CommandHandler(auth_service, database_service)
@@ -928,7 +928,7 @@ def register_command_handlers(app: App, service_container: Optional['ServiceCont
     
     # Get services from container
     auth_service = container.get(AuthService)
-    database_service = container.get(DatabaseService)
+    database_service = container.get(PostgreSQLService)
     
     # Create command handler for non-trade commands
     command_handler = CommandHandler(auth_service, database_service)

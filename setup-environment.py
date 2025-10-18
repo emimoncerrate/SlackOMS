@@ -98,10 +98,19 @@ def test_finnhub_api(api_key: str) -> bool:
 def test_alpaca_api(api_key: str, secret_key: str) -> bool:
     """Test Alpaca API connection."""
     try:
-        import alpaca_trade_api as tradeapi
-        api = tradeapi.REST(api_key, secret_key, base_url='https://paper-api.alpaca.markets')
-        account = api.get_account()
-        return account is not None
+        # Basic HTTP test instead of requiring alpaca-trade-api
+        import base64
+        credentials = base64.b64encode(f"{api_key}:{secret_key}".encode()).decode()
+        headers = {
+            'Authorization': f'Basic {credentials}',
+            'Content-Type': 'application/json'
+        }
+        response = requests.get(
+            'https://paper-api.alpaca.markets/v2/account',
+            headers=headers,
+            timeout=10
+        )
+        return response.status_code == 200
     except Exception:
         return False
 
@@ -167,6 +176,11 @@ def main():
     # Slack Configuration
     print_section("Slack Configuration")
     print("Get these from your Slack App at https://api.slack.com/apps")
+    print("1. Create new app → 'From scratch'")
+    print("2. Add OAuth scopes: commands, chat:write, chat:write.public")
+    print("3. Install to workspace")
+    print("4. Copy Bot Token (xoxb-...) and Signing Secret")
+    print()
     
     config['SLACK_BOT_TOKEN'] = get_user_input(
         "Slack Bot Token (xoxb-...)",
@@ -182,8 +196,9 @@ def main():
     
     # Database Configuration
     print_section("Database Configuration")
-    print("For local development, you can use SQLite (no setup required)")
-    print("For production, use PostgreSQL connection string from Render")
+    print("For local development, SQLite is recommended (no setup required)")
+    print("For production, PostgreSQL will be provided by Render")
+    print()
     
     db_choice = input("Use SQLite for local development? (Y/n): ").strip().lower()
     if db_choice in ['', 'y', 'yes']:
@@ -200,6 +215,10 @@ def main():
     # Market Data API
     print_section("Market Data API (Finnhub)")
     print("Get a free API key from https://finnhub.io")
+    print("1. Sign up for free account")
+    print("2. Go to dashboard and copy API key")
+    print("3. Free tier: 60 calls/minute")
+    print()
     
     config['FINNHUB_API_KEY'] = get_user_input(
         "Finnhub API Key",
@@ -213,10 +232,16 @@ def main():
         print("✅ Finnhub API connection successful")
     else:
         print("⚠️  Finnhub API test failed. Please verify your API key.")
+        print("   You can continue setup and test later.")
     
     # Trading API
     print_section("Trading API (Alpaca)")
     print("Get a free paper trading account from https://alpaca.markets")
+    print("1. Sign up for free account")
+    print("2. Go to 'Paper Trading' section")
+    print("3. Generate API Key and Secret Key")
+    print("4. You get $100k virtual money for testing")
+    print()
     
     config['ALPACA_API_KEY'] = get_user_input(
         "Alpaca API Key",
@@ -236,7 +261,7 @@ def main():
         print("✅ Alpaca API connection successful")
     else:
         print("⚠️  Alpaca API test failed. Please verify your API keys.")
-        print("Note: Make sure you have alpaca-trade-api installed: pip install alpaca-trade-api")
+        print("   Make sure you're using paper trading keys.")
     
     # Application Settings
     print_section("Application Settings")
@@ -278,10 +303,11 @@ def main():
     
     # Next steps
     print_section("Next Steps")
-    print("1. Review your .env file and make any necessary adjustments")
+    print("1. Validate your setup: python3 validate-environment.py")
     print("2. Install dependencies: pip install -r requirements.txt")
-    print("3. Run the application: python app.py")
-    print("4. For Render deployment, follow POSTGRESQL_DEPLOYMENT_GUIDE.md")
+    print("3. Run the application: python3 app.py")
+    print("4. Test in Slack: /trade AAPL 100 BUY")
+    print("5. For Render deployment: Follow POSTGRESQL_DEPLOYMENT_GUIDE.md")
     print()
     print("🎉 Setup complete! Your Slack Trading Bot is ready to run.")
 

@@ -66,8 +66,9 @@ class DatabaseConfig:
         if not self.database_url:
             raise ValueError("Database URL is required")
         
-        if not self.database_url.startswith(('postgresql://', 'postgres://')):
-            raise ValueError("Database URL must be a PostgreSQL connection string")
+        # Support both SQLite and PostgreSQL
+        if not (self.database_url.startswith(('postgresql://', 'postgres://', 'sqlite:'))):
+            raise ValueError("Database URL must be SQLite or PostgreSQL connection string")
         
         if self.pool_size <= 0:
             raise ValueError("Pool size must be positive")
@@ -270,7 +271,7 @@ class AppConfig:
             'environment': self.environment.value,
             'log_level': self.log_level.value,
             'debug_mode': self.debug_mode,
-            'aws_region': self.aws.region,
+            'database_type': 'PostgreSQL' if self.database.database_url.startswith('postgresql') else 'SQLite',
             'trading_mock_enabled': self.trading.mock_execution_enabled,
             'approved_channels_count': len(self.security.approved_channels)
         }
@@ -446,14 +447,9 @@ class ConfigurationManager:
             bool: True if environment is properly configured
         """
         try:
-            # Validate AWS credentials and permissions (skip in development with mock credentials)
-            if not (self._config.environment.value == 'development' and 
-                   os.getenv('AWS_ACCESS_KEY_ID') in ['mock-access-key-id', 'local']):
-                if not self._config.aws.validate_aws_credentials():
-                    logging.error("AWS credentials validation failed")
-                    return False
-            else:
-                logging.info("Skipping AWS validation in development mode with mock credentials")
+            # Skip AWS validation since we're using PostgreSQL instead of DynamoDB
+            # AWS services are optional in this deployment
+            logging.info("Skipping AWS validation - using PostgreSQL instead of DynamoDB")
             
             # Validate Slack configuration
             if not self._config.slack.bot_token or not self._config.slack.signing_secret:

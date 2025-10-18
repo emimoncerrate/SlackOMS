@@ -33,7 +33,7 @@ from slack_sdk.errors import SlackApiError
 
 # Import our services and models
 from services.auth import AuthService, AuthenticationError, AuthorizationError, SessionError
-from services.database import DatabaseService, DatabaseError, NotFoundError
+from services.postgresql_service import PostgreSQLService
 from services.market_data import MarketDataService, MarketDataError, MarketQuote
 from services.risk_analysis import RiskAnalysisService, RiskAnalysisError, RiskAnalysis
 from services.trading_api import TradingAPIService, TradingError, TradeExecution
@@ -195,7 +195,7 @@ class ActionHandler:
     - Performance metrics and monitoring
     """
     
-    def __init__(self, auth_service: AuthService, database_service: DatabaseService,
+    def __init__(self, auth_service: AuthService, database_service: PostgreSQLService,
                  market_data_service: MarketDataService, risk_analysis_service: RiskAnalysisService,
                  trading_api_service: TradingAPIService):
         """
@@ -1198,7 +1198,7 @@ class ActionHandler:
 _action_handler: Optional[ActionHandler] = None
 
 
-def initialize_action_handler(auth_service: AuthService, database_service: DatabaseService,
+def initialize_action_handler(auth_service: AuthService, database_service: PostgreSQLService,
                             market_data_service: MarketDataService, risk_analysis_service: RiskAnalysisService,
                             trading_api_service: TradingAPIService) -> None:
     """Initialize global action handler instance."""
@@ -1223,7 +1223,7 @@ def register_action_handlers(app: App, service_container: Optional['ServiceConta
     
     # Get services from container
     auth_service = container.get(AuthService)
-    database_service = container.get(DatabaseService)
+    database_service = container.get(PostgreSQLService)
     market_data_service = container.get(MarketDataService)
     risk_analysis_service = container.get(RiskAnalysisService)
     trading_api_service = container.get(TradingAPIService)

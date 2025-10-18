@@ -30,7 +30,7 @@ from slack_sdk.errors import SlackApiError
 
 # Import our services and models
 from services.auth import AuthService, AuthenticationError, AuthorizationError, SessionError
-from services.database import DatabaseService, DatabaseError, NotFoundError
+from services.postgresql_service import PostgreSQLService
 from services.market_data import MarketDataService, MarketDataError
 from services.service_container import ServiceContainer, get_container
 from models.user import User, UserRole, Permission
@@ -171,7 +171,7 @@ class EventHandler:
     - State management and caching
     """
     
-    def __init__(self, auth_service: AuthService, database_service: DatabaseService,
+    def __init__(self, auth_service: AuthService, database_service: PostgreSQLService,
                  market_data_service: MarketDataService):
         """
         Initialize event handler with required services.
@@ -821,7 +821,7 @@ class EventHandler:
 _event_handler: Optional[EventHandler] = None
 
 
-def initialize_event_handler(auth_service: AuthService, database_service: DatabaseService,
+def initialize_event_handler(auth_service: AuthService, database_service: PostgreSQLService,
                            market_data_service: MarketDataService) -> None:
     """Initialize global event handler instance."""
     global _event_handler
@@ -842,7 +842,7 @@ def register_event_handlers(app: App, service_container: Optional['ServiceContai
     
     # Get services from container
     auth_service = container.get(AuthService)
-    database_service = container.get(DatabaseService)
+    database_service = container.get(PostgreSQLService)
     market_data_service = container.get(MarketDataService)
     
     # Create event handler

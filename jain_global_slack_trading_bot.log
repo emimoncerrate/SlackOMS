@@ -23684,3 +23684,946 @@ The server responded with: {'ok': False, 'error': 'expired_trigger_id'}
 2025-10-17 21:54:27,382 - listeners.multi_account_trade_command - INFO - ⚡ TOTAL TIME: 207.42ms
 2025-10-17 21:54:27,382 - listeners.multi_account_trade_command - INFO - ✅ INTERACTIVE MESSAGE SENT SUCCESSFULLY!
 2025-10-17 21:54:27,382 - listeners.multi_account_trade_command - INFO - 📊 Symbol: GOOG, Quantity: 2, Price: Price unavailable
+2025-10-18 00:30:44,382 - services.service_container - INFO - ServiceContainer initialized
+2025-10-18 00:30:44,383 - services.service_container - INFO - Service registered: PostgreSQLService (implementation: PostgreSQLService, scope: singleton, dependencies: [])
+2025-10-18 00:30:44,383 - services.service_container - INFO - Service registered: AlpacaService (implementation: AlpacaService, scope: singleton, dependencies: [])
+2025-10-18 00:30:44,384 - services.service_container - INFO - Service registered: MarketDataService (implementation: MarketDataService, scope: singleton, dependencies: [])
+2025-10-18 00:30:44,384 - services.service_container - INFO - Service registered: RiskAnalysisService (implementation: RiskAnalysisService, scope: singleton, dependencies: [])
+2025-10-18 00:30:44,384 - services.service_container - INFO - Service registered: TradingAPIService (implementation: TradingAPIService, scope: singleton, dependencies: [])
+2025-10-18 00:30:44,384 - services.service_container - INFO - Service registered: AuthService (implementation: AuthService, scope: singleton, dependencies: ['PostgreSQLService'])
+2025-10-18 00:30:44,400 - services.service_container - INFO - Service registered: MultiAlpacaService (implementation: MultiAlpacaService, scope: singleton, dependencies: [])
+2025-10-18 00:30:44,400 - services.service_container - INFO - Service registered: UserAccountManager (implementation: UserAccountManager, scope: singleton, dependencies: ['PostgreSQLService'])
+2025-10-18 00:30:44,401 - services.service_container - INFO - Multi-account services registered successfully
+2025-10-18 00:30:44,401 - services.service_container - INFO - Default services configured in container
+2025-10-18 00:30:44,402 - __main__ - INFO - Initializing Slack Bolt application...
+2025-10-18 00:30:44,842 - __main__ - INFO - Middleware stack registered successfully
+2025-10-18 00:30:44,871 - services.postgresql_service - ERROR - Error creating database tables: (in table 'users', column 'profile'): Compiler <sqlalchemy.dialects.sqlite.base.SQLiteTypeCompiler object at 0x11b1ca3c0> can't render element of type JSONB
+2025-10-18 00:30:44,871 - services.service_container - ERROR - Failed to initialize service PostgreSQLService: (in table 'users', column 'profile'): Compiler <sqlalchemy.dialects.sqlite.base.SQLiteTypeCompiler object at 0x11b1ca3c0> can't render element of type JSONB
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/visitors.py", line 137, in _compiler_dispatch
+    meth = getter(visitor)
+           ^^^^^^^^^^^^^^^
+AttributeError: 'SQLiteTypeCompiler' object has no attribute 'visit_JSONB'. Did you mean: 'visit_JSON'?
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/compiler.py", line 6716, in visit_create_table
+    processed = self.process(
+                ^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/compiler.py", line 932, in process
+    return obj._compiler_dispatch(self, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/visitors.py", line 141, in _compiler_dispatch
+    return meth(self, **kw)  # type: ignore  # noqa: E501
+           ^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/compiler.py", line 6747, in visit_create_column
+    text = self.get_column_specification(column, first_pk=first_pk)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/dialects/sqlite/base.py", line 1666, in get_column_specification
+    coltype = self.dialect.type_compiler_instance.process(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/compiler.py", line 977, in process
+    return type_._compiler_dispatch(self, **kw)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/visitors.py", line 139, in _compiler_dispatch
+    return visitor.visit_unsupported_compilation(self, err, **kw)  # type: ignore  # noqa: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/compiler.py", line 982, in visit_unsupported_compilation
+    raise exc.UnsupportedCompilationError(self, element) from err
+sqlalchemy.exc.UnsupportedCompilationError: Compiler <sqlalchemy.dialects.sqlite.base.SQLiteTypeCompiler object at 0x11b1ca3c0> can't render element of type JSONB (Background on this error at: https://sqlalche.me/e/20/l7de)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/kelvin/Desktop/kelveloper/SlackOMS/services/service_container.py", line 289, in _create_instance
+    instance = definition.factory(*dependency_instances)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kelvin/Desktop/kelveloper/SlackOMS/services/service_container.py", line 561, in create_postgresql_service
+    return PostgreSQLService(config.database.database_url)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kelvin/Desktop/kelveloper/SlackOMS/services/postgresql_service.py", line 119, in __init__
+    self.create_tables()
+  File "/Users/kelvin/Desktop/kelveloper/SlackOMS/services/postgresql_service.py", line 126, in create_tables
+    Base.metadata.create_all(bind=self.engine)
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/schema.py", line 5924, in create_all
+    bind._run_ddl_visitor(
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 3248, in _run_ddl_visitor
+    conn._run_ddl_visitor(visitorcallable, element, **kwargs)
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2455, in _run_ddl_visitor
+    ).traverse_single(element)
+      ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/visitors.py", line 664, in traverse_single
+    return meth(obj, **kw)
+           ^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/ddl.py", line 982, in visit_metadata
+    self.traverse_single(
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/visitors.py", line 664, in traverse_single
+    return meth(obj, **kw)
+           ^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/ddl.py", line 1020, in visit_table
+    )._invoke_with(self.connection)
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/ddl.py", line 321, in _invoke_with
+    return bind.execute(self)
+           ^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1415, in execute
+    return meth(
+           ^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/ddl.py", line 187, in _execute_on_connection
+    return connection._execute_ddl(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1523, in _execute_ddl
+    compiled = ddl.compile(
+               ^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/elements.py", line 308, in compile
+    return self._compiler(dialect, **kw)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/ddl.py", line 76, in _compiler
+    return dialect.ddl_compiler(dialect, self, **kw)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/compiler.py", line 886, in __init__
+    self.string = self.process(self.statement, **compile_kwargs)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/compiler.py", line 932, in process
+    return obj._compiler_dispatch(self, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/visitors.py", line 141, in _compiler_dispatch
+    return meth(self, **kw)  # type: ignore  # noqa: E501
+           ^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/compiler.py", line 6726, in visit_create_table
+    raise exc.CompileError(
+sqlalchemy.exc.CompileError: (in table 'users', column 'profile'): Compiler <sqlalchemy.dialects.sqlite.base.SQLiteTypeCompiler object at 0x11b1ca3c0> can't render element of type JSONB
+2025-10-18 00:30:44,903 - services.service_container - ERROR - Failed to initialize service AuthService: Failed to initialize service PostgreSQLService: (in table 'users', column 'profile'): Compiler <sqlalchemy.dialects.sqlite.base.SQLiteTypeCompiler object at 0x11b1ca3c0> can't render element of type JSONB
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/visitors.py", line 137, in _compiler_dispatch
+    meth = getter(visitor)
+           ^^^^^^^^^^^^^^^
+AttributeError: 'SQLiteTypeCompiler' object has no attribute 'visit_JSONB'. Did you mean: 'visit_JSON'?
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/compiler.py", line 6716, in visit_create_table
+    processed = self.process(
+                ^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/compiler.py", line 932, in process
+    return obj._compiler_dispatch(self, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/visitors.py", line 141, in _compiler_dispatch
+    return meth(self, **kw)  # type: ignore  # noqa: E501
+           ^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/compiler.py", line 6747, in visit_create_column
+    text = self.get_column_specification(column, first_pk=first_pk)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/dialects/sqlite/base.py", line 1666, in get_column_specification
+    coltype = self.dialect.type_compiler_instance.process(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/compiler.py", line 977, in process
+    return type_._compiler_dispatch(self, **kw)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/visitors.py", line 139, in _compiler_dispatch
+    return visitor.visit_unsupported_compilation(self, err, **kw)  # type: ignore  # noqa: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/compiler.py", line 982, in visit_unsupported_compilation
+    raise exc.UnsupportedCompilationError(self, element) from err
+sqlalchemy.exc.UnsupportedCompilationError: Compiler <sqlalchemy.dialects.sqlite.base.SQLiteTypeCompiler object at 0x11b1ca3c0> can't render element of type JSONB (Background on this error at: https://sqlalche.me/e/20/l7de)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/kelvin/Desktop/kelveloper/SlackOMS/services/service_container.py", line 289, in _create_instance
+    instance = definition.factory(*dependency_instances)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kelvin/Desktop/kelveloper/SlackOMS/services/service_container.py", line 561, in create_postgresql_service
+    return PostgreSQLService(config.database.database_url)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kelvin/Desktop/kelveloper/SlackOMS/services/postgresql_service.py", line 119, in __init__
+    self.create_tables()
+  File "/Users/kelvin/Desktop/kelveloper/SlackOMS/services/postgresql_service.py", line 126, in create_tables
+    Base.metadata.create_all(bind=self.engine)
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/schema.py", line 5924, in create_all
+    bind._run_ddl_visitor(
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 3248, in _run_ddl_visitor
+    conn._run_ddl_visitor(visitorcallable, element, **kwargs)
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2455, in _run_ddl_visitor
+    ).traverse_single(element)
+      ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/visitors.py", line 664, in traverse_single
+    return meth(obj, **kw)
+           ^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/ddl.py", line 982, in visit_metadata
+    self.traverse_single(
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/visitors.py", line 664, in traverse_single
+    return meth(obj, **kw)
+           ^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/ddl.py", line 1020, in visit_table
+    )._invoke_with(self.connection)
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/ddl.py", line 321, in _invoke_with
+    return bind.execute(self)
+           ^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1415, in execute
+    return meth(
+           ^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/ddl.py", line 187, in _execute_on_connection
+    return connection._execute_ddl(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1523, in _execute_ddl
+    compiled = ddl.compile(
+               ^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/elements.py", line 308, in compile
+    return self._compiler(dialect, **kw)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/ddl.py", line 76, in _compiler
+    return dialect.ddl_compiler(dialect, self, **kw)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/compiler.py", line 886, in __init__
+    self.string = self.process(self.statement, **compile_kwargs)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/compiler.py", line 932, in process
+    return obj._compiler_dispatch(self, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/visitors.py", line 141, in _compiler_dispatch
+    return meth(self, **kw)  # type: ignore  # noqa: E501
+           ^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/compiler.py", line 6726, in visit_create_table
+    raise exc.CompileError(
+sqlalchemy.exc.CompileError: (in table 'users', column 'profile'): Compiler <sqlalchemy.dialects.sqlite.base.SQLiteTypeCompiler object at 0x11b1ca3c0> can't render element of type JSONB
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/kelvin/Desktop/kelveloper/SlackOMS/services/service_container.py", line 283, in _create_instance
+    dep_instance = self._create_instance(dep_type, new_chain)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kelvin/Desktop/kelveloper/SlackOMS/services/service_container.py", line 337, in _create_instance
+    raise ServiceInitializationError(
+services.service_container.ServiceInitializationError: Failed to initialize service PostgreSQLService: (in table 'users', column 'profile'): Compiler <sqlalchemy.dialects.sqlite.base.SQLiteTypeCompiler object at 0x11b1ca3c0> can't render element of type JSONB
+2025-10-18 00:30:44,910 - __main__ - ERROR - Failed to register command handlers: Failed to initialize service AuthService: Failed to initialize service PostgreSQLService: (in table 'users', column 'profile'): Compiler <sqlalchemy.dialects.sqlite.base.SQLiteTypeCompiler object at 0x11b1ca3c0> can't render element of type JSONB
+2025-10-18 00:30:44,910 - __main__ - ERROR - Failed to initialize Slack app: Failed to initialize service AuthService: Failed to initialize service PostgreSQLService: (in table 'users', column 'profile'): Compiler <sqlalchemy.dialects.sqlite.base.SQLiteTypeCompiler object at 0x11b1ca3c0> can't render element of type JSONB
+2025-10-18 00:30:44,920 - __main__ - ERROR - Stack trace: Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/visitors.py", line 137, in _compiler_dispatch
+    meth = getter(visitor)
+           ^^^^^^^^^^^^^^^
+AttributeError: 'SQLiteTypeCompiler' object has no attribute 'visit_JSONB'. Did you mean: 'visit_JSON'?
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/compiler.py", line 6716, in visit_create_table
+    processed = self.process(
+                ^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/compiler.py", line 932, in process
+    return obj._compiler_dispatch(self, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/visitors.py", line 141, in _compiler_dispatch
+    return meth(self, **kw)  # type: ignore  # noqa: E501
+           ^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/compiler.py", line 6747, in visit_create_column
+    text = self.get_column_specification(column, first_pk=first_pk)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/dialects/sqlite/base.py", line 1666, in get_column_specification
+    coltype = self.dialect.type_compiler_instance.process(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/compiler.py", line 977, in process
+    return type_._compiler_dispatch(self, **kw)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/visitors.py", line 139, in _compiler_dispatch
+    return visitor.visit_unsupported_compilation(self, err, **kw)  # type: ignore  # noqa: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/compiler.py", line 982, in visit_unsupported_compilation
+    raise exc.UnsupportedCompilationError(self, element) from err
+sqlalchemy.exc.UnsupportedCompilationError: Compiler <sqlalchemy.dialects.sqlite.base.SQLiteTypeCompiler object at 0x11b1ca3c0> can't render element of type JSONB (Background on this error at: https://sqlalche.me/e/20/l7de)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/kelvin/Desktop/kelveloper/SlackOMS/services/service_container.py", line 289, in _create_instance
+    instance = definition.factory(*dependency_instances)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kelvin/Desktop/kelveloper/SlackOMS/services/service_container.py", line 561, in create_postgresql_service
+    return PostgreSQLService(config.database.database_url)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kelvin/Desktop/kelveloper/SlackOMS/services/postgresql_service.py", line 119, in __init__
+    self.create_tables()
+  File "/Users/kelvin/Desktop/kelveloper/SlackOMS/services/postgresql_service.py", line 126, in create_tables
+    Base.metadata.create_all(bind=self.engine)
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/schema.py", line 5924, in create_all
+    bind._run_ddl_visitor(
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 3248, in _run_ddl_visitor
+    conn._run_ddl_visitor(visitorcallable, element, **kwargs)
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2455, in _run_ddl_visitor
+    ).traverse_single(element)
+      ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/visitors.py", line 664, in traverse_single
+    return meth(obj, **kw)
+           ^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/ddl.py", line 982, in visit_metadata
+    self.traverse_single(
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/visitors.py", line 664, in traverse_single
+    return meth(obj, **kw)
+           ^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/ddl.py", line 1020, in visit_table
+    )._invoke_with(self.connection)
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/ddl.py", line 321, in _invoke_with
+    return bind.execute(self)
+           ^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1415, in execute
+    return meth(
+           ^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/ddl.py", line 187, in _execute_on_connection
+    return connection._execute_ddl(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1523, in _execute_ddl
+    compiled = ddl.compile(
+               ^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/elements.py", line 308, in compile
+    return self._compiler(dialect, **kw)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/ddl.py", line 76, in _compiler
+    return dialect.ddl_compiler(dialect, self, **kw)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/compiler.py", line 886, in __init__
+    self.string = self.process(self.statement, **compile_kwargs)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/compiler.py", line 932, in process
+    return obj._compiler_dispatch(self, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/visitors.py", line 141, in _compiler_dispatch
+    return meth(self, **kw)  # type: ignore  # noqa: E501
+           ^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/sql/compiler.py", line 6726, in visit_create_table
+    raise exc.CompileError(
+sqlalchemy.exc.CompileError: (in table 'users', column 'profile'): Compiler <sqlalchemy.dialects.sqlite.base.SQLiteTypeCompiler object at 0x11b1ca3c0> can't render element of type JSONB
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/kelvin/Desktop/kelveloper/SlackOMS/services/service_container.py", line 283, in _create_instance
+    dep_instance = self._create_instance(dep_type, new_chain)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kelvin/Desktop/kelveloper/SlackOMS/services/service_container.py", line 337, in _create_instance
+    raise ServiceInitializationError(
+services.service_container.ServiceInitializationError: Failed to initialize service PostgreSQLService: (in table 'users', column 'profile'): Compiler <sqlalchemy.dialects.sqlite.base.SQLiteTypeCompiler object at 0x11b1ca3c0> can't render element of type JSONB
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/kelvin/Desktop/kelveloper/SlackOMS/app.py", line 327, in create_slack_app
+    register_command_handlers(app, service_container)
+  File "/Users/kelvin/Desktop/kelveloper/SlackOMS/listeners/commands.py", line 930, in register_command_handlers
+    auth_service = container.get(AuthService)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kelvin/Desktop/kelveloper/SlackOMS/services/service_container.py", line 242, in get
+    return self._create_instance(service_type)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kelvin/Desktop/kelveloper/SlackOMS/services/service_container.py", line 337, in _create_instance
+    raise ServiceInitializationError(
+services.service_container.ServiceInitializationError: Failed to initialize service AuthService: Failed to initialize service PostgreSQLService: (in table 'users', column 'profile'): Compiler <sqlalchemy.dialects.sqlite.base.SQLiteTypeCompiler object at 0x11b1ca3c0> can't render element of type JSONB
+
+2025-10-18 00:30:44,923 - __main__ - CRITICAL - Failed to create Slack app instance: Failed to initialize service AuthService: Failed to initialize service PostgreSQLService: (in table 'users', column 'profile'): Compiler <sqlalchemy.dialects.sqlite.base.SQLiteTypeCompiler object at 0x11b1ca3c0> can't render element of type JSONB
+2025-10-18 00:30:44,927 - root - ERROR - Runtime environment validation failed: 'AppConfig' object has no attribute 'aws'
+2025-10-18 00:30:44,927 - __main__ - ERROR - Configuration validation failed
+2025-10-18 00:30:44,928 - __main__ - ERROR - ❌ Startup validation failed
+2025-10-18 00:31:22,717 - services.service_container - INFO - ServiceContainer initialized
+2025-10-18 00:31:22,717 - services.service_container - INFO - Service registered: PostgreSQLService (implementation: PostgreSQLService, scope: singleton, dependencies: [])
+2025-10-18 00:31:22,717 - services.service_container - INFO - Service registered: AlpacaService (implementation: AlpacaService, scope: singleton, dependencies: [])
+2025-10-18 00:31:22,717 - services.service_container - INFO - Service registered: MarketDataService (implementation: MarketDataService, scope: singleton, dependencies: [])
+2025-10-18 00:31:22,717 - services.service_container - INFO - Service registered: RiskAnalysisService (implementation: RiskAnalysisService, scope: singleton, dependencies: [])
+2025-10-18 00:31:22,718 - services.service_container - INFO - Service registered: TradingAPIService (implementation: TradingAPIService, scope: singleton, dependencies: [])
+2025-10-18 00:31:22,718 - services.service_container - INFO - Service registered: AuthService (implementation: AuthService, scope: singleton, dependencies: ['PostgreSQLService'])
+2025-10-18 00:31:22,721 - services.service_container - INFO - Service registered: MultiAlpacaService (implementation: MultiAlpacaService, scope: singleton, dependencies: [])
+2025-10-18 00:31:22,721 - services.service_container - INFO - Service registered: UserAccountManager (implementation: UserAccountManager, scope: singleton, dependencies: ['PostgreSQLService'])
+2025-10-18 00:31:22,721 - services.service_container - INFO - Multi-account services registered successfully
+2025-10-18 00:31:22,721 - services.service_container - INFO - Default services configured in container
+2025-10-18 00:31:22,721 - __main__ - INFO - Initializing Slack Bolt application...
+2025-10-18 00:31:23,031 - __main__ - INFO - Middleware stack registered successfully
+2025-10-18 00:31:23,077 - services.postgresql_service - INFO - Database tables created/verified successfully
+2025-10-18 00:31:23,077 - services.postgresql_service - INFO - PostgreSQL service initialized successfully
+2025-10-18 00:31:23,077 - services.service_container - INFO - Service initialized: PostgreSQLService
+2025-10-18 00:31:23,077 - services.service_container - INFO - Service started: PostgreSQLService
+2025-10-18 00:31:23,078 - services.auth - INFO - AuthService initialized successfully
+2025-10-18 00:31:23,078 - services.service_container - INFO - Service initialized: AuthService
+2025-10-18 00:31:23,078 - services.service_container - INFO - Service started: AuthService
+2025-10-18 00:31:23,078 - __main__ - ERROR - Failed to register command handlers: Service DatabaseService is not registered
+2025-10-18 00:31:23,078 - __main__ - ERROR - Failed to initialize Slack app: Service DatabaseService is not registered
+2025-10-18 00:31:23,085 - __main__ - ERROR - Stack trace: Traceback (most recent call last):
+  File "/Users/kelvin/Desktop/kelveloper/SlackOMS/app.py", line 327, in create_slack_app
+    register_command_handlers(app, service_container)
+  File "/Users/kelvin/Desktop/kelveloper/SlackOMS/listeners/commands.py", line 931, in register_command_handlers
+    database_service = container.get(DatabaseService)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kelvin/Desktop/kelveloper/SlackOMS/services/service_container.py", line 228, in get
+    raise ServiceNotFoundError(f"Service {service_type.__name__} is not registered")
+services.service_container.ServiceNotFoundError: Service DatabaseService is not registered
+
+2025-10-18 00:31:23,086 - __main__ - CRITICAL - Failed to create Slack app instance: Service DatabaseService is not registered
+2025-10-18 00:31:23,091 - root - ERROR - Runtime environment validation failed: 'AppConfig' object has no attribute 'aws'
+2025-10-18 00:31:23,091 - __main__ - ERROR - Configuration validation failed
+2025-10-18 00:31:23,093 - __main__ - ERROR - ❌ Startup validation failed
+2025-10-18 00:32:46,042 - services.service_container - INFO - ServiceContainer initialized
+2025-10-18 00:32:46,042 - services.service_container - INFO - Service registered: PostgreSQLService (implementation: PostgreSQLService, scope: singleton, dependencies: [])
+2025-10-18 00:32:46,042 - services.service_container - INFO - Service registered: AlpacaService (implementation: AlpacaService, scope: singleton, dependencies: [])
+2025-10-18 00:32:46,042 - services.service_container - INFO - Service registered: MarketDataService (implementation: MarketDataService, scope: singleton, dependencies: [])
+2025-10-18 00:32:46,043 - services.service_container - INFO - Service registered: RiskAnalysisService (implementation: RiskAnalysisService, scope: singleton, dependencies: [])
+2025-10-18 00:32:46,043 - services.service_container - INFO - Service registered: TradingAPIService (implementation: TradingAPIService, scope: singleton, dependencies: [])
+2025-10-18 00:32:46,043 - services.service_container - INFO - Service registered: AuthService (implementation: AuthService, scope: singleton, dependencies: ['PostgreSQLService'])
+2025-10-18 00:32:46,045 - services.service_container - INFO - Service registered: MultiAlpacaService (implementation: MultiAlpacaService, scope: singleton, dependencies: [])
+2025-10-18 00:32:46,045 - services.service_container - INFO - Service registered: UserAccountManager (implementation: UserAccountManager, scope: singleton, dependencies: ['PostgreSQLService'])
+2025-10-18 00:32:46,045 - services.service_container - INFO - Multi-account services registered successfully
+2025-10-18 00:32:46,045 - services.service_container - INFO - Default services configured in container
+2025-10-18 00:32:46,045 - __main__ - INFO - Initializing Slack Bolt application...
+2025-10-18 00:32:46,395 - __main__ - INFO - Middleware stack registered successfully
+2025-10-18 00:32:46,405 - services.postgresql_service - INFO - Database tables created/verified successfully
+2025-10-18 00:32:46,405 - services.postgresql_service - INFO - PostgreSQL service initialized successfully
+2025-10-18 00:32:46,405 - services.service_container - INFO - Service initialized: PostgreSQLService
+2025-10-18 00:32:46,405 - services.service_container - INFO - Service started: PostgreSQLService
+2025-10-18 00:32:46,405 - services.auth - INFO - AuthService initialized successfully
+2025-10-18 00:32:46,405 - services.service_container - INFO - Service initialized: AuthService
+2025-10-18 00:32:46,405 - services.service_container - INFO - Service started: AuthService
+2025-10-18 00:32:46,405 - ui.trade_widget - INFO - TradeWidget initialized with role-based customizations
+2025-10-18 00:32:46,405 - listeners.commands - INFO - CommandHandler initialized with comprehensive security and validation
+2025-10-18 00:32:46,405 - services.multi_alpaca_service - WARNING - Primary Alpaca account credentials not found
+2025-10-18 00:32:46,405 - services.multi_alpaca_service - INFO - Loaded 0 Alpaca account configurations
+2025-10-18 00:32:46,405 - services.multi_alpaca_service - INFO - MultiAlpacaService initialized with 0 accounts
+2025-10-18 00:32:46,405 - services.service_container - INFO - Service initialized: MultiAlpacaService
+2025-10-18 00:32:46,406 - services.service_container - INFO - Service started: MultiAlpacaService
+2025-10-18 00:32:46,407 - services.postgresql_service - INFO - Database tables created/verified successfully
+2025-10-18 00:32:46,407 - services.postgresql_service - INFO - PostgreSQL service initialized successfully
+2025-10-18 00:32:46,407 - services.service_container - INFO - Service initialized: PostgreSQLService
+2025-10-18 00:32:46,407 - services.service_container - INFO - Service started: PostgreSQLService
+2025-10-18 00:32:46,408 - services.user_account_manager - INFO - User assignments loaded: 6 assignments
+2025-10-18 00:32:46,408 - services.user_account_manager - INFO - UserAccountManager initialized
+2025-10-18 00:32:46,408 - services.service_container - INFO - Service initialized: UserAccountManager
+2025-10-18 00:32:46,408 - services.service_container - INFO - Service started: UserAccountManager
+2025-10-18 00:32:46,408 - listeners.commands - INFO - 📊 Multi-account services loaded but no accounts available
+2025-10-18 00:32:46,408 - listeners.commands - INFO - All command handlers registered successfully with service container integration
+2025-10-18 00:32:46,409 - __main__ - INFO - Command handlers registered successfully
+2025-10-18 00:32:46,411 - services.service_container - INFO - Service initialized: MarketDataService
+2025-10-18 00:32:46,411 - services.service_container - INFO - Service started: MarketDataService
+2025-10-18 00:32:46,412 - services.service_container - ERROR - Failed to initialize service RiskAnalysisService: 'AppConfig' object has no attribute 'aws'
+Traceback (most recent call last):
+  File "/Users/kelvin/Desktop/kelveloper/SlackOMS/services/service_container.py", line 295, in _create_instance
+    instance = definition.implementation()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kelvin/Desktop/kelveloper/SlackOMS/services/risk_analysis.py", line 340, in __init__
+    model_id=self.config.aws.bedrock_model_id,
+             ^^^^^^^^^^^^^^^
+AttributeError: 'AppConfig' object has no attribute 'aws'
+2025-10-18 00:32:46,414 - __main__ - ERROR - Failed to register action handlers: Failed to initialize service RiskAnalysisService: 'AppConfig' object has no attribute 'aws'
+2025-10-18 00:32:46,414 - __main__ - ERROR - Failed to initialize Slack app: Failed to initialize service RiskAnalysisService: 'AppConfig' object has no attribute 'aws'
+2025-10-18 00:32:46,415 - __main__ - ERROR - Stack trace: Traceback (most recent call last):
+  File "/Users/kelvin/Desktop/kelveloper/SlackOMS/services/service_container.py", line 295, in _create_instance
+    instance = definition.implementation()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kelvin/Desktop/kelveloper/SlackOMS/services/risk_analysis.py", line 340, in __init__
+    model_id=self.config.aws.bedrock_model_id,
+             ^^^^^^^^^^^^^^^
+AttributeError: 'AppConfig' object has no attribute 'aws'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/kelvin/Desktop/kelveloper/SlackOMS/app.py", line 334, in create_slack_app
+    register_action_handlers(app, service_container)
+  File "/Users/kelvin/Desktop/kelveloper/SlackOMS/listeners/actions.py", line 1228, in register_action_handlers
+    risk_analysis_service = container.get(RiskAnalysisService)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kelvin/Desktop/kelveloper/SlackOMS/services/service_container.py", line 242, in get
+    return self._create_instance(service_type)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kelvin/Desktop/kelveloper/SlackOMS/services/service_container.py", line 337, in _create_instance
+    raise ServiceInitializationError(
+services.service_container.ServiceInitializationError: Failed to initialize service RiskAnalysisService: 'AppConfig' object has no attribute 'aws'
+
+2025-10-18 00:32:46,415 - __main__ - CRITICAL - Failed to create Slack app instance: Failed to initialize service RiskAnalysisService: 'AppConfig' object has no attribute 'aws'
+2025-10-18 00:32:46,417 - root - ERROR - Runtime environment validation failed: 'AppConfig' object has no attribute 'aws'
+2025-10-18 00:32:46,417 - __main__ - ERROR - Configuration validation failed
+2025-10-18 00:32:46,418 - __main__ - ERROR - ❌ Startup validation failed
+2025-10-18 00:33:23,855 - services.service_container - INFO - ServiceContainer initialized
+2025-10-18 00:33:23,855 - services.service_container - INFO - Service registered: PostgreSQLService (implementation: PostgreSQLService, scope: singleton, dependencies: [])
+2025-10-18 00:33:23,855 - services.service_container - INFO - Service registered: AlpacaService (implementation: AlpacaService, scope: singleton, dependencies: [])
+2025-10-18 00:33:23,855 - services.service_container - INFO - Service registered: MarketDataService (implementation: MarketDataService, scope: singleton, dependencies: [])
+2025-10-18 00:33:23,855 - services.service_container - INFO - Service registered: RiskAnalysisService (implementation: RiskAnalysisService, scope: singleton, dependencies: [])
+2025-10-18 00:33:23,855 - services.service_container - INFO - Service registered: TradingAPIService (implementation: TradingAPIService, scope: singleton, dependencies: [])
+2025-10-18 00:33:23,855 - services.service_container - INFO - Service registered: AuthService (implementation: AuthService, scope: singleton, dependencies: ['PostgreSQLService'])
+2025-10-18 00:33:23,857 - services.service_container - INFO - Service registered: MultiAlpacaService (implementation: MultiAlpacaService, scope: singleton, dependencies: [])
+2025-10-18 00:33:23,857 - services.service_container - INFO - Service registered: UserAccountManager (implementation: UserAccountManager, scope: singleton, dependencies: ['PostgreSQLService'])
+2025-10-18 00:33:23,857 - services.service_container - INFO - Multi-account services registered successfully
+2025-10-18 00:33:23,857 - services.service_container - INFO - Default services configured in container
+2025-10-18 00:33:23,858 - __main__ - INFO - Initializing Slack Bolt application...
+2025-10-18 00:33:24,095 - __main__ - INFO - Middleware stack registered successfully
+2025-10-18 00:33:24,104 - services.postgresql_service - INFO - Database tables created/verified successfully
+2025-10-18 00:33:24,105 - services.postgresql_service - INFO - PostgreSQL service initialized successfully
+2025-10-18 00:33:24,105 - services.service_container - INFO - Service initialized: PostgreSQLService
+2025-10-18 00:33:24,105 - services.service_container - INFO - Service started: PostgreSQLService
+2025-10-18 00:33:24,105 - services.auth - INFO - AuthService initialized successfully
+2025-10-18 00:33:24,105 - services.service_container - INFO - Service initialized: AuthService
+2025-10-18 00:33:24,105 - services.service_container - INFO - Service started: AuthService
+2025-10-18 00:33:24,105 - ui.trade_widget - INFO - TradeWidget initialized with role-based customizations
+2025-10-18 00:33:24,105 - listeners.commands - INFO - CommandHandler initialized with comprehensive security and validation
+2025-10-18 00:33:24,105 - services.multi_alpaca_service - WARNING - Primary Alpaca account credentials not found
+2025-10-18 00:33:24,105 - services.multi_alpaca_service - INFO - Loaded 0 Alpaca account configurations
+2025-10-18 00:33:24,105 - services.multi_alpaca_service - INFO - MultiAlpacaService initialized with 0 accounts
+2025-10-18 00:33:24,105 - services.service_container - INFO - Service initialized: MultiAlpacaService
+2025-10-18 00:33:24,105 - services.service_container - INFO - Service started: MultiAlpacaService
+2025-10-18 00:33:24,107 - services.postgresql_service - INFO - Database tables created/verified successfully
+2025-10-18 00:33:24,107 - services.postgresql_service - INFO - PostgreSQL service initialized successfully
+2025-10-18 00:33:24,107 - services.service_container - INFO - Service initialized: PostgreSQLService
+2025-10-18 00:33:24,107 - services.service_container - INFO - Service started: PostgreSQLService
+2025-10-18 00:33:24,107 - services.user_account_manager - INFO - User assignments loaded: 6 assignments
+2025-10-18 00:33:24,107 - services.user_account_manager - INFO - UserAccountManager initialized
+2025-10-18 00:33:24,107 - services.service_container - INFO - Service initialized: UserAccountManager
+2025-10-18 00:33:24,107 - services.service_container - INFO - Service started: UserAccountManager
+2025-10-18 00:33:24,108 - listeners.commands - INFO - 📊 Multi-account services loaded but no accounts available
+2025-10-18 00:33:24,108 - listeners.commands - INFO - All command handlers registered successfully with service container integration
+2025-10-18 00:33:24,108 - __main__ - INFO - Command handlers registered successfully
+2025-10-18 00:33:24,111 - services.service_container - INFO - Service initialized: MarketDataService
+2025-10-18 00:33:24,111 - services.service_container - INFO - Service started: MarketDataService
+2025-10-18 00:33:24,111 - services.service_container - INFO - Service initialized: RiskAnalysisService
+2025-10-18 00:33:24,111 - services.service_container - INFO - Service started: RiskAnalysisService
+2025-10-18 00:33:24,112 - services.alpaca_service - INFO - AlpacaService created, will initialize on first use
+2025-10-18 00:33:24,112 - services.alpaca_service - INFO - ⚠️  Alpaca Paper Trading is DISABLED (set ALPACA_PAPER_ENABLED=true to enable)
+2025-10-18 00:33:24,112 - services.alpaca_service - INFO -    Bot will use mock trading instead
+2025-10-18 00:33:24,112 - services.service_container - INFO - Service initialized: TradingAPIService
+2025-10-18 00:33:24,112 - services.service_container - INFO - Service started: TradingAPIService
+2025-10-18 00:33:24,112 - ui.trade_widget - INFO - TradeWidget initialized with role-based customizations
+2025-10-18 00:33:24,112 - ui.notifications - INFO - NotificationService initialized
+2025-10-18 00:33:24,112 - listeners.actions - INFO - ActionHandler initialized with comprehensive processing capabilities
+2025-10-18 00:33:24,113 - listeners.actions - INFO - All action handlers registered successfully with service container integration
+2025-10-18 00:33:24,113 - __main__ - INFO - Action handlers registered successfully
+2025-10-18 00:33:24,132 - ui.interactive_trade_widget - INFO - InteractiveTradeWidget initialized
+2025-10-18 00:33:24,132 - listeners.interactive_actions - INFO - InteractiveActionHandler initialized
+2025-10-18 00:33:24,132 - listeners.interactive_actions - INFO - Interactive action handlers registered
+2025-10-18 00:33:24,132 - __main__ - INFO - Interactive action handlers registered successfully
+2025-10-18 00:33:24,133 - ui.dashboard - INFO - Dashboard initialized with role-based customizations
+2025-10-18 00:33:24,133 - ui.notifications - INFO - NotificationService initialized
+2025-10-18 00:33:24,133 - listeners.events - INFO - EventHandler initialized with comprehensive dashboard and user management
+2025-10-18 00:33:24,133 - listeners.events - INFO - All event handlers registered successfully with service container integration
+2025-10-18 00:33:24,133 - __main__ - INFO - Event handlers registered successfully
+2025-10-18 00:33:24,133 - __main__ - INFO - Slack Bolt app initialized successfully
+2025-10-18 00:33:24,134 - __main__ - INFO - Slack app instance created successfully
+2025-10-18 00:33:24,135 - root - ERROR - Runtime environment validation failed: 'AppConfig' object has no attribute 'aws'
+2025-10-18 00:33:24,136 - __main__ - ERROR - Configuration validation failed
+2025-10-18 00:33:24,136 - __main__ - ERROR - ❌ Startup validation failed
+2025-10-18 00:33:58,743 - services.service_container - INFO - ServiceContainer initialized
+2025-10-18 00:33:58,744 - services.service_container - INFO - Service registered: PostgreSQLService (implementation: PostgreSQLService, scope: singleton, dependencies: [])
+2025-10-18 00:33:58,744 - services.service_container - INFO - Service registered: AlpacaService (implementation: AlpacaService, scope: singleton, dependencies: [])
+2025-10-18 00:33:58,744 - services.service_container - INFO - Service registered: MarketDataService (implementation: MarketDataService, scope: singleton, dependencies: [])
+2025-10-18 00:33:58,744 - services.service_container - INFO - Service registered: RiskAnalysisService (implementation: RiskAnalysisService, scope: singleton, dependencies: [])
+2025-10-18 00:33:58,744 - services.service_container - INFO - Service registered: TradingAPIService (implementation: TradingAPIService, scope: singleton, dependencies: [])
+2025-10-18 00:33:58,744 - services.service_container - INFO - Service registered: AuthService (implementation: AuthService, scope: singleton, dependencies: ['PostgreSQLService'])
+2025-10-18 00:33:58,746 - services.service_container - INFO - Service registered: MultiAlpacaService (implementation: MultiAlpacaService, scope: singleton, dependencies: [])
+2025-10-18 00:33:58,746 - services.service_container - INFO - Service registered: UserAccountManager (implementation: UserAccountManager, scope: singleton, dependencies: ['PostgreSQLService'])
+2025-10-18 00:33:58,746 - services.service_container - INFO - Multi-account services registered successfully
+2025-10-18 00:33:58,746 - services.service_container - INFO - Default services configured in container
+2025-10-18 00:33:58,747 - __main__ - INFO - Initializing Slack Bolt application...
+2025-10-18 00:33:58,996 - __main__ - INFO - Middleware stack registered successfully
+2025-10-18 00:33:59,006 - services.postgresql_service - INFO - Database tables created/verified successfully
+2025-10-18 00:33:59,006 - services.postgresql_service - INFO - PostgreSQL service initialized successfully
+2025-10-18 00:33:59,006 - services.service_container - INFO - Service initialized: PostgreSQLService
+2025-10-18 00:33:59,006 - services.service_container - INFO - Service started: PostgreSQLService
+2025-10-18 00:33:59,006 - services.auth - INFO - AuthService initialized successfully
+2025-10-18 00:33:59,006 - services.service_container - INFO - Service initialized: AuthService
+2025-10-18 00:33:59,007 - services.service_container - INFO - Service started: AuthService
+2025-10-18 00:33:59,007 - ui.trade_widget - INFO - TradeWidget initialized with role-based customizations
+2025-10-18 00:33:59,007 - listeners.commands - INFO - CommandHandler initialized with comprehensive security and validation
+2025-10-18 00:33:59,007 - services.multi_alpaca_service - WARNING - Primary Alpaca account credentials not found
+2025-10-18 00:33:59,007 - services.multi_alpaca_service - INFO - Loaded 0 Alpaca account configurations
+2025-10-18 00:33:59,007 - services.multi_alpaca_service - INFO - MultiAlpacaService initialized with 0 accounts
+2025-10-18 00:33:59,007 - services.service_container - INFO - Service initialized: MultiAlpacaService
+2025-10-18 00:33:59,007 - services.service_container - INFO - Service started: MultiAlpacaService
+2025-10-18 00:33:59,009 - services.postgresql_service - INFO - Database tables created/verified successfully
+2025-10-18 00:33:59,009 - services.postgresql_service - INFO - PostgreSQL service initialized successfully
+2025-10-18 00:33:59,009 - services.service_container - INFO - Service initialized: PostgreSQLService
+2025-10-18 00:33:59,009 - services.service_container - INFO - Service started: PostgreSQLService
+2025-10-18 00:33:59,009 - services.user_account_manager - INFO - User assignments loaded: 6 assignments
+2025-10-18 00:33:59,009 - services.user_account_manager - INFO - UserAccountManager initialized
+2025-10-18 00:33:59,009 - services.service_container - INFO - Service initialized: UserAccountManager
+2025-10-18 00:33:59,009 - services.service_container - INFO - Service started: UserAccountManager
+2025-10-18 00:33:59,009 - listeners.commands - INFO - 📊 Multi-account services loaded but no accounts available
+2025-10-18 00:33:59,010 - listeners.commands - INFO - All command handlers registered successfully with service container integration
+2025-10-18 00:33:59,010 - __main__ - INFO - Command handlers registered successfully
+2025-10-18 00:33:59,012 - services.service_container - INFO - Service initialized: MarketDataService
+2025-10-18 00:33:59,012 - services.service_container - INFO - Service started: MarketDataService
+2025-10-18 00:33:59,013 - services.service_container - INFO - Service initialized: RiskAnalysisService
+2025-10-18 00:33:59,013 - services.service_container - INFO - Service started: RiskAnalysisService
+2025-10-18 00:33:59,013 - services.alpaca_service - INFO - AlpacaService created, will initialize on first use
+2025-10-18 00:33:59,013 - services.alpaca_service - INFO - ⚠️  Alpaca Paper Trading is DISABLED (set ALPACA_PAPER_ENABLED=true to enable)
+2025-10-18 00:33:59,013 - services.alpaca_service - INFO -    Bot will use mock trading instead
+2025-10-18 00:33:59,014 - services.service_container - INFO - Service initialized: TradingAPIService
+2025-10-18 00:33:59,014 - services.service_container - INFO - Service started: TradingAPIService
+2025-10-18 00:33:59,014 - ui.trade_widget - INFO - TradeWidget initialized with role-based customizations
+2025-10-18 00:33:59,014 - ui.notifications - INFO - NotificationService initialized
+2025-10-18 00:33:59,014 - listeners.actions - INFO - ActionHandler initialized with comprehensive processing capabilities
+2025-10-18 00:33:59,015 - listeners.actions - INFO - All action handlers registered successfully with service container integration
+2025-10-18 00:33:59,015 - __main__ - INFO - Action handlers registered successfully
+2025-10-18 00:33:59,017 - ui.interactive_trade_widget - INFO - InteractiveTradeWidget initialized
+2025-10-18 00:33:59,017 - listeners.interactive_actions - INFO - InteractiveActionHandler initialized
+2025-10-18 00:33:59,018 - listeners.interactive_actions - INFO - Interactive action handlers registered
+2025-10-18 00:33:59,018 - __main__ - INFO - Interactive action handlers registered successfully
+2025-10-18 00:33:59,018 - ui.dashboard - INFO - Dashboard initialized with role-based customizations
+2025-10-18 00:33:59,018 - ui.notifications - INFO - NotificationService initialized
+2025-10-18 00:33:59,018 - listeners.events - INFO - EventHandler initialized with comprehensive dashboard and user management
+2025-10-18 00:33:59,019 - listeners.events - INFO - All event handlers registered successfully with service container integration
+2025-10-18 00:33:59,020 - __main__ - INFO - Event handlers registered successfully
+2025-10-18 00:33:59,020 - __main__ - INFO - Slack Bolt app initialized successfully
+2025-10-18 00:33:59,020 - __main__ - INFO - Slack app instance created successfully
+2025-10-18 00:33:59,022 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 00:33:59,023 - __main__ - INFO - Performing environment validation...
+2025-10-18 00:33:59,023 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 00:33:59,023 - __main__ - INFO - ✅ Environment validation passed
+2025-10-18 00:33:59,023 - __main__ - INFO - ✅ Slack app initialized successfully
+2025-10-18 00:33:59,023 - __main__ - INFO - 🔧 Initializing service container...
+2025-10-18 00:33:59,023 - __main__ - INFO - ✅ Service container initialized with 8 services
+2025-10-18 00:33:59,024 - __main__ - INFO - 🎯 Starting Jain Global Slack Trading Bot v1.0.0
+2025-10-18 00:33:59,024 - __main__ - INFO - 📊 Environment: development
+2025-10-18 00:33:59,024 - __main__ - INFO - 🔧 Debug mode: True
+2025-10-18 00:33:59,024 - __main__ - INFO - 📝 Log level: INFO
+2025-10-18 00:33:59,024 - __main__ - ERROR - 💥 Critical application error: 'AppConfig' object has no attribute 'aws'
+2025-10-18 00:33:59,025 - __main__ - ERROR - Stack trace: Traceback (most recent call last):
+  File "/Users/kelvin/Desktop/kelveloper/SlackOMS/app.py", line 1362, in main
+    config_summary = config.to_dict()
+                     ^^^^^^^^^^^^^^^^
+  File "/Users/kelvin/Desktop/kelveloper/SlackOMS/config/settings.py", line 274, in to_dict
+    'aws_region': self.aws.region,
+                  ^^^^^^^^
+AttributeError: 'AppConfig' object has no attribute 'aws'
+
+2025-10-18 00:33:59,025 - __main__ - INFO - Initiating graceful shutdown (signal: None)
+2025-10-18 00:33:59,026 - __main__ - INFO - Graceful shutdown completed
+2025-10-18 00:33:59,026 - __main__ - INFO - 🏁 Application shutdown complete
+2025-10-18 00:34:17,855 - services.service_container - INFO - ServiceContainer initialized
+2025-10-18 00:34:17,855 - services.service_container - INFO - Service registered: PostgreSQLService (implementation: PostgreSQLService, scope: singleton, dependencies: [])
+2025-10-18 00:34:17,856 - services.service_container - INFO - Service registered: AlpacaService (implementation: AlpacaService, scope: singleton, dependencies: [])
+2025-10-18 00:34:17,856 - services.service_container - INFO - Service registered: MarketDataService (implementation: MarketDataService, scope: singleton, dependencies: [])
+2025-10-18 00:34:17,856 - services.service_container - INFO - Service registered: RiskAnalysisService (implementation: RiskAnalysisService, scope: singleton, dependencies: [])
+2025-10-18 00:34:17,856 - services.service_container - INFO - Service registered: TradingAPIService (implementation: TradingAPIService, scope: singleton, dependencies: [])
+2025-10-18 00:34:17,856 - services.service_container - INFO - Service registered: AuthService (implementation: AuthService, scope: singleton, dependencies: ['PostgreSQLService'])
+2025-10-18 00:34:17,858 - services.service_container - INFO - Service registered: MultiAlpacaService (implementation: MultiAlpacaService, scope: singleton, dependencies: [])
+2025-10-18 00:34:17,858 - services.service_container - INFO - Service registered: UserAccountManager (implementation: UserAccountManager, scope: singleton, dependencies: ['PostgreSQLService'])
+2025-10-18 00:34:17,858 - services.service_container - INFO - Multi-account services registered successfully
+2025-10-18 00:34:17,858 - services.service_container - INFO - Default services configured in container
+2025-10-18 00:34:17,858 - __main__ - INFO - Initializing Slack Bolt application...
+2025-10-18 00:34:18,253 - __main__ - INFO - Middleware stack registered successfully
+2025-10-18 00:34:18,262 - services.postgresql_service - INFO - Database tables created/verified successfully
+2025-10-18 00:34:18,262 - services.postgresql_service - INFO - PostgreSQL service initialized successfully
+2025-10-18 00:34:18,263 - services.service_container - INFO - Service initialized: PostgreSQLService
+2025-10-18 00:34:18,263 - services.service_container - INFO - Service started: PostgreSQLService
+2025-10-18 00:34:18,263 - services.auth - INFO - AuthService initialized successfully
+2025-10-18 00:34:18,263 - services.service_container - INFO - Service initialized: AuthService
+2025-10-18 00:34:18,263 - services.service_container - INFO - Service started: AuthService
+2025-10-18 00:34:18,263 - ui.trade_widget - INFO - TradeWidget initialized with role-based customizations
+2025-10-18 00:34:18,263 - listeners.commands - INFO - CommandHandler initialized with comprehensive security and validation
+2025-10-18 00:34:18,263 - services.multi_alpaca_service - WARNING - Primary Alpaca account credentials not found
+2025-10-18 00:34:18,263 - services.multi_alpaca_service - INFO - Loaded 0 Alpaca account configurations
+2025-10-18 00:34:18,263 - services.multi_alpaca_service - INFO - MultiAlpacaService initialized with 0 accounts
+2025-10-18 00:34:18,263 - services.service_container - INFO - Service initialized: MultiAlpacaService
+2025-10-18 00:34:18,263 - services.service_container - INFO - Service started: MultiAlpacaService
+2025-10-18 00:34:18,265 - services.postgresql_service - INFO - Database tables created/verified successfully
+2025-10-18 00:34:18,265 - services.postgresql_service - INFO - PostgreSQL service initialized successfully
+2025-10-18 00:34:18,265 - services.service_container - INFO - Service initialized: PostgreSQLService
+2025-10-18 00:34:18,265 - services.service_container - INFO - Service started: PostgreSQLService
+2025-10-18 00:34:18,265 - services.user_account_manager - INFO - User assignments loaded: 6 assignments
+2025-10-18 00:34:18,265 - services.user_account_manager - INFO - UserAccountManager initialized
+2025-10-18 00:34:18,265 - services.service_container - INFO - Service initialized: UserAccountManager
+2025-10-18 00:34:18,265 - services.service_container - INFO - Service started: UserAccountManager
+2025-10-18 00:34:18,265 - listeners.commands - INFO - 📊 Multi-account services loaded but no accounts available
+2025-10-18 00:34:18,266 - listeners.commands - INFO - All command handlers registered successfully with service container integration
+2025-10-18 00:34:18,266 - __main__ - INFO - Command handlers registered successfully
+2025-10-18 00:34:18,269 - services.service_container - INFO - Service initialized: MarketDataService
+2025-10-18 00:34:18,269 - services.service_container - INFO - Service started: MarketDataService
+2025-10-18 00:34:18,270 - services.service_container - INFO - Service initialized: RiskAnalysisService
+2025-10-18 00:34:18,270 - services.service_container - INFO - Service started: RiskAnalysisService
+2025-10-18 00:34:18,270 - services.alpaca_service - INFO - AlpacaService created, will initialize on first use
+2025-10-18 00:34:18,271 - services.alpaca_service - INFO - ⚠️  Alpaca Paper Trading is DISABLED (set ALPACA_PAPER_ENABLED=true to enable)
+2025-10-18 00:34:18,271 - services.alpaca_service - INFO -    Bot will use mock trading instead
+2025-10-18 00:34:18,271 - services.service_container - INFO - Service initialized: TradingAPIService
+2025-10-18 00:34:18,272 - services.service_container - INFO - Service started: TradingAPIService
+2025-10-18 00:34:18,272 - ui.trade_widget - INFO - TradeWidget initialized with role-based customizations
+2025-10-18 00:34:18,272 - ui.notifications - INFO - NotificationService initialized
+2025-10-18 00:34:18,272 - listeners.actions - INFO - ActionHandler initialized with comprehensive processing capabilities
+2025-10-18 00:34:18,273 - listeners.actions - INFO - All action handlers registered successfully with service container integration
+2025-10-18 00:34:18,274 - __main__ - INFO - Action handlers registered successfully
+2025-10-18 00:34:18,278 - ui.interactive_trade_widget - INFO - InteractiveTradeWidget initialized
+2025-10-18 00:34:18,278 - listeners.interactive_actions - INFO - InteractiveActionHandler initialized
+2025-10-18 00:34:18,279 - listeners.interactive_actions - INFO - Interactive action handlers registered
+2025-10-18 00:34:18,279 - __main__ - INFO - Interactive action handlers registered successfully
+2025-10-18 00:34:18,279 - ui.dashboard - INFO - Dashboard initialized with role-based customizations
+2025-10-18 00:34:18,279 - ui.notifications - INFO - NotificationService initialized
+2025-10-18 00:34:18,279 - listeners.events - INFO - EventHandler initialized with comprehensive dashboard and user management
+2025-10-18 00:34:18,281 - listeners.events - INFO - All event handlers registered successfully with service container integration
+2025-10-18 00:34:18,281 - __main__ - INFO - Event handlers registered successfully
+2025-10-18 00:34:18,281 - __main__ - INFO - Slack Bolt app initialized successfully
+2025-10-18 00:34:18,282 - __main__ - INFO - Slack app instance created successfully
+2025-10-18 00:34:18,285 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 00:34:18,285 - __main__ - INFO - Performing environment validation...
+2025-10-18 00:34:18,285 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 00:34:18,285 - __main__ - INFO - ✅ Environment validation passed
+2025-10-18 00:34:18,285 - __main__ - INFO - ✅ Slack app initialized successfully
+2025-10-18 00:34:18,286 - __main__ - INFO - 🔧 Initializing service container...
+2025-10-18 00:34:18,286 - __main__ - INFO - ✅ Service container initialized with 8 services
+2025-10-18 00:34:18,286 - __main__ - INFO - 🎯 Starting Jain Global Slack Trading Bot v1.0.0
+2025-10-18 00:34:18,286 - __main__ - INFO - 📊 Environment: development
+2025-10-18 00:34:18,286 - __main__ - INFO - 🔧 Debug mode: True
+2025-10-18 00:34:18,286 - __main__ - INFO - 📝 Log level: INFO
+2025-10-18 00:34:18,286 - __main__ - INFO - 🌐 Using HTTP server mode
+2025-10-18 00:34:18,287 - __main__ - INFO - Server will start on 0.0.0.0:8080
+2025-10-18 00:34:18,287 - __main__ - INFO - Starting HTTP server on 0.0.0.0:8080...
+2025-10-18 00:34:18,287 - __main__ - INFO - Environment: development
+2025-10-18 00:34:18,287 - __main__ - INFO - Debug mode: True
+2025-10-18 00:34:18,287 - __main__ - INFO - Uvicorn configuration: {
+  "app": "<fastapi.applications.FastAPI object at 0x11ec17920>",
+  "host": "0.0.0.0",
+  "port": 8080,
+  "log_level": "debug",
+  "access_log": true,
+  "reload": true,
+  "workers": 1
+}
+2025-10-18 00:34:18,288 - __main__ - INFO - 🛑 Application exiting
+2025-10-18 00:34:18,288 - __main__ - INFO - 🏁 Application shutdown complete
+2025-10-18 00:34:33,932 - services.service_container - INFO - ServiceContainer initialized
+2025-10-18 00:34:33,932 - services.service_container - INFO - Service registered: PostgreSQLService (implementation: PostgreSQLService, scope: singleton, dependencies: [])
+2025-10-18 00:34:33,933 - services.service_container - INFO - Service registered: AlpacaService (implementation: AlpacaService, scope: singleton, dependencies: [])
+2025-10-18 00:34:33,933 - services.service_container - INFO - Service registered: MarketDataService (implementation: MarketDataService, scope: singleton, dependencies: [])
+2025-10-18 00:34:33,933 - services.service_container - INFO - Service registered: RiskAnalysisService (implementation: RiskAnalysisService, scope: singleton, dependencies: [])
+2025-10-18 00:34:33,933 - services.service_container - INFO - Service registered: TradingAPIService (implementation: TradingAPIService, scope: singleton, dependencies: [])
+2025-10-18 00:34:33,933 - services.service_container - INFO - Service registered: AuthService (implementation: AuthService, scope: singleton, dependencies: ['PostgreSQLService'])
+2025-10-18 00:34:33,936 - services.service_container - INFO - Service registered: MultiAlpacaService (implementation: MultiAlpacaService, scope: singleton, dependencies: [])
+2025-10-18 00:34:33,936 - services.service_container - INFO - Service registered: UserAccountManager (implementation: UserAccountManager, scope: singleton, dependencies: ['PostgreSQLService'])
+2025-10-18 00:34:33,937 - services.service_container - INFO - Multi-account services registered successfully
+2025-10-18 00:34:33,937 - services.service_container - INFO - Default services configured in container
+2025-10-18 00:34:33,937 - __main__ - INFO - Initializing Slack Bolt application...
+2025-10-18 00:34:34,284 - __main__ - INFO - Middleware stack registered successfully
+2025-10-18 00:34:34,297 - services.postgresql_service - INFO - Database tables created/verified successfully
+2025-10-18 00:34:34,297 - services.postgresql_service - INFO - PostgreSQL service initialized successfully
+2025-10-18 00:34:34,297 - services.service_container - INFO - Service initialized: PostgreSQLService
+2025-10-18 00:34:34,298 - services.service_container - INFO - Service started: PostgreSQLService
+2025-10-18 00:34:34,298 - services.auth - INFO - AuthService initialized successfully
+2025-10-18 00:34:34,298 - services.service_container - INFO - Service initialized: AuthService
+2025-10-18 00:34:34,298 - services.service_container - INFO - Service started: AuthService
+2025-10-18 00:34:34,298 - ui.trade_widget - INFO - TradeWidget initialized with role-based customizations
+2025-10-18 00:34:34,298 - listeners.commands - INFO - CommandHandler initialized with comprehensive security and validation
+2025-10-18 00:34:34,298 - services.multi_alpaca_service - WARNING - Primary Alpaca account credentials not found
+2025-10-18 00:34:34,298 - services.multi_alpaca_service - INFO - Loaded 0 Alpaca account configurations
+2025-10-18 00:34:34,298 - services.multi_alpaca_service - INFO - MultiAlpacaService initialized with 0 accounts
+2025-10-18 00:34:34,298 - services.service_container - INFO - Service initialized: MultiAlpacaService
+2025-10-18 00:34:34,298 - services.service_container - INFO - Service started: MultiAlpacaService
+2025-10-18 00:34:34,300 - services.postgresql_service - INFO - Database tables created/verified successfully
+2025-10-18 00:34:34,300 - services.postgresql_service - INFO - PostgreSQL service initialized successfully
+2025-10-18 00:34:34,300 - services.service_container - INFO - Service initialized: PostgreSQLService
+2025-10-18 00:34:34,300 - services.service_container - INFO - Service started: PostgreSQLService
+2025-10-18 00:34:34,300 - services.user_account_manager - INFO - User assignments loaded: 6 assignments
+2025-10-18 00:34:34,301 - services.user_account_manager - INFO - UserAccountManager initialized
+2025-10-18 00:34:34,301 - services.service_container - INFO - Service initialized: UserAccountManager
+2025-10-18 00:34:34,301 - services.service_container - INFO - Service started: UserAccountManager
+2025-10-18 00:34:34,301 - listeners.commands - INFO - 📊 Multi-account services loaded but no accounts available
+2025-10-18 00:34:34,301 - listeners.commands - INFO - All command handlers registered successfully with service container integration
+2025-10-18 00:34:34,301 - __main__ - INFO - Command handlers registered successfully
+2025-10-18 00:34:34,305 - services.service_container - INFO - Service initialized: MarketDataService
+2025-10-18 00:34:34,305 - services.service_container - INFO - Service started: MarketDataService
+2025-10-18 00:34:34,306 - services.service_container - INFO - Service initialized: RiskAnalysisService
+2025-10-18 00:34:34,306 - services.service_container - INFO - Service started: RiskAnalysisService
+2025-10-18 00:34:34,306 - services.alpaca_service - INFO - AlpacaService created, will initialize on first use
+2025-10-18 00:34:34,306 - services.alpaca_service - INFO - ⚠️  Alpaca Paper Trading is DISABLED (set ALPACA_PAPER_ENABLED=true to enable)
+2025-10-18 00:34:34,306 - services.alpaca_service - INFO -    Bot will use mock trading instead
+2025-10-18 00:34:34,307 - services.service_container - INFO - Service initialized: TradingAPIService
+2025-10-18 00:34:34,307 - services.service_container - INFO - Service started: TradingAPIService
+2025-10-18 00:34:34,307 - ui.trade_widget - INFO - TradeWidget initialized with role-based customizations
+2025-10-18 00:34:34,307 - ui.notifications - INFO - NotificationService initialized
+2025-10-18 00:34:34,307 - listeners.actions - INFO - ActionHandler initialized with comprehensive processing capabilities
+2025-10-18 00:34:34,308 - listeners.actions - INFO - All action handlers registered successfully with service container integration
+2025-10-18 00:34:34,308 - __main__ - INFO - Action handlers registered successfully
+2025-10-18 00:34:34,311 - ui.interactive_trade_widget - INFO - InteractiveTradeWidget initialized
+2025-10-18 00:34:34,311 - listeners.interactive_actions - INFO - InteractiveActionHandler initialized
+2025-10-18 00:34:34,360 - listeners.interactive_actions - INFO - Interactive action handlers registered
+2025-10-18 00:34:34,360 - __main__ - INFO - Interactive action handlers registered successfully
+2025-10-18 00:34:34,360 - ui.dashboard - INFO - Dashboard initialized with role-based customizations
+2025-10-18 00:34:34,360 - ui.notifications - INFO - NotificationService initialized
+2025-10-18 00:34:34,360 - listeners.events - INFO - EventHandler initialized with comprehensive dashboard and user management
+2025-10-18 00:34:34,361 - listeners.events - INFO - All event handlers registered successfully with service container integration
+2025-10-18 00:34:34,362 - __main__ - INFO - Event handlers registered successfully
+2025-10-18 00:34:34,362 - __main__ - INFO - Slack Bolt app initialized successfully
+2025-10-18 00:34:34,362 - __main__ - INFO - Slack app instance created successfully
+2025-10-18 00:34:34,365 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 00:34:34,366 - __main__ - INFO - Performing environment validation...
+2025-10-18 00:34:34,366 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 00:34:34,366 - __main__ - INFO - ✅ Environment validation passed
+2025-10-18 00:34:34,366 - __main__ - INFO - ✅ Slack app initialized successfully
+2025-10-18 00:34:34,366 - __main__ - INFO - 🔧 Initializing service container...
+2025-10-18 00:34:34,366 - __main__ - INFO - ✅ Service container initialized with 8 services
+2025-10-18 00:34:34,366 - __main__ - INFO - 🎯 Starting Jain Global Slack Trading Bot v1.0.0
+2025-10-18 00:34:34,366 - __main__ - INFO - 📊 Environment: development
+2025-10-18 00:34:34,366 - __main__ - INFO - 🔧 Debug mode: False
+2025-10-18 00:34:34,366 - __main__ - INFO - 📝 Log level: INFO
+2025-10-18 00:34:34,366 - __main__ - INFO - 🌐 Using HTTP server mode
+2025-10-18 00:34:34,366 - __main__ - INFO - Server will start on 0.0.0.0:8080
+2025-10-18 00:34:34,366 - __main__ - INFO - Starting HTTP server on 0.0.0.0:8080...
+2025-10-18 00:34:34,367 - __main__ - INFO - Environment: development
+2025-10-18 00:34:34,367 - __main__ - INFO - Debug mode: False
+2025-10-18 00:34:34,367 - __main__ - INFO - Uvicorn configuration: {
+  "app": "<fastapi.applications.FastAPI object at 0x1072a9910>",
+  "host": "0.0.0.0",
+  "port": 8080,
+  "log_level": "info",
+  "access_log": false,
+  "reload": false,
+  "workers": 1
+}
+2025-10-18 00:34:34,636 - __main__ - INFO - FastAPI application starting up...
+2025-10-18 00:34:34,636 - __main__ - INFO - Starting service container...
+2025-10-18 00:34:34,636 - services.alpaca_service - INFO - AlpacaService created, will initialize on first use
+2025-10-18 00:34:34,636 - services.alpaca_service - INFO - ⚠️  Alpaca Paper Trading is DISABLED (set ALPACA_PAPER_ENABLED=true to enable)
+2025-10-18 00:34:34,636 - services.alpaca_service - INFO -    Bot will use mock trading instead
+2025-10-18 00:34:34,636 - services.service_container - INFO - Service initialized: AlpacaService
+2025-10-18 00:34:34,636 - services.service_container - INFO - Service started: AlpacaService
+2025-10-18 00:34:34,636 - services.service_container - INFO - Health monitoring started
+2025-10-18 00:34:34,636 - services.service_container - INFO - All services started
+2025-10-18 00:34:34,636 - __main__ - INFO - All services started successfully
+2025-10-18 00:34:34,637 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 00:34:34,637 - __main__ - INFO - Started background task: health_check_task
+2025-10-18 00:34:34,637 - __main__ - INFO - Started background task: cleanup_metrics_task
+2025-10-18 00:34:34,637 - __main__ - INFO - FastAPI application startup completed
+2025-10-18 00:35:04,640 - services.postgresql_service - ERROR - Database health check failed: Textual SQL expression 'SELECT 1' should be explicitly declared as text('SELECT 1')
+2025-10-18 00:35:04,640 - services.service_container - WARNING - Health check failed for PostgreSQLService
+2025-10-18 00:35:04,640 - services.service_container - WARNING - Health check failed for MultiAlpacaService
+2025-10-18 00:35:04,640 - services.service_container - WARNING - Health check failed for AlpacaService
+2025-10-18 00:35:04,643 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 00:35:34,641 - services.postgresql_service - ERROR - Database health check failed: Textual SQL expression 'SELECT 1' should be explicitly declared as text('SELECT 1')
+2025-10-18 00:35:34,642 - services.service_container - WARNING - Health check failed for PostgreSQLService
+2025-10-18 00:35:34,642 - services.service_container - WARNING - Health check failed for MultiAlpacaService
+2025-10-18 00:35:34,642 - services.service_container - WARNING - Health check failed for AlpacaService
+2025-10-18 00:35:34,648 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 00:36:04,642 - services.postgresql_service - ERROR - Database health check failed: Textual SQL expression 'SELECT 1' should be explicitly declared as text('SELECT 1')
+2025-10-18 00:36:04,642 - services.service_container - WARNING - Health check failed for PostgreSQLService
+2025-10-18 00:36:04,642 - services.service_container - WARNING - Health check failed for MultiAlpacaService
+2025-10-18 00:36:04,642 - services.service_container - WARNING - Health check failed for AlpacaService
+2025-10-18 00:36:04,656 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 00:36:34,642 - services.postgresql_service - ERROR - Database health check failed: Textual SQL expression 'SELECT 1' should be explicitly declared as text('SELECT 1')
+2025-10-18 00:36:34,643 - services.service_container - WARNING - Health check failed for PostgreSQLService
+2025-10-18 00:36:34,643 - services.service_container - WARNING - Health check failed for MultiAlpacaService
+2025-10-18 00:36:34,643 - services.service_container - WARNING - Health check failed for AlpacaService
+2025-10-18 00:36:34,659 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 00:37:04,643 - services.postgresql_service - ERROR - Database health check failed: Textual SQL expression 'SELECT 1' should be explicitly declared as text('SELECT 1')
+2025-10-18 00:37:04,644 - services.service_container - WARNING - Health check failed for PostgreSQLService
+2025-10-18 00:37:04,644 - services.service_container - WARNING - Health check failed for MultiAlpacaService
+2025-10-18 00:37:04,645 - services.service_container - WARNING - Health check failed for AlpacaService
+2025-10-18 00:37:04,667 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 00:37:34,644 - services.postgresql_service - ERROR - Database health check failed: Textual SQL expression 'SELECT 1' should be explicitly declared as text('SELECT 1')
+2025-10-18 00:37:34,645 - services.service_container - WARNING - Health check failed for PostgreSQLService
+2025-10-18 00:37:34,645 - services.service_container - WARNING - Health check failed for MultiAlpacaService
+2025-10-18 00:37:34,645 - services.service_container - WARNING - Health check failed for AlpacaService
+2025-10-18 00:37:34,671 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 00:38:04,645 - services.postgresql_service - ERROR - Database health check failed: Textual SQL expression 'SELECT 1' should be explicitly declared as text('SELECT 1')
+2025-10-18 00:38:04,645 - services.service_container - WARNING - Health check failed for PostgreSQLService
+2025-10-18 00:38:04,646 - services.service_container - WARNING - Health check failed for MultiAlpacaService
+2025-10-18 00:38:04,646 - services.service_container - WARNING - Health check failed for AlpacaService
+2025-10-18 00:38:04,681 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 00:38:34,647 - services.postgresql_service - ERROR - Database health check failed: Textual SQL expression 'SELECT 1' should be explicitly declared as text('SELECT 1')
+2025-10-18 00:38:34,648 - services.service_container - WARNING - Health check failed for PostgreSQLService
+2025-10-18 00:38:34,648 - services.service_container - WARNING - Health check failed for MultiAlpacaService
+2025-10-18 00:38:34,648 - services.service_container - WARNING - Health check failed for AlpacaService
+2025-10-18 00:38:34,684 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 00:39:04,648 - services.postgresql_service - ERROR - Database health check failed: Textual SQL expression 'SELECT 1' should be explicitly declared as text('SELECT 1')
+2025-10-18 00:39:04,649 - services.service_container - WARNING - Health check failed for PostgreSQLService
+2025-10-18 00:39:04,649 - services.service_container - WARNING - Health check failed for MultiAlpacaService
+2025-10-18 00:39:04,649 - services.service_container - WARNING - Health check failed for AlpacaService
+2025-10-18 00:39:04,692 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 00:39:34,649 - services.postgresql_service - ERROR - Database health check failed: Textual SQL expression 'SELECT 1' should be explicitly declared as text('SELECT 1')
+2025-10-18 00:39:34,650 - services.service_container - WARNING - Health check failed for PostgreSQLService
+2025-10-18 00:39:34,650 - services.service_container - WARNING - Health check failed for MultiAlpacaService
+2025-10-18 00:39:34,651 - services.service_container - WARNING - Health check failed for AlpacaService
+2025-10-18 00:39:34,701 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 00:40:04,651 - services.postgresql_service - ERROR - Database health check failed: Textual SQL expression 'SELECT 1' should be explicitly declared as text('SELECT 1')
+2025-10-18 00:40:04,652 - services.service_container - WARNING - Health check failed for PostgreSQLService
+2025-10-18 00:40:04,652 - services.service_container - WARNING - Health check failed for MultiAlpacaService
+2025-10-18 00:40:04,652 - services.service_container - WARNING - Health check failed for AlpacaService
+2025-10-18 00:40:04,707 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 00:40:34,652 - services.postgresql_service - ERROR - Database health check failed: Textual SQL expression 'SELECT 1' should be explicitly declared as text('SELECT 1')
+2025-10-18 00:40:34,653 - services.service_container - WARNING - Health check failed for PostgreSQLService
+2025-10-18 00:40:34,653 - services.service_container - WARNING - Health check failed for MultiAlpacaService
+2025-10-18 00:40:34,653 - services.service_container - WARNING - Health check failed for AlpacaService
+2025-10-18 00:40:34,717 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 00:41:04,653 - services.postgresql_service - ERROR - Database health check failed: Textual SQL expression 'SELECT 1' should be explicitly declared as text('SELECT 1')
+2025-10-18 00:41:04,654 - services.service_container - WARNING - Health check failed for PostgreSQLService
+2025-10-18 00:41:04,654 - services.service_container - WARNING - Health check failed for MultiAlpacaService
+2025-10-18 00:41:04,655 - services.service_container - WARNING - Health check failed for AlpacaService
+2025-10-18 00:41:04,721 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 00:41:34,654 - services.postgresql_service - ERROR - Database health check failed: Textual SQL expression 'SELECT 1' should be explicitly declared as text('SELECT 1')
+2025-10-18 00:41:34,654 - services.service_container - WARNING - Health check failed for PostgreSQLService
+2025-10-18 00:41:34,654 - services.service_container - WARNING - Health check failed for MultiAlpacaService
+2025-10-18 00:41:34,654 - services.service_container - WARNING - Health check failed for AlpacaService
+2025-10-18 00:41:34,728 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 00:42:04,655 - services.postgresql_service - ERROR - Database health check failed: Textual SQL expression 'SELECT 1' should be explicitly declared as text('SELECT 1')
+2025-10-18 00:42:04,655 - services.service_container - WARNING - Health check failed for PostgreSQLService
+2025-10-18 00:42:04,655 - services.service_container - WARNING - Health check failed for MultiAlpacaService
+2025-10-18 00:42:04,655 - services.service_container - WARNING - Health check failed for AlpacaService
+2025-10-18 00:42:04,735 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 00:42:34,655 - services.postgresql_service - ERROR - Database health check failed: Textual SQL expression 'SELECT 1' should be explicitly declared as text('SELECT 1')
+2025-10-18 00:42:34,656 - services.service_container - WARNING - Health check failed for PostgreSQLService
+2025-10-18 00:42:34,656 - services.service_container - WARNING - Health check failed for MultiAlpacaService
+2025-10-18 00:42:34,656 - services.service_container - WARNING - Health check failed for AlpacaService
+2025-10-18 00:42:34,740 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 00:43:04,655 - services.postgresql_service - ERROR - Database health check failed: Textual SQL expression 'SELECT 1' should be explicitly declared as text('SELECT 1')
+2025-10-18 00:43:04,656 - services.service_container - WARNING - Health check failed for PostgreSQLService
+2025-10-18 00:43:04,656 - services.service_container - WARNING - Health check failed for MultiAlpacaService
+2025-10-18 00:43:04,657 - services.service_container - WARNING - Health check failed for AlpacaService
+2025-10-18 00:43:04,744 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 00:43:34,656 - services.postgresql_service - ERROR - Database health check failed: Textual SQL expression 'SELECT 1' should be explicitly declared as text('SELECT 1')
+2025-10-18 00:43:34,658 - services.service_container - WARNING - Health check failed for PostgreSQLService
+2025-10-18 00:43:34,658 - services.service_container - WARNING - Health check failed for MultiAlpacaService
+2025-10-18 00:43:34,658 - services.service_container - WARNING - Health check failed for AlpacaService
+2025-10-18 00:43:34,747 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 00:44:04,660 - services.postgresql_service - ERROR - Database health check failed: Textual SQL expression 'SELECT 1' should be explicitly declared as text('SELECT 1')
+2025-10-18 00:44:04,661 - services.service_container - WARNING - Health check failed for PostgreSQLService
+2025-10-18 00:44:04,661 - services.service_container - WARNING - Health check failed for MultiAlpacaService
+2025-10-18 00:44:04,662 - services.service_container - WARNING - Health check failed for AlpacaService
+2025-10-18 00:44:04,755 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 00:44:34,661 - services.postgresql_service - ERROR - Database health check failed: Textual SQL expression 'SELECT 1' should be explicitly declared as text('SELECT 1')
+2025-10-18 00:44:34,665 - services.service_container - WARNING - Health check failed for PostgreSQLService
+2025-10-18 00:44:34,665 - services.service_container - WARNING - Health check failed for MultiAlpacaService
+2025-10-18 00:44:34,665 - services.service_container - WARNING - Health check failed for AlpacaService
+2025-10-18 00:44:34,762 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 00:45:04,666 - services.postgresql_service - ERROR - Database health check failed: Textual SQL expression 'SELECT 1' should be explicitly declared as text('SELECT 1')
+2025-10-18 00:45:04,667 - services.service_container - WARNING - Health check failed for PostgreSQLService
+2025-10-18 00:45:04,667 - services.service_container - WARNING - Health check failed for MultiAlpacaService
+2025-10-18 00:45:04,667 - services.service_container - WARNING - Health check failed for AlpacaService
+2025-10-18 00:45:04,770 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 00:45:34,667 - services.postgresql_service - ERROR - Database health check failed: Textual SQL expression 'SELECT 1' should be explicitly declared as text('SELECT 1')
+2025-10-18 00:45:34,668 - services.service_container - WARNING - Health check failed for PostgreSQLService
+2025-10-18 00:45:34,669 - services.service_container - WARNING - Health check failed for MultiAlpacaService
+2025-10-18 00:45:34,669 - services.service_container - WARNING - Health check failed for AlpacaService
+2025-10-18 00:45:34,779 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 00:46:04,669 - services.postgresql_service - ERROR - Database health check failed: Textual SQL expression 'SELECT 1' should be explicitly declared as text('SELECT 1')
+2025-10-18 00:46:04,671 - services.service_container - WARNING - Health check failed for PostgreSQLService
+2025-10-18 00:46:04,671 - services.service_container - WARNING - Health check failed for MultiAlpacaService
+2025-10-18 00:46:04,671 - services.service_container - WARNING - Health check failed for AlpacaService
+2025-10-18 00:46:04,783 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 00:46:34,675 - services.postgresql_service - ERROR - Database health check failed: Textual SQL expression 'SELECT 1' should be explicitly declared as text('SELECT 1')
+2025-10-18 00:46:34,675 - services.service_container - WARNING - Health check failed for PostgreSQLService
+2025-10-18 00:46:34,675 - services.service_container - WARNING - Health check failed for MultiAlpacaService
+2025-10-18 00:46:34,675 - services.service_container - WARNING - Health check failed for AlpacaService
+2025-10-18 00:46:34,793 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 00:47:04,684 - services.postgresql_service - ERROR - Database health check failed: Textual SQL expression 'SELECT 1' should be explicitly declared as text('SELECT 1')
+2025-10-18 00:47:04,685 - services.service_container - WARNING - Health check failed for PostgreSQLService
+2025-10-18 00:47:04,685 - services.service_container - WARNING - Health check failed for MultiAlpacaService
+2025-10-18 00:47:04,685 - services.service_container - WARNING - Health check failed for AlpacaService
+2025-10-18 00:47:04,806 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 00:47:34,687 - services.postgresql_service - ERROR - Database health check failed: Textual SQL expression 'SELECT 1' should be explicitly declared as text('SELECT 1')
+2025-10-18 00:47:34,687 - services.service_container - WARNING - Health check failed for PostgreSQLService
+2025-10-18 00:47:34,687 - services.service_container - WARNING - Health check failed for MultiAlpacaService
+2025-10-18 00:47:34,687 - services.service_container - WARNING - Health check failed for AlpacaService
+2025-10-18 00:47:34,815 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 00:48:04,756 - services.postgresql_service - ERROR - Database health check failed: Textual SQL expression 'SELECT 1' should be explicitly declared as text('SELECT 1')
+2025-10-18 00:48:04,806 - services.service_container - WARNING - Health check failed for PostgreSQLService
+2025-10-18 00:48:04,807 - services.service_container - WARNING - Health check failed for MultiAlpacaService
+2025-10-18 00:48:04,807 - services.service_container - WARNING - Health check failed for AlpacaService
+2025-10-18 00:48:04,824 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 00:48:34,807 - services.postgresql_service - ERROR - Database health check failed: Textual SQL expression 'SELECT 1' should be explicitly declared as text('SELECT 1')
+2025-10-18 00:48:34,807 - services.service_container - WARNING - Health check failed for PostgreSQLService
+2025-10-18 00:48:34,807 - services.service_container - WARNING - Health check failed for MultiAlpacaService
+2025-10-18 00:48:34,807 - services.service_container - WARNING - Health check failed for AlpacaService
+2025-10-18 00:48:34,861 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
