@@ -1273,44 +1273,101 @@ def _create_instant_buy_modal(symbol: str = "", quantity: str = "1") -> Dict[str
     return {
         "type": "modal",
         "callback_id": "stock_trade_modal_interactive",
-        "title": {"type": "plain_text", "text": "Quick Trade"},
-        "submit": {"type": "plain_text", "text": "Execute"},
+        "title": {"type": "plain_text", "text": "Place Interactive Trade"},
+        "submit": {"type": "plain_text", "text": "Execute Trade"},
         "close": {"type": "plain_text", "text": "Cancel"},
         "blocks": [
             {
                 "type": "input",
                 "block_id": "trade_symbol_block",
-                "label": {"type": "plain_text", "text": "Symbol"},
+                "label": {"type": "plain_text", "text": "Stock Symbol (e.g., AAPL)"},
                 "element": {
                     "type": "plain_text_input",
                     "action_id": "symbol_input",
+                    "placeholder": {"type": "plain_text", "text": "Enter the stock ticker"},
                     "initial_value": symbol if symbol else "AAPL"
+                }
+            },
+            {
+                "type": "section",
+                "text": {"type": "mrkdwn", "text": "*Current Stock Price:* *Loading...*"},
+                "block_id": "current_price_display"
+            },
+            {"type": "divider"},
+            {
+                "type": "input",
+                "block_id": "trade_side_block",
+                "label": {"type": "plain_text", "text": "Trade Action (Buy/Sell)"},
+                "element": {
+                    "type": "radio_buttons",
+                    "action_id": "trade_side_radio",
+                    "options": [
+                        {"value": "buy", "text": {"type": "plain_text", "text": "Buy"}},
+                        {"value": "sell", "text": {"type": "plain_text", "text": "Sell"}}
+                    ],
+                    "initial_option": {"value": "buy", "text": {"type": "plain_text", "text": "Buy"}}
                 }
             },
             {
                 "type": "input",
                 "block_id": "qty_shares_block",
-                "label": {"type": "plain_text", "text": "Quantity"},
+                "label": {"type": "plain_text", "text": "Quantity (shares)"},
                 "element": {
                     "type": "number_input",
                     "action_id": "shares_input",
+                    "placeholder": {"type": "plain_text", "text": "Enter shares, and GMV will update"},
                     "is_decimal_allowed": False,
-                    "initial_value": quantity
+                    "initial_value": quantity,
+                    "dispatch_action_config": {
+                        "trigger_actions_on": ["on_enter_pressed", "on_character_entered"]
+                    }
+                },
+                "hint": {"type": "plain_text", "text": "Changes here trigger an automatic GMV calculation."}
+            },
+            {
+                "type": "input",
+                "block_id": "gmv_block",
+                "label": {"type": "plain_text", "text": "Gross Market Value (GMV)"},
+                "element": {
+                    "type": "number_input",
+                    "action_id": "gmv_input",
+                    "placeholder": {"type": "plain_text", "text": "Enter dollar amount, and shares will update"},
+                    "is_decimal_allowed": True,
+                    "dispatch_action_config": {
+                        "trigger_actions_on": ["on_enter_pressed", "on_character_entered"]
+                    }
+                },
+                "hint": {"type": "plain_text", "text": "Changes here trigger an automatic Shares calculation."}
+            },
+            {"type": "divider"},
+            {
+                "type": "input",
+                "block_id": "order_type_block",
+                "label": {"type": "plain_text", "text": "Order Type"},
+                "element": {
+                    "type": "static_select",
+                    "action_id": "order_type_select",
+                    "placeholder": {"type": "plain_text", "text": "Select an order type"},
+                    "options": [
+                        {"text": {"type": "plain_text", "text": "Market"}, "value": "market"},
+                        {"text": {"type": "plain_text", "text": "Limit"}, "value": "limit"},
+                        {"text": {"type": "plain_text", "text": "Stop"}, "value": "stop"},
+                        {"text": {"type": "plain_text", "text": "Stop Limit"}, "value": "stop_limit"}
+                    ]
                 }
             },
             {
                 "type": "input",
-                "block_id": "trade_side_block",
-                "label": {"type": "plain_text", "text": "Action"},
+                "block_id": "limit_price_block",
+                "optional": True,
+                "label": {"type": "plain_text", "text": "Limit Price (Quantity/Price for Limit Orders)"},
                 "element": {
-                    "type": "static_select",
-                    "action_id": "trade_side_radio",
-                    "initial_option": {"text": {"type": "plain_text", "text": "Buy"}, "value": "buy"},
-                    "options": [
-                        {"text": {"type": "plain_text", "text": "Buy"}, "value": "buy"},
-                        {"text": {"type": "plain_text", "text": "Sell"}, "value": "sell"}
-                    ]
-                }
+                    "type": "number_input",
+                    "action_id": "limit_price_input",
+                    "placeholder": {"type": "plain_text", "text": "Enter your maximum/minimum price"},
+                    "is_decimal_allowed": True
+                },
+                "hint": {"type": "plain_text", "text": "Only required for Limit or Stop Limit order types."}
             }
         ]
     }
@@ -1336,44 +1393,101 @@ def _create_instant_sell_modal(symbol: str = "", quantity: str = "1") -> Dict[st
     return {
         "type": "modal",
         "callback_id": "stock_trade_modal_interactive",
-        "title": {"type": "plain_text", "text": "Quick Trade"},
-        "submit": {"type": "plain_text", "text": "Execute"},
+        "title": {"type": "plain_text", "text": "Place Interactive Trade"},
+        "submit": {"type": "plain_text", "text": "Execute Trade"},
         "close": {"type": "plain_text", "text": "Cancel"},
         "blocks": [
             {
                 "type": "input",
                 "block_id": "trade_symbol_block",
-                "label": {"type": "plain_text", "text": "Symbol"},
+                "label": {"type": "plain_text", "text": "Stock Symbol (e.g., AAPL)"},
                 "element": {
                     "type": "plain_text_input",
                     "action_id": "symbol_input",
+                    "placeholder": {"type": "plain_text", "text": "Enter the stock ticker"},
                     "initial_value": symbol if symbol else "AAPL"
+                }
+            },
+            {
+                "type": "section",
+                "text": {"type": "mrkdwn", "text": "*Current Stock Price:* *Loading...*"},
+                "block_id": "current_price_display"
+            },
+            {"type": "divider"},
+            {
+                "type": "input",
+                "block_id": "trade_side_block",
+                "label": {"type": "plain_text", "text": "Trade Action (Buy/Sell)"},
+                "element": {
+                    "type": "radio_buttons",
+                    "action_id": "trade_side_radio",
+                    "options": [
+                        {"value": "buy", "text": {"type": "plain_text", "text": "Buy"}},
+                        {"value": "sell", "text": {"type": "plain_text", "text": "Sell"}}
+                    ],
+                    "initial_option": {"value": "sell", "text": {"type": "plain_text", "text": "Sell"}}
                 }
             },
             {
                 "type": "input",
                 "block_id": "qty_shares_block",
-                "label": {"type": "plain_text", "text": "Quantity"},
+                "label": {"type": "plain_text", "text": "Quantity (shares)"},
                 "element": {
                     "type": "number_input",
                     "action_id": "shares_input",
+                    "placeholder": {"type": "plain_text", "text": "Enter shares, and GMV will update"},
                     "is_decimal_allowed": False,
-                    "initial_value": quantity
+                    "initial_value": quantity,
+                    "dispatch_action_config": {
+                        "trigger_actions_on": ["on_enter_pressed", "on_character_entered"]
+                    }
+                },
+                "hint": {"type": "plain_text", "text": "Changes here trigger an automatic GMV calculation."}
+            },
+            {
+                "type": "input",
+                "block_id": "gmv_block",
+                "label": {"type": "plain_text", "text": "Gross Market Value (GMV)"},
+                "element": {
+                    "type": "number_input",
+                    "action_id": "gmv_input",
+                    "placeholder": {"type": "plain_text", "text": "Enter dollar amount, and shares will update"},
+                    "is_decimal_allowed": True,
+                    "dispatch_action_config": {
+                        "trigger_actions_on": ["on_enter_pressed", "on_character_entered"]
+                    }
+                },
+                "hint": {"type": "plain_text", "text": "Changes here trigger an automatic Shares calculation."}
+            },
+            {"type": "divider"},
+            {
+                "type": "input",
+                "block_id": "order_type_block",
+                "label": {"type": "plain_text", "text": "Order Type"},
+                "element": {
+                    "type": "static_select",
+                    "action_id": "order_type_select",
+                    "placeholder": {"type": "plain_text", "text": "Select an order type"},
+                    "options": [
+                        {"text": {"type": "plain_text", "text": "Market"}, "value": "market"},
+                        {"text": {"type": "plain_text", "text": "Limit"}, "value": "limit"},
+                        {"text": {"type": "plain_text", "text": "Stop"}, "value": "stop"},
+                        {"text": {"type": "plain_text", "text": "Stop Limit"}, "value": "stop_limit"}
+                    ]
                 }
             },
             {
                 "type": "input",
-                "block_id": "trade_side_block",
-                "label": {"type": "plain_text", "text": "Action"},
+                "block_id": "limit_price_block",
+                "optional": True,
+                "label": {"type": "plain_text", "text": "Limit Price (Quantity/Price for Limit Orders)"},
                 "element": {
-                    "type": "static_select",
-                    "action_id": "trade_side_radio",
-                    "initial_option": {"text": {"type": "plain_text", "text": "Sell"}, "value": "sell"},
-                    "options": [
-                        {"text": {"type": "plain_text", "text": "Buy"}, "value": "buy"},
-                        {"text": {"type": "plain_text", "text": "Sell"}, "value": "sell"}
-                    ]
-                }
+                    "type": "number_input",
+                    "action_id": "limit_price_input",
+                    "placeholder": {"type": "plain_text", "text": "Enter your maximum/minimum price"},
+                    "is_decimal_allowed": True
+                },
+                "hint": {"type": "plain_text", "text": "Only required for Limit or Stop Limit order types."}
             }
         ]
     }
