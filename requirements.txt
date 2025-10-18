@@ -23,5 +23,8 @@ finnhub-python==2.4.25
 structlog==25.4.0
 python-dateutil==2.9.0
 
+# AWS SDK (for Lambda adapter compatibility)
+boto3==1.35.67
+
 # Note: Removed alpaca-trade-api due to Python 3.13 compatibility issues
 # Will implement direct REST API calls for Alpaca integration

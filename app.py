@@ -36,7 +36,7 @@ from fastapi import FastAPI, Request, HTTPException, BackgroundTasks
 from fastapi.responses import JSONResponse, PlainTextResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
-from slack_bolt.adapter.fastapi import SlackRequestHandler
+from slack_bolt.adapter.fastapi import SlackRequestHandler as FastAPISlackRequestHandler
 import uvicorn
 
 # Application modules
