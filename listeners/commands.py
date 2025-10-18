@@ -965,25 +965,50 @@ def register_command_handlers(app: App, service_container: Optional['ServiceCont
     # Register appropriate command based on availability
     if multi_account_available:
         try:
+            logger.info("🔍 DEBUG: Starting multi-account command registration")
+            
             # Register multi-account trade command
             from listeners.multi_account_trade_command import register_multi_account_trade_command
+            logger.info("🔍 DEBUG: Imported multi_account_trade_command successfully")
+            
             from commands.account_management import register_account_management_commands
+            logger.info("🔍 DEBUG: Imported account_management successfully")
             
             logger.info("🚀 Registering multi-account trade commands")
             
             # Register multi-account trade command (replaces regular trade command)
-            register_multi_account_trade_command(app, auth_service)
+            result = register_multi_account_trade_command(app, auth_service)
+            logger.info(f"🔍 DEBUG: Multi-account trade command registered: {result}")
             
             # Register account management commands
             register_account_management_commands(app)
+            logger.info("🔍 DEBUG: Account management commands registered")
             
             logger.info("✅ Multi-account commands registered successfully")
             
         except Exception as e:
             logger.error(f"❌ Failed to register multi-account commands: {e}")
             logger.error(f"❌ CRITICAL: Multi-account system failed to initialize!")
-            logger.error(f"❌ No trade command will be available!")
-            # Don't register any fallback - force multi-account system to work
+            logger.error(f"❌ Registering fallback buy/sell commands")
+            
+            # Register simple fallback commands
+            @app.command("/buy")
+            def handle_buy_fallback(ack, body, client, context):
+                ack()
+                client.chat_postEphemeral(
+                    channel=body.get("channel_id"),
+                    user=body.get("user_id"),
+                    text="🚧 Buy command is temporarily unavailable. Multi-account system failed to initialize."
+                )
+            
+            @app.command("/sell")
+            def handle_sell_fallback(ack, body, client, context):
+                ack()
+                client.chat_postEphemeral(
+                    channel=body.get("channel_id"),
+                    user=body.get("user_id"),
+                    text="🚧 Sell command is temporarily unavailable. Multi-account system failed to initialize."
+                )
     
     # Register common commands (help, status, positions) - these should always be available
     @app.command("/help")
