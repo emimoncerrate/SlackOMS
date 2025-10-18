@@ -126,9 +126,33 @@ class PostgreSQLService:
         try:
             Base.metadata.create_all(bind=self.engine)
             logger.info("Database tables created/verified successfully")
+            
+            # Run migrations to add missing columns
+            self._run_migrations()
         except Exception as e:
             logger.error(f"Error creating database tables: {e}")
             raise
+    
+    def _run_migrations(self):
+        """Run necessary database migrations."""
+        try:
+            from sqlalchemy import text
+            
+            with self.engine.connect() as connection:
+                # Migration: Add trade_type column if it doesn't exist
+                try:
+                    connection.execute(text("""
+                        ALTER TABLE trades 
+                        ADD COLUMN IF NOT EXISTS trade_type VARCHAR(10) NOT NULL DEFAULT 'buy';
+                    """))
+                    connection.commit()
+                    logger.info("Migration: trade_type column added/verified")
+                except Exception as e:
+                    logger.warning(f"Migration skipped (may already exist): {e}")
+                    
+        except Exception as e:
+            logger.error(f"Error running migrations: {e}")
+            # Don't raise - migrations are optional if tables are already correct
     
     def get_session(self) -> Session:
         """Get a database session."""
