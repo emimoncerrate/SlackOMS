@@ -21,9 +21,9 @@ services:
       - key: FINNHUB_API_KEY
         sync: false  # Required: real market data
       - key: ALPACA_API_KEY
-        sync: false  # Required: paper trading
+        sync: false  # Required: paper trading (backward compatibility)
       - key: ALPACA_SECRET_KEY
-        sync: false  # Required: paper trading
+        sync: false  # Required: paper trading (backward compatibility)
       - key: DATABASE_URL
         fromDatabase:
           name: jain-trading-db

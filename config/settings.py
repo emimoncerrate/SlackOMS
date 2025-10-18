@@ -339,11 +339,19 @@ class ConfigurationManager:
                 echo_sql=os.getenv('DB_ECHO_SQL', 'false').lower() == 'true'
             )
             
-            # Load Alpaca configuration
+            # Load Alpaca configuration (try new PAPER variables first, fallback to old names)
+            alpaca_api_key = os.getenv('ALPACA_PAPER_API_KEY') or os.getenv('ALPACA_API_KEY')
+            alpaca_secret_key = os.getenv('ALPACA_PAPER_SECRET_KEY') or os.getenv('ALPACA_SECRET_KEY')
+            
+            if not alpaca_api_key:
+                raise ValueError("Required environment variable ALPACA_PAPER_API_KEY or ALPACA_API_KEY is not set")
+            if not alpaca_secret_key:
+                raise ValueError("Required environment variable ALPACA_PAPER_SECRET_KEY or ALPACA_SECRET_KEY is not set")
+            
             alpaca_config = AlpacaConfig(
-                api_key=self._get_required_env('ALPACA_API_KEY'),
-                secret_key=self._get_required_env('ALPACA_SECRET_KEY'),
-                base_url=os.getenv('ALPACA_BASE_URL', 'https://paper-api.alpaca.markets'),
+                api_key=alpaca_api_key,
+                secret_key=alpaca_secret_key,
+                base_url=os.getenv('ALPACA_PAPER_BASE_URL') or os.getenv('ALPACA_BASE_URL', 'https://paper-api.alpaca.markets'),
                 data_url=os.getenv('ALPACA_DATA_URL', 'https://data.alpaca.markets')
             )
             
