@@ -1437,8 +1437,8 @@ def validate_startup_requirements() -> bool:
             'SLACK_BOT_TOKEN',
             'SLACK_SIGNING_SECRET',
             'FINNHUB_API_KEY',
-            'ALPACA_API_KEY',
-            'ALPACA_SECRET_KEY',
+            'ALPACA_PAPER_API_KEY',
+            'ALPACA_PAPER_SECRET_KEY',
             'DATABASE_URL'
         ]
         

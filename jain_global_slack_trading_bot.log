@@ -24627,3 +24627,309 @@ AttributeError: 'AppConfig' object has no attribute 'aws'
 2025-10-18 00:48:34,807 - services.service_container - WARNING - Health check failed for MultiAlpacaService
 2025-10-18 00:48:34,807 - services.service_container - WARNING - Health check failed for AlpacaService
 2025-10-18 00:48:34,861 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 12:56:20,939 - services.service_container - INFO - ServiceContainer initialized
+2025-10-18 12:56:20,940 - services.service_container - INFO - Service registered: PostgreSQLService (implementation: PostgreSQLService, scope: singleton, dependencies: [])
+2025-10-18 12:56:20,940 - services.service_container - INFO - Service registered: AlpacaService (implementation: AlpacaService, scope: singleton, dependencies: [])
+2025-10-18 12:56:20,940 - services.service_container - INFO - Service registered: MarketDataService (implementation: MarketDataService, scope: singleton, dependencies: [])
+2025-10-18 12:56:20,940 - services.service_container - INFO - Service registered: RiskAnalysisService (implementation: RiskAnalysisService, scope: singleton, dependencies: [])
+2025-10-18 12:56:20,940 - services.service_container - INFO - Service registered: TradingAPIService (implementation: TradingAPIService, scope: singleton, dependencies: [])
+2025-10-18 12:56:20,940 - services.service_container - INFO - Service registered: AuthService (implementation: AuthService, scope: singleton, dependencies: ['PostgreSQLService'])
+2025-10-18 12:56:20,948 - services.service_container - INFO - Service registered: MultiAlpacaService (implementation: MultiAlpacaService, scope: singleton, dependencies: [])
+2025-10-18 12:56:20,949 - services.service_container - INFO - Service registered: UserAccountManager (implementation: UserAccountManager, scope: singleton, dependencies: ['PostgreSQLService'])
+2025-10-18 12:56:20,949 - services.service_container - INFO - Multi-account services registered successfully
+2025-10-18 12:56:20,949 - services.service_container - INFO - Default services configured in container
+2025-10-18 12:56:20,949 - __main__ - INFO - Initializing Slack Bolt application...
+2025-10-18 12:56:21,933 - __main__ - INFO - Middleware stack registered successfully
+2025-10-18 12:56:24,503 - services.postgresql_service - INFO - Database tables created/verified successfully
+2025-10-18 12:56:24,503 - services.postgresql_service - INFO - PostgreSQL service initialized successfully
+2025-10-18 12:56:24,503 - services.service_container - INFO - Service initialized: PostgreSQLService
+2025-10-18 12:56:24,503 - services.service_container - INFO - Service started: PostgreSQLService
+2025-10-18 12:56:24,504 - services.auth - INFO - AuthService initialized successfully
+2025-10-18 12:56:24,504 - services.service_container - INFO - Service initialized: AuthService
+2025-10-18 12:56:24,504 - services.service_container - INFO - Service started: AuthService
+2025-10-18 12:56:24,504 - ui.trade_widget - INFO - TradeWidget initialized with role-based customizations
+2025-10-18 12:56:24,504 - listeners.commands - INFO - CommandHandler initialized with comprehensive security and validation
+2025-10-18 12:56:24,504 - listeners.commands - INFO - 🔍 DEBUG: Checking multi-account system availability...
+2025-10-18 12:56:24,504 - listeners.commands - INFO - 🔍 DEBUG: Multi-account imports successful
+2025-10-18 12:56:24,504 - services.multi_alpaca_service - INFO - Loaded 1 Alpaca account configurations
+2025-10-18 12:56:24,504 - services.simple_alpaca_client - INFO - SimpleAlpacaClient initialized for https://paper-api.alpaca.markets
+2025-10-18 12:56:24,620 - services.multi_alpaca_service - INFO - ✅ Account primary initialized successfully
+2025-10-18 12:56:24,620 - services.multi_alpaca_service - INFO - MultiAlpacaService initialized with 1 accounts
+2025-10-18 12:56:24,620 - services.service_container - INFO - Service initialized: MultiAlpacaService
+2025-10-18 12:56:24,620 - services.service_container - INFO - Service started: MultiAlpacaService
+2025-10-18 12:56:26,451 - services.postgresql_service - INFO - Database tables created/verified successfully
+2025-10-18 12:56:26,452 - services.postgresql_service - INFO - PostgreSQL service initialized successfully
+2025-10-18 12:56:26,452 - services.service_container - INFO - Service initialized: PostgreSQLService
+2025-10-18 12:56:26,452 - services.service_container - INFO - Service started: PostgreSQLService
+2025-10-18 12:56:26,453 - services.user_account_manager - INFO - User assignments loaded: 6 assignments
+2025-10-18 12:56:26,453 - services.user_account_manager - INFO - UserAccountManager initialized
+2025-10-18 12:56:26,453 - services.service_container - INFO - Service initialized: UserAccountManager
+2025-10-18 12:56:26,453 - services.service_container - INFO - Service started: UserAccountManager
+2025-10-18 12:56:26,453 - listeners.commands - INFO - 🔍 DEBUG: Got services from container
+2025-10-18 12:56:26,453 - listeners.commands - INFO - 🔍 DEBUG: multi_alpaca.is_available() = True
+2025-10-18 12:56:26,453 - listeners.commands - INFO - 🏦 Multi-account system detected and available
+2025-10-18 12:56:26,453 - listeners.commands - INFO - 🔍 DEBUG: multi_account_available = True
+2025-10-18 12:56:26,453 - listeners.commands - INFO - 🔍 DEBUG: Starting multi-account command registration
+2025-10-18 12:56:26,483 - listeners.commands - INFO - 🔍 DEBUG: Imported multi_account_trade_command successfully
+2025-10-18 12:56:26,488 - listeners.commands - INFO - 🔍 DEBUG: Imported account_management successfully
+2025-10-18 12:56:26,488 - listeners.commands - INFO - 🚀 Registering multi-account trade commands
+2025-10-18 12:56:26,488 - listeners.multi_account_trade_command - INFO - 🔧 REGISTERING MULTI-ACCOUNT BUY/SELL COMMANDS
+2025-10-18 12:56:26,491 - services.service_container - INFO - Service initialized: MarketDataService
+2025-10-18 12:56:26,491 - services.service_container - INFO - Service started: MarketDataService
+2025-10-18 12:56:26,491 - listeners.enhanced_trade_command - INFO - Enhanced trade command initialized with live market data features
+2025-10-18 12:56:26,491 - listeners.multi_account_trade_command - INFO - MultiAccountTradeCommand initialized
+2025-10-18 12:56:26,496 - ui.interactive_trade_widget - INFO - InteractiveTradeWidget initialized
+2025-10-18 12:56:26,496 - listeners.interactive_actions - INFO - InteractiveActionHandler initialized
+2025-10-18 12:56:26,496 - ui.interactive_trade_widget - INFO - InteractiveTradeWidget initialized
+2025-10-18 12:56:26,496 - listeners.interactive_actions - INFO - InteractiveActionHandler initialized
+2025-10-18 12:56:26,496 - listeners.interactive_actions - INFO - Interactive action handlers registered
+2025-10-18 12:56:26,496 - listeners.multi_account_trade_command - INFO - ✅ MULTI-ACCOUNT BUY/SELL COMMANDS REGISTERED SUCCESSFULLY
+2025-10-18 12:56:26,496 - listeners.commands - INFO - 🔍 DEBUG: Multi-account trade command registered: <listeners.multi_account_trade_command.MultiAccountTradeCommand object at 0x11132d7c0>
+2025-10-18 12:56:26,497 - commands.account_management - INFO - Account management commands registered
+2025-10-18 12:56:26,497 - listeners.commands - INFO - 🔍 DEBUG: Account management commands registered
+2025-10-18 12:56:26,497 - listeners.commands - INFO - ✅ Multi-account commands registered successfully
+2025-10-18 12:56:26,498 - listeners.commands - INFO - All command handlers registered successfully with service container integration
+2025-10-18 12:56:26,498 - __main__ - INFO - Command handlers registered successfully
+2025-10-18 12:56:26,498 - services.service_container - INFO - Service initialized: RiskAnalysisService
+2025-10-18 12:56:26,498 - services.service_container - INFO - Service started: RiskAnalysisService
+2025-10-18 12:56:26,498 - services.alpaca_service - INFO - AlpacaService created, will initialize on first use
+2025-10-18 12:56:26,499 - services.alpaca_service - INFO - ✅ Safety Check 1: Paper Trading URL verified (https://paper-api.alpaca.markets)
+2025-10-18 12:56:26,499 - services.alpaca_service - INFO - ✅ Safety Check 2: Paper API key format verified (PK...)
+2025-10-18 12:56:26,499 - services.alpaca_service - INFO - ✅ Safety Check 3: Environment verified (production)
+2025-10-18 12:56:26,499 - services.simple_alpaca_client - INFO - SimpleAlpacaClient initialized for https://paper-api.alpaca.markets
+2025-10-18 12:56:26,499 - services.alpaca_service - INFO - 🔌 Connecting to Alpaca Paper Trading API...
+2025-10-18 12:56:26,610 - services.alpaca_service - INFO - ✅ Safety Check 4: Paper account verified (Account: PA3JFB0IWAB5)
+2025-10-18 12:56:26,611 - services.alpaca_service - INFO - ====================================================================
+2025-10-18 12:56:26,611 - services.alpaca_service - INFO - 🧪 ALPACA PAPER TRADING - SIMULATION MODE
+2025-10-18 12:56:26,611 - services.alpaca_service - INFO - ====================================================================
+2025-10-18 12:56:26,611 - services.alpaca_service - INFO -    Account Number: PA3JFB0IWAB5
+2025-10-18 12:56:26,611 - services.alpaca_service - INFO -    Cash Available: $484,582.67
+2025-10-18 12:56:26,611 - services.alpaca_service - INFO -    Buying Power: $984,438.86
+2025-10-18 12:56:26,611 - services.alpaca_service - INFO -    Portfolio Value: $500,108.66
+2025-10-18 12:56:26,611 - services.alpaca_service - INFO -    Account Status: ACTIVE
+2025-10-18 12:56:26,611 - services.alpaca_service - INFO -    ⚠️  THIS IS SIMULATED TRADING - NO REAL MONEY
+2025-10-18 12:56:26,611 - services.alpaca_service - INFO - ====================================================================
+2025-10-18 12:56:26,611 - services.alpaca_service - INFO - ✅ AlpacaService initialized successfully - Paper Trading ACTIVE
+2025-10-18 12:56:26,611 - services.service_container - INFO - Service initialized: TradingAPIService
+2025-10-18 12:56:26,611 - services.service_container - INFO - Service started: TradingAPIService
+2025-10-18 12:56:26,611 - ui.trade_widget - INFO - TradeWidget initialized with role-based customizations
+2025-10-18 12:56:26,611 - ui.notifications - INFO - NotificationService initialized
+2025-10-18 12:56:26,612 - listeners.actions - INFO - ActionHandler initialized with comprehensive processing capabilities
+2025-10-18 12:56:26,612 - listeners.actions - INFO - All action handlers registered successfully with service container integration
+2025-10-18 12:56:26,612 - __main__ - INFO - Action handlers registered successfully
+2025-10-18 12:56:26,613 - listeners.interactive_actions - INFO - Interactive action handlers registered
+2025-10-18 12:56:26,613 - __main__ - INFO - Interactive action handlers registered successfully
+2025-10-18 12:56:26,613 - ui.dashboard - INFO - Dashboard initialized with role-based customizations
+2025-10-18 12:56:26,613 - ui.notifications - INFO - NotificationService initialized
+2025-10-18 12:56:26,613 - listeners.events - INFO - EventHandler initialized with comprehensive dashboard and user management
+2025-10-18 12:56:26,614 - listeners.events - INFO - All event handlers registered successfully with service container integration
+2025-10-18 12:56:26,615 - __main__ - INFO - Event handlers registered successfully
+2025-10-18 12:56:26,615 - __main__ - INFO - Slack Bolt app initialized successfully
+2025-10-18 12:56:26,616 - __main__ - INFO - Slack app instance created successfully
+2025-10-18 12:56:26,617 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 12:56:26,618 - __main__ - INFO - Performing environment validation...
+2025-10-18 12:56:26,618 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 12:56:26,618 - __main__ - INFO - ✅ Environment validation passed
+2025-10-18 12:56:26,618 - __main__ - INFO - ✅ Slack app initialized successfully
+2025-10-18 12:56:26,618 - __main__ - INFO - 🔧 Initializing service container...
+2025-10-18 12:56:26,618 - __main__ - INFO - ✅ Service container initialized with 8 services
+2025-10-18 12:56:26,618 - __main__ - INFO - 🎯 Starting Jain Global Slack Trading Bot v1.0.0
+2025-10-18 12:56:26,618 - __main__ - INFO - 📊 Environment: production
+2025-10-18 12:56:26,618 - __main__ - INFO - 🔧 Debug mode: False
+2025-10-18 12:56:26,619 - __main__ - INFO - 📝 Log level: INFO
+2025-10-18 12:56:26,619 - __main__ - INFO - 🌐 Using HTTP server mode
+2025-10-18 12:56:26,619 - __main__ - INFO - Server will start on 0.0.0.0:8080
+2025-10-18 12:56:26,619 - __main__ - INFO - Starting HTTP server on 0.0.0.0:8080...
+2025-10-18 12:56:26,619 - __main__ - INFO - Environment: production
+2025-10-18 12:56:26,619 - __main__ - INFO - Debug mode: False
+2025-10-18 12:56:26,619 - __main__ - INFO - Uvicorn configuration: {
+  "app": "<fastapi.applications.FastAPI object at 0x1115ae090>",
+  "host": "0.0.0.0",
+  "port": 8080,
+  "log_level": "warning",
+  "access_log": true,
+  "reload": false,
+  "workers": 1
+}
+2025-10-18 12:56:26,882 - __main__ - INFO - FastAPI application starting up...
+2025-10-18 12:56:26,882 - __main__ - INFO - Starting service container...
+2025-10-18 12:56:26,883 - services.alpaca_service - INFO - AlpacaService created, will initialize on first use
+2025-10-18 12:56:26,883 - services.alpaca_service - INFO - ✅ Safety Check 1: Paper Trading URL verified (https://paper-api.alpaca.markets)
+2025-10-18 12:56:26,883 - services.alpaca_service - INFO - ✅ Safety Check 2: Paper API key format verified (PK...)
+2025-10-18 12:56:26,883 - services.alpaca_service - INFO - ✅ Safety Check 3: Environment verified (production)
+2025-10-18 12:56:26,883 - services.simple_alpaca_client - INFO - SimpleAlpacaClient initialized for https://paper-api.alpaca.markets
+2025-10-18 12:56:26,883 - services.alpaca_service - INFO - 🔌 Connecting to Alpaca Paper Trading API...
+2025-10-18 12:56:26,969 - services.alpaca_service - INFO - ✅ Safety Check 4: Paper account verified (Account: PA3JFB0IWAB5)
+2025-10-18 12:56:26,969 - services.alpaca_service - INFO - ====================================================================
+2025-10-18 12:56:26,969 - services.alpaca_service - INFO - 🧪 ALPACA PAPER TRADING - SIMULATION MODE
+2025-10-18 12:56:26,969 - services.alpaca_service - INFO - ====================================================================
+2025-10-18 12:56:26,969 - services.alpaca_service - INFO -    Account Number: PA3JFB0IWAB5
+2025-10-18 12:56:26,969 - services.alpaca_service - INFO -    Cash Available: $484,582.67
+2025-10-18 12:56:26,969 - services.alpaca_service - INFO -    Buying Power: $984,438.86
+2025-10-18 12:56:26,969 - services.alpaca_service - INFO -    Portfolio Value: $500,108.66
+2025-10-18 12:56:26,970 - services.alpaca_service - INFO -    Account Status: ACTIVE
+2025-10-18 12:56:26,970 - services.alpaca_service - INFO -    ⚠️  THIS IS SIMULATED TRADING - NO REAL MONEY
+2025-10-18 12:56:26,970 - services.alpaca_service - INFO - ====================================================================
+2025-10-18 12:56:26,970 - services.alpaca_service - INFO - ✅ AlpacaService initialized successfully - Paper Trading ACTIVE
+2025-10-18 12:56:26,970 - services.service_container - INFO - Service initialized: AlpacaService
+2025-10-18 12:56:26,970 - services.service_container - INFO - Service started: AlpacaService
+2025-10-18 12:56:26,970 - services.service_container - INFO - Health monitoring started
+2025-10-18 12:56:26,970 - services.service_container - INFO - All services started
+2025-10-18 12:56:26,970 - __main__ - INFO - All services started successfully
+2025-10-18 12:56:26,970 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 12:56:26,970 - __main__ - INFO - Started background task: health_check_task
+2025-10-18 12:56:26,970 - __main__ - INFO - Started background task: cleanup_metrics_task
+2025-10-18 12:56:26,971 - __main__ - INFO - FastAPI application startup completed
+2025-10-18 12:56:45,464 - services.service_container - INFO - ServiceContainer initialized
+2025-10-18 12:56:45,464 - services.service_container - INFO - Service registered: PostgreSQLService (implementation: PostgreSQLService, scope: singleton, dependencies: [])
+2025-10-18 12:56:45,464 - services.service_container - INFO - Service registered: AlpacaService (implementation: AlpacaService, scope: singleton, dependencies: [])
+2025-10-18 12:56:45,465 - services.service_container - INFO - Service registered: MarketDataService (implementation: MarketDataService, scope: singleton, dependencies: [])
+2025-10-18 12:56:45,465 - services.service_container - INFO - Service registered: RiskAnalysisService (implementation: RiskAnalysisService, scope: singleton, dependencies: [])
+2025-10-18 12:56:45,465 - services.service_container - INFO - Service registered: TradingAPIService (implementation: TradingAPIService, scope: singleton, dependencies: [])
+2025-10-18 12:56:45,465 - services.service_container - INFO - Service registered: AuthService (implementation: AuthService, scope: singleton, dependencies: ['PostgreSQLService'])
+2025-10-18 12:56:45,469 - services.service_container - INFO - Service registered: MultiAlpacaService (implementation: MultiAlpacaService, scope: singleton, dependencies: [])
+2025-10-18 12:56:45,469 - services.service_container - INFO - Service registered: UserAccountManager (implementation: UserAccountManager, scope: singleton, dependencies: ['PostgreSQLService'])
+2025-10-18 12:56:45,469 - services.service_container - INFO - Multi-account services registered successfully
+2025-10-18 12:56:45,469 - services.service_container - INFO - Default services configured in container
+2025-10-18 12:56:45,470 - __main__ - INFO - Initializing Slack Bolt application...
+2025-10-18 12:56:45,743 - __main__ - INFO - Middleware stack registered successfully
+2025-10-18 12:56:47,840 - services.postgresql_service - INFO - Database tables created/verified successfully
+2025-10-18 12:56:47,840 - services.postgresql_service - INFO - PostgreSQL service initialized successfully
+2025-10-18 12:56:47,840 - services.service_container - INFO - Service initialized: PostgreSQLService
+2025-10-18 12:56:47,840 - services.service_container - INFO - Service started: PostgreSQLService
+2025-10-18 12:56:47,840 - services.auth - INFO - AuthService initialized successfully
+2025-10-18 12:56:47,841 - services.service_container - INFO - Service initialized: AuthService
+2025-10-18 12:56:47,841 - services.service_container - INFO - Service started: AuthService
+2025-10-18 12:56:47,841 - ui.trade_widget - INFO - TradeWidget initialized with role-based customizations
+2025-10-18 12:56:47,841 - listeners.commands - INFO - CommandHandler initialized with comprehensive security and validation
+2025-10-18 12:56:47,841 - listeners.commands - INFO - 🔍 DEBUG: Checking multi-account system availability...
+2025-10-18 12:56:47,841 - listeners.commands - INFO - 🔍 DEBUG: Multi-account imports successful
+2025-10-18 12:56:47,841 - services.multi_alpaca_service - INFO - Loaded 1 Alpaca account configurations
+2025-10-18 12:56:47,841 - services.simple_alpaca_client - INFO - SimpleAlpacaClient initialized for https://paper-api.alpaca.markets
+2025-10-18 12:56:47,973 - services.multi_alpaca_service - INFO - ✅ Account primary initialized successfully
+2025-10-18 12:56:47,973 - services.multi_alpaca_service - INFO - MultiAlpacaService initialized with 1 accounts
+2025-10-18 12:56:47,974 - services.service_container - INFO - Service initialized: MultiAlpacaService
+2025-10-18 12:56:47,974 - services.service_container - INFO - Service started: MultiAlpacaService
+2025-10-18 12:56:50,009 - services.postgresql_service - INFO - Database tables created/verified successfully
+2025-10-18 12:56:50,009 - services.postgresql_service - INFO - PostgreSQL service initialized successfully
+2025-10-18 12:56:50,009 - services.service_container - INFO - Service initialized: PostgreSQLService
+2025-10-18 12:56:50,009 - services.service_container - INFO - Service started: PostgreSQLService
+2025-10-18 12:56:50,009 - services.user_account_manager - INFO - User assignments loaded: 6 assignments
+2025-10-18 12:56:50,009 - services.user_account_manager - INFO - UserAccountManager initialized
+2025-10-18 12:56:50,009 - services.service_container - INFO - Service initialized: UserAccountManager
+2025-10-18 12:56:50,010 - services.service_container - INFO - Service started: UserAccountManager
+2025-10-18 12:56:50,010 - listeners.commands - INFO - 🔍 DEBUG: Got services from container
+2025-10-18 12:56:50,010 - listeners.commands - INFO - 🔍 DEBUG: multi_alpaca.is_available() = True
+2025-10-18 12:56:50,010 - listeners.commands - INFO - 🏦 Multi-account system detected and available
+2025-10-18 12:56:50,010 - listeners.commands - INFO - 🔍 DEBUG: multi_account_available = True
+2025-10-18 12:56:50,010 - listeners.commands - INFO - 🔍 DEBUG: Starting multi-account command registration
+2025-10-18 12:56:50,014 - listeners.commands - INFO - 🔍 DEBUG: Imported multi_account_trade_command successfully
+2025-10-18 12:56:50,017 - listeners.commands - INFO - 🔍 DEBUG: Imported account_management successfully
+2025-10-18 12:56:50,017 - listeners.commands - INFO - 🚀 Registering multi-account trade commands
+2025-10-18 12:56:50,017 - listeners.multi_account_trade_command - INFO - 🔧 REGISTERING MULTI-ACCOUNT BUY/SELL COMMANDS
+2025-10-18 12:56:50,020 - services.service_container - INFO - Service initialized: MarketDataService
+2025-10-18 12:56:50,020 - services.service_container - INFO - Service started: MarketDataService
+2025-10-18 12:56:50,021 - listeners.enhanced_trade_command - INFO - Enhanced trade command initialized with live market data features
+2025-10-18 12:56:50,021 - listeners.multi_account_trade_command - INFO - MultiAccountTradeCommand initialized
+2025-10-18 12:56:50,023 - ui.interactive_trade_widget - INFO - InteractiveTradeWidget initialized
+2025-10-18 12:56:50,023 - listeners.interactive_actions - INFO - InteractiveActionHandler initialized
+2025-10-18 12:56:50,023 - ui.interactive_trade_widget - INFO - InteractiveTradeWidget initialized
+2025-10-18 12:56:50,023 - listeners.interactive_actions - INFO - InteractiveActionHandler initialized
+2025-10-18 12:56:50,024 - listeners.interactive_actions - INFO - Interactive action handlers registered
+2025-10-18 12:56:50,024 - listeners.multi_account_trade_command - INFO - ✅ MULTI-ACCOUNT BUY/SELL COMMANDS REGISTERED SUCCESSFULLY
+2025-10-18 12:56:50,024 - listeners.commands - INFO - 🔍 DEBUG: Multi-account trade command registered: <listeners.multi_account_trade_command.MultiAccountTradeCommand object at 0x113c071d0>
+2025-10-18 12:56:50,024 - commands.account_management - INFO - Account management commands registered
+2025-10-18 12:56:50,024 - listeners.commands - INFO - 🔍 DEBUG: Account management commands registered
+2025-10-18 12:56:50,024 - listeners.commands - INFO - ✅ Multi-account commands registered successfully
+2025-10-18 12:56:50,025 - listeners.commands - INFO - All command handlers registered successfully with service container integration
+2025-10-18 12:56:50,025 - __main__ - INFO - Command handlers registered successfully
+2025-10-18 12:56:50,025 - services.service_container - INFO - Service initialized: RiskAnalysisService
+2025-10-18 12:56:50,026 - services.service_container - INFO - Service started: RiskAnalysisService
+2025-10-18 12:56:50,026 - services.alpaca_service - INFO - AlpacaService created, will initialize on first use
+2025-10-18 12:56:50,026 - services.alpaca_service - INFO - ✅ Safety Check 1: Paper Trading URL verified (https://paper-api.alpaca.markets)
+2025-10-18 12:56:50,026 - services.alpaca_service - INFO - ✅ Safety Check 2: Paper API key format verified (PK...)
+2025-10-18 12:56:50,026 - services.alpaca_service - INFO - ✅ Safety Check 3: Environment verified (production)
+2025-10-18 12:56:50,026 - services.simple_alpaca_client - INFO - SimpleAlpacaClient initialized for https://paper-api.alpaca.markets
+2025-10-18 12:56:50,026 - services.alpaca_service - INFO - 🔌 Connecting to Alpaca Paper Trading API...
+2025-10-18 12:56:50,182 - services.alpaca_service - INFO - ✅ Safety Check 4: Paper account verified (Account: PA3JFB0IWAB5)
+2025-10-18 12:56:50,182 - services.alpaca_service - INFO - ====================================================================
+2025-10-18 12:56:50,183 - services.alpaca_service - INFO - 🧪 ALPACA PAPER TRADING - SIMULATION MODE
+2025-10-18 12:56:50,183 - services.alpaca_service - INFO - ====================================================================
+2025-10-18 12:56:50,183 - services.alpaca_service - INFO -    Account Number: PA3JFB0IWAB5
+2025-10-18 12:56:50,183 - services.alpaca_service - INFO -    Cash Available: $484,582.67
+2025-10-18 12:56:50,184 - services.alpaca_service - INFO -    Buying Power: $984,438.86
+2025-10-18 12:56:50,184 - services.alpaca_service - INFO -    Portfolio Value: $500,108.66
+2025-10-18 12:56:50,184 - services.alpaca_service - INFO -    Account Status: ACTIVE
+2025-10-18 12:56:50,184 - services.alpaca_service - INFO -    ⚠️  THIS IS SIMULATED TRADING - NO REAL MONEY
+2025-10-18 12:56:50,184 - services.alpaca_service - INFO - ====================================================================
+2025-10-18 12:56:50,184 - services.alpaca_service - INFO - ✅ AlpacaService initialized successfully - Paper Trading ACTIVE
+2025-10-18 12:56:50,184 - services.service_container - INFO - Service initialized: TradingAPIService
+2025-10-18 12:56:50,185 - services.service_container - INFO - Service started: TradingAPIService
+2025-10-18 12:56:50,185 - ui.trade_widget - INFO - TradeWidget initialized with role-based customizations
+2025-10-18 12:56:50,185 - ui.notifications - INFO - NotificationService initialized
+2025-10-18 12:56:50,185 - listeners.actions - INFO - ActionHandler initialized with comprehensive processing capabilities
+2025-10-18 12:56:50,186 - listeners.actions - INFO - All action handlers registered successfully with service container integration
+2025-10-18 12:56:50,186 - __main__ - INFO - Action handlers registered successfully
+2025-10-18 12:56:50,186 - listeners.interactive_actions - INFO - Interactive action handlers registered
+2025-10-18 12:56:50,186 - __main__ - INFO - Interactive action handlers registered successfully
+2025-10-18 12:56:50,187 - ui.dashboard - INFO - Dashboard initialized with role-based customizations
+2025-10-18 12:56:50,187 - ui.notifications - INFO - NotificationService initialized
+2025-10-18 12:56:50,187 - listeners.events - INFO - EventHandler initialized with comprehensive dashboard and user management
+2025-10-18 12:56:50,187 - listeners.events - INFO - All event handlers registered successfully with service container integration
+2025-10-18 12:56:50,187 - __main__ - INFO - Event handlers registered successfully
+2025-10-18 12:56:50,187 - __main__ - INFO - Slack Bolt app initialized successfully
+2025-10-18 12:56:50,188 - __main__ - INFO - Slack app instance created successfully
+2025-10-18 12:56:50,190 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 12:56:50,190 - __main__ - INFO - Performing environment validation...
+2025-10-18 12:56:50,190 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 12:56:50,190 - __main__ - INFO - ✅ Environment validation passed
+2025-10-18 12:56:50,190 - __main__ - INFO - ✅ Slack app initialized successfully
+2025-10-18 12:56:50,190 - __main__ - INFO - 🔧 Initializing service container...
+2025-10-18 12:56:50,190 - __main__ - INFO - ✅ Service container initialized with 8 services
+2025-10-18 12:56:50,190 - __main__ - INFO - 🎯 Starting Jain Global Slack Trading Bot v1.0.0
+2025-10-18 12:56:50,190 - __main__ - INFO - 📊 Environment: production
+2025-10-18 12:56:50,190 - __main__ - INFO - 🔧 Debug mode: False
+2025-10-18 12:56:50,190 - __main__ - INFO - 📝 Log level: INFO
+2025-10-18 12:56:50,190 - __main__ - INFO - 🌐 Using HTTP server mode
+2025-10-18 12:56:50,190 - __main__ - INFO - Server will start on 0.0.0.0:8080
+2025-10-18 12:56:50,190 - __main__ - INFO - Starting HTTP server on 0.0.0.0:8080...
+2025-10-18 12:56:50,190 - __main__ - INFO - Environment: production
+2025-10-18 12:56:50,191 - __main__ - INFO - Debug mode: False
+2025-10-18 12:56:50,191 - __main__ - INFO - Uvicorn configuration: {
+  "app": "<fastapi.applications.FastAPI object at 0x10f330a70>",
+  "host": "0.0.0.0",
+  "port": 8080,
+  "log_level": "warning",
+  "access_log": true,
+  "reload": false,
+  "workers": 1
+}
+2025-10-18 12:56:50,228 - __main__ - INFO - FastAPI application starting up...
+2025-10-18 12:56:50,228 - __main__ - INFO - Starting service container...
+2025-10-18 12:56:50,228 - services.alpaca_service - INFO - AlpacaService created, will initialize on first use
+2025-10-18 12:56:50,228 - services.alpaca_service - INFO - ✅ Safety Check 1: Paper Trading URL verified (https://paper-api.alpaca.markets)
+2025-10-18 12:56:50,228 - services.alpaca_service - INFO - ✅ Safety Check 2: Paper API key format verified (PK...)
+2025-10-18 12:56:50,228 - services.alpaca_service - INFO - ✅ Safety Check 3: Environment verified (production)
+2025-10-18 12:56:50,228 - services.simple_alpaca_client - INFO - SimpleAlpacaClient initialized for https://paper-api.alpaca.markets
+2025-10-18 12:56:50,228 - services.alpaca_service - INFO - 🔌 Connecting to Alpaca Paper Trading API...
+2025-10-18 12:56:50,331 - services.alpaca_service - INFO - ✅ Safety Check 4: Paper account verified (Account: PA3JFB0IWAB5)
+2025-10-18 12:56:50,332 - services.alpaca_service - INFO - ====================================================================
+2025-10-18 12:56:50,332 - services.alpaca_service - INFO - 🧪 ALPACA PAPER TRADING - SIMULATION MODE
+2025-10-18 12:56:50,332 - services.alpaca_service - INFO - ====================================================================
+2025-10-18 12:56:50,332 - services.alpaca_service - INFO -    Account Number: PA3JFB0IWAB5
+2025-10-18 12:56:50,332 - services.alpaca_service - INFO -    Cash Available: $484,582.67
+2025-10-18 12:56:50,333 - services.alpaca_service - INFO -    Buying Power: $984,438.86
+2025-10-18 12:56:50,333 - services.alpaca_service - INFO -    Portfolio Value: $500,108.66
+2025-10-18 12:56:50,333 - services.alpaca_service - INFO -    Account Status: ACTIVE
+2025-10-18 12:56:50,333 - services.alpaca_service - INFO -    ⚠️  THIS IS SIMULATED TRADING - NO REAL MONEY
+2025-10-18 12:56:50,333 - services.alpaca_service - INFO - ====================================================================
+2025-10-18 12:56:50,333 - services.alpaca_service - INFO - ✅ AlpacaService initialized successfully - Paper Trading ACTIVE
+2025-10-18 12:56:50,333 - services.service_container - INFO - Service initialized: AlpacaService
+2025-10-18 12:56:50,334 - services.service_container - INFO - Service started: AlpacaService
+2025-10-18 12:56:50,334 - services.service_container - INFO - Health monitoring started
+2025-10-18 12:56:50,334 - services.service_container - INFO - All services started
+2025-10-18 12:56:50,334 - __main__ - INFO - All services started successfully
+2025-10-18 12:56:50,334 - root - INFO - Skipping AWS validation - using PostgreSQL instead of DynamoDB
+2025-10-18 12:56:50,334 - __main__ - INFO - Started background task: health_check_task
+2025-10-18 12:56:50,334 - __main__ - INFO - Started background task: cleanup_metrics_task
+2025-10-18 12:56:50,335 - __main__ - INFO - FastAPI application startup completed

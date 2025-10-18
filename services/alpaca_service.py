@@ -106,31 +106,31 @@ class AlpacaService:
             account = self.alpaca.get_account()
             
             # Final safety check - ensure it's a paper account
-            if not account.account_number.startswith('P'):
+            if not account['account_number'].startswith('P'):
                 logger.error("🛑 SAFETY VIOLATION: Account is not a paper trading account!")
                 logger.error("🛑 ALPACA INITIALIZATION BLOCKED FOR SAFETY")
                 raise Exception("Not a paper trading account")
             
-            logger.info(f"✅ Safety Check 4: Paper account verified (Account: {account.account_number})")
+            logger.info(f"✅ Safety Check 4: Paper account verified (Account: {account['account_number']})")
             
             # Store account info
             self.account_info = {
-                'account_number': account.account_number,
-                'cash': float(account.cash),
-                'buying_power': float(account.buying_power),
-                'portfolio_value': float(account.portfolio_value),
-                'status': account.status
+                'account_number': account['account_number'],
+                'cash': float(account['cash']),
+                'buying_power': float(account['buying_power']),
+                'portfolio_value': float(account['portfolio_value']),
+                'status': account['status']
             }
             
             # Log successful initialization
             logger.info("=" * 68)
             logger.info("🧪 ALPACA PAPER TRADING - SIMULATION MODE")
             logger.info("=" * 68)
-            logger.info(f"   Account Number: {account.account_number}")
-            logger.info(f"   Cash Available: ${float(account.cash):,.2f}")
-            logger.info(f"   Buying Power: ${float(account.buying_power):,.2f}")
-            logger.info(f"   Portfolio Value: ${float(account.portfolio_value):,.2f}")
-            logger.info(f"   Account Status: {account.status}")
+            logger.info(f"   Account Number: {account['account_number']}")
+            logger.info(f"   Cash Available: ${float(account['cash']):,.2f}")
+            logger.info(f"   Buying Power: ${float(account['buying_power']):,.2f}")
+            logger.info(f"   Portfolio Value: ${float(account['portfolio_value']):,.2f}")
+            logger.info(f"   Account Status: {account['status']}")
             logger.info("   ⚠️  THIS IS SIMULATED TRADING - NO REAL MONEY")
             logger.info("=" * 68)
             
@@ -209,26 +209,26 @@ class AlpacaService:
             # ========== SAFETY CHECK 4: Verify Account is Paper ==========
             self.account_info = self.alpaca.get_account()
             
-            if not self.account_info.account_number.startswith('P'):
+            if not self.account_info['account_number'].startswith('P'):
                 raise AlpacaSafetyError(
                     "❌ SAFETY VIOLATION: Account number does not start with 'P' (Paper Account)! "
-                    f"Account: {self.account_info.account_number}"
+                    f"Account: {self.account_info['account_number']}"
                 )
-            logger.info(f"✅ Safety Check 4: Paper account verified (Account: {self.account_info.account_number})")
+            logger.info(f"✅ Safety Check 4: Paper account verified (Account: {self.account_info['account_number']})")
             
             # ========== SAFETY CHECK 5: Verify Account Status ==========
-            if self.account_info.status != 'ACTIVE':
-                logger.warning(f"⚠️  Account status: {self.account_info.status}")
+            if self.account_info['status'] != 'ACTIVE':
+                logger.warning(f"⚠️  Account status: {self.account_info['status']}")
             
             # Display account information
             logger.info("="*70)
             logger.info("🧪 ALPACA PAPER TRADING - SIMULATION MODE")
             logger.info("="*70)
-            logger.info(f"   Account Number: {self.account_info.account_number}")
-            logger.info(f"   Cash Available: ${float(self.account_info.cash):,.2f}")
-            logger.info(f"   Buying Power: ${float(self.account_info.buying_power):,.2f}")
-            logger.info(f"   Portfolio Value: ${float(self.account_info.portfolio_value):,.2f}")
-            logger.info(f"   Account Status: {self.account_info.status}")
+            logger.info(f"   Account Number: {self.account_info['account_number']}")
+            logger.info(f"   Cash Available: ${float(self.account_info['cash']):,.2f}")
+            logger.info(f"   Buying Power: ${float(self.account_info['buying_power']):,.2f}")
+            logger.info(f"   Portfolio Value: ${float(self.account_info['portfolio_value']):,.2f}")
+            logger.info(f"   Account Status: {self.account_info['status']}")
             logger.info("   ⚠️  THIS IS SIMULATED TRADING - NO REAL MONEY")
             logger.info("="*70)
             
@@ -267,12 +267,12 @@ class AlpacaService:
         try:
             account = self.alpaca.get_account()
             return {
-                'account_number': account.account_number,
-                'cash': float(account.cash),
-                'buying_power': float(account.buying_power),
-                'portfolio_value': float(account.portfolio_value),
-                'equity': float(account.equity),
-                'status': account.status
+                'account_number': account['account_number'],
+                'cash': float(account['cash']),
+                'buying_power': float(account['buying_power']),
+                'portfolio_value': float(account['portfolio_value']),
+                'equity': float(account['equity']),
+                'status': account['status']
             }
         except Exception as e:
             logger.error(f"Error getting account: {e}")
