@@ -34,6 +34,15 @@ services:
         value: 8080
       - key: HOST
         value: 0.0.0.0
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: jain-trading-bot-redis
+          property: connectionString
+      - key: REDIS_ENABLED
+        value: true
+      - key: REDIS_TTL_SECONDS
+        value: 300
     
     # Health monitoring
     healthCheckPath: /health
@@ -47,3 +56,10 @@ databases:
     databaseName: trading_bot
     user: trading_user
     plan: free  # Free PostgreSQL (1GB storage)
+
+# Redis cache for improved performance
+services:
+  - type: redis
+    name: jain-trading-bot-redis
+    plan: free  # Free Redis (0.25GB RAM)
+    maxmemoryPolicy: allkeys-lru
