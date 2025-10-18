@@ -43,6 +43,20 @@ services:
         value: true
       - key: REDIS_TTL_SECONDS
         value: 300
+      - key: APPROVED_CHANNELS
+        value: C09H1R7KKP1,C09HFMTQYDU
+      - key: SESSION_TIMEOUT_MINUTES
+        value: 480
+      - key: MAX_FAILED_ATTEMPTS
+        value: 5
+      - key: ALPACA_PAPER_API_KEY
+        sync: false  # Set in dashboard: your paper API key
+      - key: ALPACA_PAPER_SECRET_KEY
+        sync: false  # Set in dashboard: your paper secret key
+      - key: ALPACA_PAPER_BASE_URL
+        value: https://paper-api.alpaca.markets
+      - key: ALPACA_PAPER_ENABLED
+        value: true
     
     # Health monitoring
     healthCheckPath: /health
