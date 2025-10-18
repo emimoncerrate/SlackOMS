@@ -322,6 +322,37 @@ class PostgreSQLService:
                 logger.error(f"Error updating trade: {e}")
                 raise
     
+    async def update_trade_status(self, user_id: str, trade_id: str, status: str, execution_details: Dict[str, Any]) -> None:
+        """Update trade status and execution details."""
+        with self.get_session() as session:
+            try:
+                trade = session.query(Trade).filter(Trade.trade_id == trade_id).first()
+                if not trade:
+                    logger.warning(f"Trade {trade_id} not found for status update")
+                    return
+                
+                # Update status
+                trade.status = status.upper() if isinstance(status, str) else str(status)
+                
+                # Update execution details
+                if execution_details.get('alpaca_order_id'):
+                    trade.alpaca_order_id = execution_details['alpaca_order_id']
+                
+                if execution_details.get('execution_timestamp'):
+                    from dateutil import parser
+                    trade.executed_at = parser.parse(execution_details['execution_timestamp'])
+                
+                if execution_details.get('execution_price'):
+                    trade.price = Decimal(str(execution_details['execution_price']))
+                
+                session.commit()
+                logger.info(f"Trade {trade_id} status updated to {status}")
+                
+            except Exception as e:
+                session.rollback()
+                logger.error(f"Error updating trade status: {e}")
+                # Don't raise - this is a background update
+    
     # Position operations
     def get_user_positions(self, user_id: str) -> List[Dict[str, Any]]:
         """Get all positions for a user."""
