@@ -701,7 +701,7 @@ class EventHandler:
             f"🎉 *Welcome to Jain Global Trading Bot, {user.profile.display_name}!*\n\n"
             f"Your trading command center is now ready. Here's what you can do:\n\n"
             f"📊 *Dashboard:* View your portfolio, positions, and P&L in the App Home tab\n"
-            f"💼 *Trading:* Use `/trade` in approved channels to execute trades\n"
+            f"💼 *Trading:* Use `/buy` and `/sell` in approved channels to execute trades\n"
             f"🔍 *Risk Analysis:* Get AI-powered risk assessments for all trades\n"
             f"📈 *Market Data:* Access real-time market information\n"
             f"{role_specific}\n"
@@ -716,7 +716,7 @@ class EventHandler:
                 "👋 *Welcome to Jain Global!*\n\n"
                 "You now have access to our Slack Trading Bot. To get started:\n\n"
                 "1. Visit the *App Home* tab to see your dashboard\n"
-                "2. Use `/trade` in approved channels to execute trades\n"
+                "2. Use `/buy` and `/sell` in approved channels to execute trades\n"
                 "3. Use `/help` to see all available commands\n\n"
                 "Your account will be set up shortly. Contact your administrator if you need immediate access."
             )
@@ -736,7 +736,7 @@ class EventHandler:
             message = (
                 f"👋 Welcome to this trading channel, <@{event_context.user_id}>!\n\n"
                 f"This channel is approved for trading commands. You can:\n"
-                f"• Use `/trade` to execute trades\n"
+                f"• Use `/buy` and `/sell` to execute trades\n"
                 f"• Get real-time market data and risk analysis\n"
                 f"• Collaborate with your team on trading decisions\n\n"
                 f"Use `/help` for more information about available commands."

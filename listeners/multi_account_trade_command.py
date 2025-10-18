@@ -1536,7 +1536,7 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                 client.chat_postEphemeral(
                     channel=body.get("channel_id"),
                     user=user_id,
-                    text=f"🚀 Buy {symbol.upper() if symbol else 'stock'} - Quantity: {quantity}\nUse `/trade {symbol} {quantity} buy` to execute."
+                    text=f"🚀 Buy {symbol.upper() if symbol else 'stock'} - Quantity: {quantity}\nUse `/buy {symbol} {quantity}` to execute."
                 )
             except:
                 pass
@@ -1627,7 +1627,7 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                     client.chat_postEphemeral(
                         channel=body.get("channel_id"),
                         user=user_id,
-                        text=f"⚠️ Modal timed out. Use `/trade {symbol} {quantity} sell` as alternative."
+                        text=f"⚠️ Modal timed out. Use `/sell {symbol} {quantity}` as alternative."
                     )
                     
             except Exception as modal_error:
@@ -1637,7 +1637,7 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                 client.chat_postEphemeral(
                     channel=body.get("channel_id"),
                     user=user_id,
-                    text=f"⚠️ Modal timed out. Use `/trade {symbol} {quantity} sell` as alternative."
+                    text=f"⚠️ Modal timed out. Use `/sell {symbol} {quantity}` as alternative."
                 )
                 
         except Exception as e:
@@ -1665,10 +1665,10 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
         """Handle app mentions for testing connectivity."""
         logger.info(f"🤖 APP MENTION RECEIVED: {body}")
         text = body.get('event', {}).get('text', '')
-        if 'trade' in text.lower():
-            say("👋 I received your mention! Try using the `/trade` slash command instead.")
+        if 'trade' in text.lower() or 'buy' in text.lower() or 'sell' in text.lower():
+            say("👋 I received your mention! Try using the `/buy` or `/sell` slash commands instead.")
         else:
-            say("👋 Hello! I'm the trading bot. Use `/trade` to start trading!")
+            say("👋 Hello! I'm the trading bot. Use `/buy` or `/sell` to start trading!")
     
     # Register interactive action handlers for real-time calculations
     from listeners.interactive_actions import InteractiveActionHandler

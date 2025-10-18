@@ -1,7 +1,7 @@
 """
 Comprehensive Slack Command Handlers for Jain Global Trading Bot
 
-This module provides complete command handling functionality including the /trade command
+This module provides complete command handling functionality including the /buy and /sell commands
 with comprehensive channel validation, user authentication, permission checking, command
 routing, parameter parsing, error handling, logging, metrics collection, and audit trail
 generation.
@@ -635,9 +635,9 @@ class CommandHandler:
                     "📊 *Your Portfolio*\n\n"
                     "You don't have any positions yet.\n\n"
                     "💡 *Get Started:*\n"
-                    "• Use `/trade AAPL` to make your first trade\n"
-                    "• Try `/trade TSLA` for Tesla\n"
-                    "• Use `/trade MSFT` for Microsoft\n\n"
+                    "• Use `/buy AAPL` to buy Apple stock\n"
+                    "• Try `/buy TSLA` for Tesla\n"
+                    "• Use `/buy MSFT` for Microsoft\n\n"
                     "📈 Check the *App Home* tab for detailed portfolio analytics."
                 )
             
@@ -769,22 +769,23 @@ class CommandHandler:
         base_help = (
             "🤖 *Jain Global Trading Bot Help*\n\n"
             "*Available Commands:*\n"
-            "• `/trade` - Open enhanced interactive trading interface\n"
-            "• `/trade aapl` - Pre-filled with symbol\n"
-            "• `/trade 500 buy aapl` - Pre-filled trade parameters\n"
+            "• `/buy` - Execute buy orders with interactive interface\n"
+            "• `/sell` - Execute sell orders with interactive interface\n"
+            "• `/positions` - View your current positions\n"
             "• `/portfolio` - View portfolio dashboard (App Home)\n"
             "• `/help` - Show this help message\n"
             "• `/status` - Show system and user status\n\n"
-            "*Enhanced Trade Features:*\n"
+            "*Trading Features:*\n"
             "• 🧮 Real-time GMV ↔ Shares calculations\n"
             "• 📊 Live market data and price updates\n"
             "• 🎯 Multiple order types (Market, Limit, Stop, Stop Limit)\n"
             "• ⚡ Dynamic field updates as you type\n"
             "• 🔄 Interactive calculations and validations\n\n"
-            "*Trade Command Formats:*\n"
-            "• `/trade [symbol]` - Open with symbol pre-filled\n"
-            "• `/trade [quantity] [buy/sell] [symbol]`\n"
-            "• `/trade [buy/sell] [quantity] [symbol]`\n\n"
+            "*Command Formats:*\n"
+            "• `/buy AAPL` - Buy Apple stock with interactive modal\n"
+            "• `/buy 100 AAPL` - Buy 100 shares of Apple\n"
+            "• `/sell TSLA` - Sell Tesla stock with interactive modal\n"
+            "• `/sell 50 TSLA` - Sell 50 shares of Tesla\n\n"
         )
         
         role_specific = ""
@@ -812,7 +813,8 @@ class CommandHandler:
         
         usage_tips = (
             "*Usage Tips:*\n"
-            "• Use `/trade AAPL` to open interactive modal with live AAPL data\n"
+            "• Use `/buy AAPL` to open interactive modal with live AAPL data\n"
+            "• Use `/sell TSLA` to sell Tesla shares with live pricing\n"
             "• Type in Shares field → GMV auto-calculates\n"
             "• Type in GMV field → Shares auto-calculates\n"
             "• Change symbol → Live price updates automatically\n"
@@ -1023,7 +1025,7 @@ def register_command_handlers(app: App, service_container: Optional['ServiceCont
                         
                         position_text += f"*Total Portfolio Value: ${total_value:,.2f}*"
                     else:
-                        position_text = "📊 You don't have any positions yet.\n\nUse `/trade AAPL` to make your first trade!"
+                        position_text = "📊 You don't have any positions yet.\n\nUse `/buy AAPL` to make your first trade!"
                     
                     return position_text
                     
