@@ -50,9 +50,9 @@ services:
       - key: MAX_FAILED_ATTEMPTS
         value: 5
       - key: ALPACA_PAPER_API_KEY
-        sync: false  # Set in dashboard: your paper API key
+        sync: false  # Set in dashboard: PKBP0EO6JAUDARK9BAJK
       - key: ALPACA_PAPER_SECRET_KEY
-        sync: false  # Set in dashboard: your paper secret key
+        sync: false  # Set in dashboard: KIhKDwfNmtYY6I0lJ5IjAmJUyrVnQcDVjmfscvcD
       - key: ALPACA_PAPER_BASE_URL
         value: https://paper-api.alpaca.markets
       - key: ALPACA_PAPER_ENABLED
