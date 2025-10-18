@@ -768,7 +768,7 @@ fastapi_app.add_middleware(
 if config.environment.value == 'production':
     fastapi_app.add_middleware(
         TrustedHostMiddleware,
-        allowed_hosts=["*.amazonaws.com", "*.slack.com"]
+        allowed_hosts=["*.amazonaws.com", "*.slack.com", "*.onrender.com", "slackoms.onrender.com"]
     )
 
 @fastapi_app.get("/health")
