@@ -1474,12 +1474,12 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                         finally:
                             loop.close()
                     
-                    # Try to get price quickly (timeout after 100ms)
+                    # Try to get price quickly (timeout after 1 second)
                     import concurrent.futures
                     with concurrent.futures.ThreadPoolExecutor() as executor:
                         future = executor.submit(fetch_price)
                         try:
-                            price_text = future.result(timeout=0.1)  # 100ms timeout
+                            price_text = future.result(timeout=1.0)  # 1 second timeout
                         except concurrent.futures.TimeoutError:
                             price_text = "Loading..."
                             
