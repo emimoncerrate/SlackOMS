@@ -945,6 +945,7 @@ async def services_status():
 @fastapi_app.get("/")
 async def root():
     """Root endpoint with basic application information."""
+    print("🔍 ROOT ENDPOINT CALLED")
     return {
         'application': config.app_name,
         'version': config.app_version,
@@ -952,7 +953,9 @@ async def root():
         'status': 'running',
         'timestamp': datetime.now(timezone.utc).isoformat(),
         'services_healthy': len([s for s in service_container.get_service_status()['services'].values() 
-                               if s.get('health_status', False)]) if service_container else 0
+                               if s.get('health_status', False)]) if service_container else 0,
+        'slack_commands': ['buy', 'sell', 'help', 'status', 'positions', 'portfolio'],
+        'debug': 'Commands should work now with better error handling'
     }
 
 @fastapi_app.post("/slack/events")

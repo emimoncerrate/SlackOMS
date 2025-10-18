@@ -1091,16 +1091,70 @@ def register_command_handlers(app: App, service_container: Optional['ServiceCont
     @app.command("/help")
     async def handle_help_command(ack, body, client, context):
         """Handle the /help slash command."""
-        await command_handler.process_command(
-            CommandType.HELP, body, client, ack, context
-        )
+        try:
+            print("🔍 HELP COMMAND DEBUG: Starting help command")
+            logger.info("🔍 HELP COMMAND DEBUG: Starting help command")
+            
+            await ack()  # Acknowledge immediately
+            print("🔍 HELP COMMAND DEBUG: ACK sent")
+            
+            await command_handler.process_command(
+                CommandType.HELP, body, client, ack, context
+            )
+            print("🔍 HELP COMMAND DEBUG: Command processed successfully")
+            
+        except Exception as e:
+            print(f"❌ HELP COMMAND ERROR: {e}")
+            logger.error(f"❌ HELP COMMAND ERROR: {e}")
+            logger.error(f"❌ HELP COMMAND TRACEBACK: {traceback.format_exc()}")
+            
+            try:
+                await ack()  # Try to ack if not already done
+            except:
+                pass
+                
+            try:
+                await client.chat_postEphemeral(
+                    channel=body.get("channel_id"),
+                    user=body.get("user_id"),
+                    text=f"❌ Help command failed: {str(e)}\n\nPlease contact support."
+                )
+            except Exception as post_error:
+                print(f"❌ Failed to send error message: {post_error}")
     
     @app.command("/status")
     async def handle_status_command(ack, body, client, context):
         """Handle the /status slash command."""
-        await command_handler.process_command(
-            CommandType.STATUS, body, client, ack, context
-        )
+        try:
+            print("🔍 STATUS COMMAND DEBUG: Starting status command")
+            logger.info("🔍 STATUS COMMAND DEBUG: Starting status command")
+            
+            await ack()  # Acknowledge immediately
+            print("🔍 STATUS COMMAND DEBUG: ACK sent")
+            
+            await command_handler.process_command(
+                CommandType.STATUS, body, client, ack, context
+            )
+            print("🔍 STATUS COMMAND DEBUG: Command processed successfully")
+            
+        except Exception as e:
+            print(f"❌ STATUS COMMAND ERROR: {e}")
+            logger.error(f"❌ STATUS COMMAND ERROR: {e}")
+            logger.error(f"❌ STATUS COMMAND TRACEBACK: {traceback.format_exc()}")
+            
+            try:
+                await ack()  # Try to ack if not already done
+            except:
+                pass
+                
+            try:
+                await client.chat_postEphemeral(
+                    channel=body.get("channel_id"),
+                    user=body.get("user_id"),
+                    text=f"❌ Status command failed: {str(e)}\n\nPlease contact support."
+                )
+            except Exception as post_error:
+                print(f"❌ Failed to send error message: {post_error}")
     
     # Store handler globally for metrics access
     global _command_handler

@@ -1414,9 +1414,18 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
         import time
         start_time = time.time()
         
-        # Immediate acknowledgment and terminal feedback
-        ack()
-        ack_time = time.time()
+        try:
+            print("🔍 BUY COMMAND DEBUG: Starting buy command")
+            logger.info("🔍 BUY COMMAND DEBUG: Starting buy command")
+            
+            # Immediate acknowledgment and terminal feedback
+            ack()
+            ack_time = time.time()
+            print("🔍 BUY COMMAND DEBUG: ACK sent successfully")
+        except Exception as e:
+            print(f"❌ BUY COMMAND ACK ERROR: {e}")
+            logger.error(f"❌ BUY COMMAND ACK ERROR: {e}")
+            return
         
         user_id = body.get("user_id", "Unknown")
         command_text = body.get("text", "")
@@ -1549,9 +1558,18 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
         import time
         start_time = time.time()
         
-        # Immediate acknowledgment and terminal feedback
-        ack()
-        ack_time = time.time()
+        try:
+            print("🔍 SELL COMMAND DEBUG: Starting sell command")
+            logger.info("🔍 SELL COMMAND DEBUG: Starting sell command")
+            
+            # Immediate acknowledgment and terminal feedback
+            ack()
+            ack_time = time.time()
+            print("🔍 SELL COMMAND DEBUG: ACK sent successfully")
+        except Exception as e:
+            print(f"❌ SELL COMMAND ACK ERROR: {e}")
+            logger.error(f"❌ SELL COMMAND ACK ERROR: {e}")
+            return
         
         user_id = body.get("user_id", "Unknown")
         command_text = body.get("text", "")
