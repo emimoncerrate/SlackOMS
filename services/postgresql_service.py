@@ -54,6 +54,7 @@ class Trade(Base):
     trade_type = Column(String, nullable=False)  # BUY, SELL
     price = Column(Numeric(15, 4), nullable=False)
     gmv = Column(Numeric(15, 4), nullable=False)  # Gross Market Value
+    portfolio_name = Column(String, nullable=False, default='default')  # Portfolio name
     status = Column(String, nullable=False, default='PENDING')
     alpaca_order_id = Column(String)
     executed_at = Column(DateTime(timezone=True))
@@ -145,6 +146,7 @@ class PostgreSQLService:
                     ("trade_type", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS trade_type VARCHAR(10) NOT NULL DEFAULT 'BUY';"),
                     ("price", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS price NUMERIC(15, 4) NOT NULL DEFAULT 0.0;"),
                     ("gmv", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS gmv NUMERIC(15, 4) NOT NULL DEFAULT 0.0;"),
+                    ("portfolio_name", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS portfolio_name VARCHAR(255) NOT NULL DEFAULT 'default';"),
                     ("status", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS status VARCHAR(20) NOT NULL DEFAULT 'PENDING';"),
                     ("alpaca_order_id", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS alpaca_order_id VARCHAR(255);"),
                     ("executed_at", "ALTER TABLE trades ADD COLUMN IF NOT EXISTS executed_at TIMESTAMPTZ;"),
@@ -258,6 +260,7 @@ class PostgreSQLService:
                     trade_type=trade_type,
                     price=Decimal(str(trade_data['price'])),
                     gmv=Decimal(str(trade_data.get('gmv', trade_data['quantity'] * trade_data['price']))),
+                    portfolio_name=trade_data.get('portfolio_name', 'default'),  # Add portfolio_name
                     status=trade_data.get('status', 'PENDING').upper(),
                     alpaca_order_id=trade_data.get('alpaca_order_id'),
                     executed_at=trade_data.get('executed_at')
@@ -439,6 +442,7 @@ class PostgreSQLService:
             'trade_type': trade.trade_type,
             'price': float(trade.price),
             'gmv': float(trade.gmv),
+            'portfolio_name': trade.portfolio_name,
             'status': trade.status,
             'alpaca_order_id': trade.alpaca_order_id,
             'executed_at': trade.executed_at.isoformat() if trade.executed_at else None,

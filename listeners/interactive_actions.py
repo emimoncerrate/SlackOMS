@@ -628,6 +628,7 @@ class InteractiveActionHandler:
                 'trade_type': trade.trade_type.value,
                 'price': float(trade.price),
                 'gmv': gmv_value,
+                'portfolio_name': getattr(trade, 'portfolio_name', 'personal'),  # Default to 'personal'
                 'status': trade.status.value,
                 'alpaca_order_id': None,
                 'executed_at': None
