@@ -1208,6 +1208,22 @@ async def _fetch_and_update_price(symbol: str, view_id: str, client: WebClient) 
     try:
         print(f"🔄 BUY PRICE FETCH: Starting for {symbol}")
         
+        # Get the current view to extract quantity
+        try:
+            view_info = client.views_info(view=view_id)
+            current_view = view_info.get("view", {})
+            values = current_view.get("state", {}).get("values", {})
+            
+            # Extract current quantity from modal state
+            qty_block = values.get("qty_shares_block", {})
+            current_quantity = qty_block.get("shares_input", {}).get("value", "1")
+            if not current_quantity or current_quantity.strip() == "":
+                current_quantity = "1"
+            print(f"✅ BUY PRICE FETCH: Current quantity in modal: {current_quantity}")
+        except Exception as e:
+            print(f"⚠️ BUY PRICE FETCH: Could not extract quantity, using default: {e}")
+            current_quantity = "1"
+        
         # Import here to avoid circular imports
         from services.service_container import get_market_data_service
         
@@ -1219,8 +1235,8 @@ async def _fetch_and_update_price(symbol: str, view_id: str, client: WebClient) 
         current_price = float(quote.current_price)
         print(f"✅ BUY PRICE FETCH: Got price ${current_price:.2f} for {symbol}")
         
-        # Update the modal with the new price
-        updated_modal = _create_instant_buy_modal_with_price(symbol, "1", current_price)
+        # Update the modal with the new price using actual quantity
+        updated_modal = _create_instant_buy_modal_with_price(symbol, current_quantity, current_price)
         
         response = client.views_update(
             view_id=view_id,
@@ -1228,7 +1244,7 @@ async def _fetch_and_update_price(symbol: str, view_id: str, client: WebClient) 
         )
         
         if response.get("ok"):
-            print(f"✅ BUY PRICE FETCH: Modal updated with ${current_price:.2f}")
+            print(f"✅ BUY PRICE FETCH: Modal updated with ${current_price:.2f} (qty: {current_quantity})")
         else:
             print(f"❌ BUY PRICE FETCH: Modal update failed: {response}")
             
@@ -1243,6 +1259,22 @@ async def _fetch_and_update_sell_price(symbol: str, view_id: str, client: WebCli
     try:
         print(f"🔄 SELL PRICE FETCH: Starting for {symbol}")
         
+        # Get the current view to extract quantity
+        try:
+            view_info = client.views_info(view=view_id)
+            current_view = view_info.get("view", {})
+            values = current_view.get("state", {}).get("values", {})
+            
+            # Extract current quantity from modal state
+            qty_block = values.get("qty_shares_block", {})
+            current_quantity = qty_block.get("shares_input", {}).get("value", "1")
+            if not current_quantity or current_quantity.strip() == "":
+                current_quantity = "1"
+            print(f"✅ SELL PRICE FETCH: Current quantity in modal: {current_quantity}")
+        except Exception as e:
+            print(f"⚠️ SELL PRICE FETCH: Could not extract quantity, using default: {e}")
+            current_quantity = "1"
+        
         # Import here to avoid circular imports
         from services.service_container import get_market_data_service
         
@@ -1254,8 +1286,8 @@ async def _fetch_and_update_sell_price(symbol: str, view_id: str, client: WebCli
         current_price = float(quote.current_price)
         print(f"✅ SELL PRICE FETCH: Got price ${current_price:.2f} for {symbol}")
         
-        # Update the modal with the new price (sell modal)
-        updated_modal = _create_instant_sell_modal_with_price(symbol, "1", current_price)
+        # Update the modal with the new price (sell modal) using actual quantity
+        updated_modal = _create_instant_sell_modal_with_price(symbol, current_quantity, current_price)
         
         response = client.views_update(
             view_id=view_id,
@@ -1263,7 +1295,7 @@ async def _fetch_and_update_sell_price(symbol: str, view_id: str, client: WebCli
         )
         
         if response.get("ok"):
-            print(f"✅ SELL PRICE FETCH: Modal updated with ${current_price:.2f}")
+            print(f"✅ SELL PRICE FETCH: Modal updated with ${current_price:.2f} (qty: {current_quantity})")
         else:
             print(f"❌ SELL PRICE FETCH: Modal update failed: {response}")
             
@@ -1278,6 +1310,22 @@ async def _fetch_and_update_buy_price(symbol: str, view_id: str, client: WebClie
     try:
         print(f"🔄 BUY PRICE FETCH: Starting for {symbol}")
         
+        # Get the current view to extract quantity
+        try:
+            view_info = client.views_info(view=view_id)
+            current_view = view_info.get("view", {})
+            values = current_view.get("state", {}).get("values", {})
+            
+            # Extract current quantity from modal state
+            qty_block = values.get("qty_shares_block", {})
+            current_quantity = qty_block.get("shares_input", {}).get("value", "1")
+            if not current_quantity or current_quantity.strip() == "":
+                current_quantity = "1"
+            print(f"✅ BUY PRICE FETCH: Current quantity in modal: {current_quantity}")
+        except Exception as e:
+            print(f"⚠️ BUY PRICE FETCH: Could not extract quantity, using default: {e}")
+            current_quantity = "1"
+        
         # Import here to avoid circular imports
         from services.service_container import get_market_data_service
         
@@ -1289,8 +1337,8 @@ async def _fetch_and_update_buy_price(symbol: str, view_id: str, client: WebClie
         current_price = float(quote.current_price)
         print(f"✅ BUY PRICE FETCH: Got price ${current_price:.2f} for {symbol}")
         
-        # Update the modal with the new price (buy modal)
-        updated_modal = _create_instant_buy_modal_with_price(symbol, "1", current_price)
+        # Update the modal with the new price (buy modal) using actual quantity
+        updated_modal = _create_instant_buy_modal_with_price(symbol, current_quantity, current_price)
         
         response = client.views_update(
             view_id=view_id,
@@ -1298,7 +1346,7 @@ async def _fetch_and_update_buy_price(symbol: str, view_id: str, client: WebClie
         )
         
         if response.get("ok"):
-            print(f"✅ BUY PRICE FETCH: Modal updated with ${current_price:.2f}")
+            print(f"✅ BUY PRICE FETCH: Modal updated with ${current_price:.2f} (qty: {current_quantity})")
         else:
             print(f"❌ BUY PRICE FETCH: Modal update failed: {response}")
             
