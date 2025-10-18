@@ -352,7 +352,7 @@ class TradeWidget:
     def _get_modal_config(self, context: WidgetContext) -> Dict[str, str]:
         """Get modal configuration based on state and theme."""
         base_config = {
-            'title': 'Execute Trade',
+            'title': "Emily's Trading Bot",
             'submit_text': 'Execute Trade'
         }
         

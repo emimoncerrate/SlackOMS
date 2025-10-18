@@ -28,6 +28,11 @@ from services.auth import AuthService
 
 logger = logging.getLogger(__name__)
 
+# Allowed channels where bot commands work
+ALLOWED_CHANNELS = [
+    "C09LMSYFH1S",  # Trading channel
+]
+
 
 class MultiAccountTradeCommand(EnhancedTradeCommand):
     """
@@ -1750,8 +1755,22 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
             return
         
         user_id = body.get("user_id", "Unknown")
+        channel_id = body.get("channel_id")
         command_text = body.get("text", "")
         trigger_id = body.get("trigger_id")
+        
+        # Check if command is from allowed channel
+        if channel_id not in ALLOWED_CHANNELS:
+            logger.warning(f"User {user_id} tried to use /buy in unauthorized channel {channel_id}")
+            try:
+                client.chat_postEphemeral(
+                    channel=channel_id,
+                    user=user_id,
+                    text="⚠️ This bot is only available in the designated trading channel."
+                )
+            except Exception as e:
+                logger.error(f"Error sending channel restriction message: {e}")
+            return
         
         # Immediate terminal feedback
         logger.info("=" * 60)
@@ -1871,8 +1890,22 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
             return
         
         user_id = body.get("user_id", "Unknown")
+        channel_id = body.get("channel_id")
         command_text = body.get("text", "")
         trigger_id = body.get("trigger_id")
+        
+        # Check if command is from allowed channel
+        if channel_id not in ALLOWED_CHANNELS:
+            logger.warning(f"User {user_id} tried to use /sell in unauthorized channel {channel_id}")
+            try:
+                client.chat_postEphemeral(
+                    channel=channel_id,
+                    user=user_id,
+                    text="⚠️ This bot is only available in the designated trading channel."
+                )
+            except Exception as e:
+                logger.error(f"Error sending channel restriction message: {e}")
+            return
         
         # Immediate terminal feedback
         logger.info("=" * 60)
