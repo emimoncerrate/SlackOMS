@@ -8,8 +8,7 @@ import logging
 from typing import Optional, Dict, Any, List
 from decimal import Decimal
 from datetime import datetime
-import alpaca_trade_api as tradeapi
-from alpaca_trade_api.rest import APIError
+from services.simple_alpaca_client import SimpleAlpacaClient
 
 logger = logging.getLogger(__name__)
 
@@ -95,12 +94,10 @@ class AlpacaService:
             self._validate_paper_trading_safety(api_key, base_url)
             
             # Initialize Alpaca client (synchronous)
-            import alpaca_trade_api as tradeapi
-            self.alpaca = tradeapi.REST(
-                key_id=api_key,
+            self.alpaca = SimpleAlpacaClient(
+                api_key=api_key,
                 secret_key=secret_key,
-                base_url=base_url,
-                api_version='v2'
+                base_url=base_url
             )
             
             logger.info("🔌 Connecting to Alpaca Paper Trading API...")
@@ -203,11 +200,10 @@ class AlpacaService:
             
             # Initialize Alpaca client
             logger.info("🔌 Connecting to Alpaca Paper Trading API...")
-            self.alpaca = tradeapi.REST(
-                api_key,
-                secret_key,
-                base_url,
-                api_version='v2'
+            self.alpaca = SimpleAlpacaClient(
+                api_key=api_key,
+                secret_key=secret_key,
+                base_url=base_url
             )
             
             # ========== SAFETY CHECK 4: Verify Account is Paper ==========
@@ -244,12 +240,13 @@ class AlpacaService:
             logger.error("🛑 ALPACA INITIALIZATION BLOCKED FOR SAFETY")
             raise
             
-        except APIError as e:
-            logger.error(f"❌ Alpaca API Error: {e}")
-            logger.error("🚨 CRITICAL: Alpaca Paper Trading service failed to initialize")
-            print(f"🚨 ALPACA SERVICE FAILURE: {e}")
-            print("🚨 ALL TRADES WILL FAIL - NO FALLBACK TO MOCK DATA")
-            self.is_initialized = False
+        except Exception as e:
+            if "API" in str(e) or "401" in str(e) or "403" in str(e):
+                logger.error(f"❌ Alpaca API Error: {e}")
+                logger.error("🚨 CRITICAL: Alpaca Paper Trading service failed to initialize")
+                print(f"🚨 ALPACA SERVICE FAILURE: {e}")
+                print("🚨 ALL TRADES WILL FAIL - NO FALLBACK TO MOCK DATA")
+                self.is_initialized = False
             
         except Exception as e:
             logger.error(f"❌ Failed to initialize Alpaca: {e}")
@@ -331,9 +328,10 @@ class AlpacaService:
                 'filled_avg_price': float(order.filled_avg_price) if order.filled_avg_price else None
             }
             
-        except APIError as e:
-            logger.error(f"❌ Alpaca API Error submitting order: {e}")
-            return None
+        except Exception as e:
+            if "API" in str(e) or "401" in str(e) or "403" in str(e):
+                logger.error(f"❌ Alpaca API Error submitting order: {e}")
+                return None
         except Exception as e:
             logger.error(f"❌ Error submitting order: {e}")
             return None

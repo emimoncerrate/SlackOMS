@@ -121,13 +121,13 @@ def test_alpaca_api() -> Tuple[bool, str]:
         return False, "ALPACA_SECRET_KEY is not set"
     
     try:
-        # Try to import alpaca-trade-api
-        import alpaca_trade_api as tradeapi
+        # Try to import our custom Alpaca client
+        from services.simple_alpaca_client import SimpleAlpacaClient
         
         # Create API instance
-        api = tradeapi.REST(
-            api_key, 
-            secret_key, 
+        api = SimpleAlpacaClient(
+            api_key=api_key, 
+            secret_key=secret_key, 
             base_url='https://paper-api.alpaca.markets'
         )
         
@@ -135,12 +135,12 @@ def test_alpaca_api() -> Tuple[bool, str]:
         account = api.get_account()
         
         if account:
-            return True, f"Alpaca API is working (Account: {account.status}, Buying Power: ${float(account.buying_power):,.2f})"
+            return True, f"Alpaca API is working (Account: {account.get('status', 'Unknown')}, Buying Power: ${account.get('buying_power', 0):,.2f})"
         else:
             return False, "Alpaca API returned no account data"
             
     except ImportError:
-        return False, "alpaca-trade-api package not installed. Run: pip install alpaca-trade-api"
+        return False, "SimpleAlpacaClient not available. Check services/simple_alpaca_client.py"
     except Exception as e:
         error_msg = str(e)
         if "401" in error_msg or "unauthorized" in error_msg.lower():

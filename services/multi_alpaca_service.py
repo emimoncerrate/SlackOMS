@@ -10,8 +10,7 @@ import os
 from typing import Dict, Optional, List, Any, Tuple
 from dataclasses import dataclass
 from datetime import datetime, timezone
-import alpaca_trade_api as tradeapi
-from alpaca_trade_api.rest import APIError
+from services.simple_alpaca_client import SimpleAlpacaClient
 
 logger = logging.getLogger(__name__)
 
@@ -43,7 +42,7 @@ class MultiAlpacaService:
     
     def __init__(self):
         self.accounts: Dict[str, AlpacaAccountConfig] = {}
-        self.api_clients: Dict[str, tradeapi.REST] = {}
+        self.api_clients: Dict[str, SimpleAlpacaClient] = {}
         self.account_status: Dict[str, Dict[str, Any]] = {}
         
         self._load_account_configurations()
@@ -121,11 +120,10 @@ class MultiAlpacaService:
         for account_id, config in self.accounts.items():
             try:
                 if config.is_active:
-                    api_client = tradeapi.REST(
-                        key_id=config.api_key,
+                    api_client = SimpleAlpacaClient(
+                        api_key=config.api_key,
                         secret_key=config.secret_key,
-                        base_url=config.base_url,
-                        api_version='v2'
+                        base_url=config.base_url
                     )
                     
                     # Test the connection
@@ -168,7 +166,7 @@ class MultiAlpacaService:
             if config.is_active and account_id in self.api_clients
         }
     
-    def get_account_client(self, account_id: str) -> Optional[tradeapi.REST]:
+    def get_account_client(self, account_id: str) -> Optional[SimpleAlpacaClient]:
         """
         Get API client for a specific account.
         
@@ -288,9 +286,10 @@ class MultiAlpacaService:
                 'account_id': account_id
             }
             
-        except APIError as e:
-            logger.error(f"Alpaca API error executing trade on {account_id}: {e}")
-            return None
+        except Exception as e:
+            if "API" in str(e) or "401" in str(e) or "403" in str(e):
+                logger.error(f"Alpaca API error executing trade on {account_id}: {e}")
+                return None
         except Exception as e:
             logger.error(f"Error executing trade on {account_id}: {e}")
             return None

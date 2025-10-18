@@ -1,27 +1,27 @@
-# Core Slack bot dependencies
-slack-bolt==1.18.0
-slack-sdk==3.23.0
+# Core Slack bot dependencies (Python 3.13 compatible)
+slack-bolt==1.21.2
+slack-sdk==3.34.0
 
 # Web framework for HTTP endpoints
-fastapi==0.104.1
-uvicorn[standard]==0.24.0
+fastapi==0.115.0
+uvicorn[standard]==0.32.1
 
 # Environment and configuration
-python-dotenv==1.0.0
+python-dotenv==1.0.1
 
 # HTTP requests
-requests==2.31.0
+requests==2.32.3
 
 # Database - PostgreSQL
-psycopg2-binary==2.9.7
-sqlalchemy==2.0.23
+psycopg2-binary==2.9.11
+sqlalchemy==2.0.36
 
 # Market data (Required)
-finnhub-python==2.4.18
-
-# Trading APIs (Required)
-alpaca-trade-api==3.0.2
+finnhub-python==2.4.25
 
 # Utilities
-structlog==23.1.0
-python-dateutil==2.8.2
+structlog==24.5.0
+python-dateutil==2.9.0
+
+# Note: Removed alpaca-trade-api due to Python 3.13 compatibility issues
+# Will implement direct REST API calls for Alpaca integration
