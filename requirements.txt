@@ -26,5 +26,21 @@ python-dateutil==2.9.0
 # AWS SDK (for Lambda adapter compatibility)
 boto3==1.35.67
 
+# JWT for authentication
+PyJWT==2.10.1
+
+# Async HTTP client
+aiohttp==3.11.10
+
+# Redis for caching
+redis==5.2.1
+
+# Retry logic
+tenacity==9.0.0
+backoff==2.2.1
+
+# Metrics and monitoring
+prometheus-client==0.21.1
+
 # Note: Removed alpaca-trade-api due to Python 3.13 compatibility issues
 # Will implement direct REST API calls for Alpaca integration
