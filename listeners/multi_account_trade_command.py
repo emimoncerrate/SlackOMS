@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 
 # Allowed channels where bot commands work
 ALLOWED_CHANNELS = [
-    "C09LMSYFH1S",  # Trading channel
+    "C09H1R7KKP1",  # Trading channel
 ]
 
 
