@@ -477,11 +477,15 @@ def register_middleware(app: App) -> None:
                 
                 # In production, block unapproved channels
                 if config.environment.value == 'production':
-                    return {
-                        "response_type": "ephemeral",
-                        "text": "🚫 This bot is not authorized to operate in this channel. "
-                               "Please contact your administrator for access."
-                    }
+                    from slack_bolt import BoltResponse
+                    return BoltResponse(
+                        status=403,
+                        body={
+                            "response_type": "ephemeral",
+                            "text": "🚫 This bot is not authorized to operate in this channel. "
+                                   "Please contact your administrator for access."
+                        }
+                    )
         
         # Additional security checks
         user_id = body.get('user_id')
