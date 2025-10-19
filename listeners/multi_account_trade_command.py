@@ -793,7 +793,8 @@ class MultiAccountTradeCommand(EnhancedTradeCommand):
             client: Slack WebClient instance
             context: Bolt context
         """
-        ack()
+        # Acknowledge with clear to close modal without showing any message
+        ack(response_action="clear")
         
         try:
             self._get_services()
