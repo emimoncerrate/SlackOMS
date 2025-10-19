@@ -2281,10 +2281,8 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
     @app.view("stock_trade_modal_interactive")
     def handle_trade_modal_submission(ack, body, client, logger):
         """Handle trade modal submission."""
-        # Acknowledge and close the modal
-        ack({
-            "response_action": "clear"
-        })
+        # Acknowledge and close the modal (empty ack closes the modal)
+        ack()
         
         try:
             # Extract values from modal
@@ -2449,30 +2447,6 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                 
                 # Execute trade in background
                 execute_trade_async()
-                
-                # Try to close the modal manually
-                try:
-                    view_id = body.get("view", {}).get("id")
-                    if view_id:
-                        client.views_update(
-                            view_id=view_id,
-                            view={
-                                "type": "modal",
-                                "title": {"type": "plain_text", "text": "Trade Submitted"},
-                                "close": {"type": "plain_text", "text": "Close"},
-                                "blocks": [
-                                    {
-                                        "type": "section",
-                                        "text": {
-                                            "type": "mrkdwn",
-                                            "text": "✅ *Trade submitted successfully!*\n\nCheck the channel for confirmation details."
-                                        }
-                                    }
-                                ]
-                            }
-                        )
-                except Exception as modal_error:
-                    logger.warning(f"Could not update modal: {modal_error}")
                 
             except Exception as immediate_error:
                 logger.error(f"❌ Immediate response error: {immediate_error}")
