@@ -2536,13 +2536,8 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                             
                             logger.info(f"TRADE EXECUTED: Order ID {order_id}, Status: {status}")
                             
-                            # Get company description from Finnhub API
-                            company_name = loop.run_until_complete(self._get_company_description(symbol))
-                            
-                            # Remove emojis from company name if present
-                            import re
-                            company_display = re.sub(r'[^\w\s\-\.\(\)&]', '', company_name).strip()
-                            
+                            # Simple success message without company description lookup
+                            # (Company description requires async context which isn't available here)
                             success_blocks = [
                                 {
                                     "type": "section",
@@ -2555,7 +2550,7 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                                     "type": "section",
                                     "text": {
                                         "type": "mrkdwn",
-                                        "text": f"*Order Details:*\n• Symbol: {symbol}{f' - {company_display}' if company_display != symbol else ''}\n• Action: {trade_side.upper()}\n• Quantity: {qty_int:,} shares\n• Order Type: {order_type.title()}{f'\n• Limit Price: ${limit_price:.2f}' if limit_price else ''}\n• Order ID: {order_id}\n• Status: {status}"
+                                        "text": f"*Order Details:*\n• Symbol: {symbol}\n• Action: {trade_side.upper()}\n• Quantity: {qty_int:,} shares\n• Order Type: {order_type.title()}{f'\n• Limit Price: ${limit_price:.2f}' if limit_price else ''}\n• Order ID: {order_id}\n• Status: {status}"
                                     }
                                 }
                             ]
@@ -2588,11 +2583,7 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                     except Exception as trade_error:
                         logger.error(f"❌ TRADE EXECUTION ERROR: {trade_error}")
                         
-                        # Get company description from Finnhub API and remove emojis
-                        import re
-                        company_name = loop.run_until_complete(self._get_company_description(symbol))
-                        company_display = re.sub(r'[^\w\s\-\.\(\)&]', '', company_name).strip()
-                        
+                        # Simple error message without company description lookup
                         error_blocks = [
                             {
                                 "type": "section",
@@ -2605,7 +2596,7 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                                 "type": "section",
                                 "text": {
                                     "type": "mrkdwn",
-                                    "text": f"Error: {str(trade_error)}\n\n*Attempted Trade:*\n• Symbol: {symbol}{f' - {company_display}' if company_display != symbol else ''}\n• Action: {trade_side.upper()}\n• Quantity: {quantity} shares\n• Order Type: {order_type}{f'\n• Limit Price: ${limit_price:.2f}' if limit_price else ''}\n\nPlease check your inputs and try again."
+                                    "text": f"Error: {str(trade_error)}\n\n*Attempted Trade:*\n• Symbol: {symbol}\n• Action: {trade_side.upper()}\n• Quantity: {quantity} shares\n• Order Type: {order_type}{f'\n• Limit Price: ${limit_price:.2f}' if limit_price else ''}\n\nPlease check your inputs and try again."
                                 }
                             }
                         ]
@@ -2629,13 +2620,8 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
             
             # Send immediate confirmation and start background execution
             try:
-                # Get company description from Finnhub API and remove emojis
-                import asyncio
-                import re
-                company_name = asyncio.run(_get_company_description_standalone(symbol))
-                company_display = re.sub(r'[^\w\s\-\.\(\)&]', '', company_name).strip()
-                
-                # Send public message in channel
+                # Send simple processing message without company description
+                # (Company description will be added in the success message)
                 processing_blocks = [
                     {
                         "type": "section",
@@ -2648,7 +2634,7 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                         "type": "section",
                         "text": {
                             "type": "mrkdwn",
-                            "text": f"*Order Details:*\n• Symbol: {symbol}{f' - {company_display}' if company_display != symbol else ''}\n• Action: {trade_side.upper()}\n• Quantity: {quantity} shares\n• Order Type: {order_type.title()}{f'\n• Limit Price: ${limit_price:.2f}' if limit_price else ''}\n\nSubmitting to Alpaca Paper Trading..."
+                            "text": f"*Order Details:*\n• Symbol: {symbol}\n• Action: {trade_side.upper()}\n• Quantity: {quantity} shares\n• Order Type: {order_type.title()}{f'\n• Limit Price: ${limit_price:.2f}' if limit_price else ''}\n\nSubmitting to Alpaca Paper Trading..."
                         }
                     }
                 ]
