@@ -794,10 +794,10 @@ class InteractiveActionHandler:
         try:
             # Determine execution method
             if execution_result.alpaca_order_id:
-                execution_method = "🧪 Alpaca Paper Trading"
+                execution_method = "Alpaca Paper Trading"
                 method_details = f"*Alpaca Order ID:* `{execution_result.alpaca_order_id}`"
             else:
-                execution_method = "🎯 Simulation"
+                execution_method = "Simulation"
                 method_details = "*Method:* Simulated execution"
             
             # Format execution details

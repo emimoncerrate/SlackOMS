@@ -1465,8 +1465,8 @@ def _create_instant_buy_modal_with_price(symbol: str = "", quantity: str = "1", 
     if price is not None:
         for block in modal["blocks"]:
             if block.get("block_id") == "current_price_display":
-                change_emoji = "📈"  # Default to positive
-                block["text"]["text"] = f"*Current Stock Price:* *${price:.2f}* {change_emoji}"
+                change_emoji = ""  # Default to positive
+                block["text"]["text"] = f"*Current Stock Price:* ${price:.2f}"
                 break
         
         # Calculate and populate initial GMV
@@ -1589,8 +1589,8 @@ def _create_instant_sell_modal_with_price(symbol: str = "", quantity: str = "1",
     if price is not None:
         for block in modal["blocks"]:
             if block.get("block_id") == "current_price_display":
-                change_emoji = "📉"  # Default to negative for sell
-                block["text"]["text"] = f"*Current Stock Price:* *${price:.2f}* {change_emoji}"
+                change_emoji = ""  # Default to negative for sell
+                block["text"]["text"] = f"*Current Stock Price:* ${price:.2f}"
                 break
         
         # Calculate and populate initial GMV
@@ -1879,7 +1879,7 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
             client.chat_postEphemeral(
                 channel=body.get("channel_id"),
                 user=user_id,
-                text=f"🚀 Opening buy modal for {symbol.upper() if symbol else 'stock'} (qty: {quantity})..."
+                text=f"Opening buy modal for {symbol.upper() if symbol else 'stock'} (qty: {quantity})..."
             )
             ephemeral_time = time.time()
             logger.info(f"⚡ Ephemeral message took: {(ephemeral_time - ephemeral_start)*1000:.2f}ms")
@@ -2014,7 +2014,7 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
             client.chat_postEphemeral(
                 channel=body.get("channel_id"),
                 user=user_id,
-                text=f"🚀 Opening sell modal for {symbol.upper() if symbol else 'stock'} (qty: {quantity})..."
+                text=f"Opening sell modal for {symbol.upper() if symbol else 'stock'} (qty: {quantity})..."
             )
             ephemeral_time = time.time()
             logger.info(f"⚡ Ephemeral message took: {(ephemeral_time - ephemeral_start)*1000:.2f}ms")
