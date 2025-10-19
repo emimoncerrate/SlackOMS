@@ -319,7 +319,7 @@ class ActionHandler:
             error_type = "VALIDATION"
             await self._send_error_response(
                 client, action_context,
-                f"❌ Invalid action: {e.message}"
+                f"Invalid action: {e.message}"
             )
             logger.warning(
                 "Action validation failed",
@@ -331,7 +331,7 @@ class ActionHandler:
             error_type = "MARKET_DATA"
             await self._send_error_response(
                 client, action_context,
-                f"📊 Market data error: {e.message}"
+                f"Market data error: {e.message}"
             )
             logger.warning(
                 "Market data error",
@@ -343,7 +343,7 @@ class ActionHandler:
             error_type = "RISK_ANALYSIS"
             await self._send_error_response(
                 client, action_context,
-                f"🔍 Risk analysis error: {e.message}"
+                f"Risk analysis error: {e.message}"
             )
             logger.warning(
                 "Risk analysis error",
@@ -355,7 +355,7 @@ class ActionHandler:
             error_type = "TRADING"
             await self._send_error_response(
                 client, action_context,
-                f"💼 Trading error: {e.message}"
+                f"Trading error: {e.message}"
             )
             logger.warning(
                 "Trading error",
@@ -379,7 +379,7 @@ class ActionHandler:
             error_type = "SYSTEM"
             await self._send_error_response(
                 client, action_context,
-                "⚠️ System error occurred. Please try again or contact support."
+                "System error occurred. Please try again or contact support."
             )
             logger.error(
                 "Unexpected error processing action",
@@ -746,7 +746,7 @@ class ActionHandler:
                 client.chat_postEphemeral,
                 channel=action_context.channel_id,
                 user=action_context.slack_user_id,
-                text="❌ Trade cancelled by user."
+                text="Trade cancelled by user."
             )
             
             logger.info(
@@ -791,7 +791,7 @@ class ActionHandler:
                 client.chat_postEphemeral,
                 channel=action_context.channel_id,
                 user=action_context.slack_user_id,
-                text="📋 Detailed view feature coming soon!"
+                text="Detailed view feature coming soon!"
             )
             
         except Exception as e:
@@ -813,7 +813,7 @@ class ActionHandler:
                 client.chat_postEphemeral,
                 channel=action_context.channel_id,
                 user=action_context.slack_user_id,
-                text="🚀 Trade execution initiated! This feature is being developed."
+                text="Trade execution initiated! This feature is being developed."
             )
             
         except Exception as e:
@@ -970,7 +970,7 @@ class ActionHandler:
         """Send trade failure notification."""
         try:
             message = (
-                f"❌ *Trade Execution Failed*\n\n"
+                f"*Trade Execution Failed*\n\n"
                 f"• Symbol: {trade.symbol}\n"
                 f"• Type: {trade.trade_type.value.title()}\n"
                 f"• Quantity: {trade.quantity:,}\n"
@@ -1108,10 +1108,10 @@ class ActionHandler:
         try:
             # Determine execution method
             if execution_result.alpaca_order_id:
-                execution_method = "🧪 Alpaca Paper Trading"
+                execution_method = "Alpaca Paper Trading"
                 method_details = f"*Alpaca Order ID:* `{execution_result.alpaca_order_id}`"
             else:
-                execution_method = "🎯 Simulation"
+                execution_method = "Simulation"
                 method_details = "*Method:* Simulated execution"
             
             # Format execution details
@@ -1133,7 +1133,7 @@ class ActionHandler:
                 f"*Execution Details:*\n"
                 f"• *Method:* {execution_method}\n"
                 + "\n".join(f"• {detail}" for detail in execution_details) + "\n\n"
-                f"📊 Check your portfolio in the *App Home* tab for updated positions."
+                f"Check your portfolio in the *App Home* tab for updated positions."
             )
             
             await client.chat_postMessage(
@@ -1303,7 +1303,7 @@ def register_action_handlers(app: App, service_container: Optional['ServiceConta
             execution_report = await trading_service.execute_trade(trade)
             
             # Determine execution method for display
-            execution_method = "🚀 Alpaca Paper Trading" if trading_service.alpaca_service.is_available() else "📝 Simulation"
+                execution_method = "Alpaca Paper Trading" if trading_service.alpaca_service.is_available() else "Simulation"
             
             # Update modal to show trade confirmation
             view_id = body.get('view', {}).get('id')
@@ -1353,14 +1353,14 @@ def register_action_handlers(app: App, service_container: Optional['ServiceConta
                     "callback_id": "trade_error_modal",
                     "title": {
                         "type": "plain_text",
-                        "text": "❌ Trade Failed"
+                        "text": "Trade Failed"
                     },
                     "blocks": [
                         {
                             "type": "section",
                             "text": {
                                 "type": "mrkdwn",
-                                "text": f"❌ *Trade execution failed*\n\n📊 *Stock:* AAPL\n📈 *Action:* BUY\n💰 *Quantity:* 10 shares\n\n🔍 *Error:* {str(e)}"
+                                "text": f"*Trade execution failed*\n\n*Stock:* AAPL\n*Action:* BUY\n*Quantity:* 10 shares\n\n*Error:* {str(e)}"
                             }
                         }
                     ],
@@ -1404,7 +1404,7 @@ def register_action_handlers(app: App, service_container: Optional['ServiceConta
             execution_report = await trading_service.execute_trade(trade)
             
             # Determine execution method for display
-            execution_method = "🚀 Alpaca Paper Trading" if trading_service.alpaca_service.is_available() else "📝 Simulation"
+                execution_method = "Alpaca Paper Trading" if trading_service.alpaca_service.is_available() else "Simulation"
             
             # Update modal to show trade confirmation
             view_id = body.get('view', {}).get('id')
@@ -1454,14 +1454,14 @@ def register_action_handlers(app: App, service_container: Optional['ServiceConta
                     "callback_id": "trade_error_modal",
                     "title": {
                         "type": "plain_text",
-                        "text": "❌ Trade Failed"
+                        "text": "Trade Failed"
                     },
                     "blocks": [
                         {
                             "type": "section",
                             "text": {
                                 "type": "mrkdwn",
-                                "text": f"❌ *Trade execution failed*\n\n📊 *Stock:* AAPL\n📉 *Action:* SELL\n💰 *Quantity:* 10 shares\n\n🔍 *Error:* {str(e)}"
+                                "text": f"*Trade execution failed*\n\n*Stock:* AAPL\n*Action:* SELL\n*Quantity:* 10 shares\n\n*Error:* {str(e)}"
                             }
                         }
                     ],
@@ -1515,14 +1515,14 @@ def register_action_handlers(app: App, service_container: Optional['ServiceConta
                     "callback_id": "trade_execution_modal",
                     "title": {
                         "type": "plain_text",
-                        "text": "🚀 Execute Trade"
+                        "text": "Execute Trade"
                     },
                     "blocks": [
                         {
                             "type": "section",
                             "text": {
                                 "type": "mrkdwn",
-                                "text": "🚀 *Trade Execution Ready!*\n\n📊 *Stock:* AAPL\n💰 *Current Price:* $256.48\n📈 *Ready to trade*"
+                                "text": "*Trade Execution Ready!*\n\n*Stock:* AAPL\n*Current Price:* $256.48\n*Ready to trade*"
                             }
                         },
                         {
@@ -1542,7 +1542,7 @@ def register_action_handlers(app: App, service_container: Optional['ServiceConta
                                     "type": "button",
                                     "text": {
                                         "type": "plain_text",
-                                        "text": "📈 Buy 10 Shares"
+                                        "text": "Buy 10 Shares"
                                     },
                                     "style": "primary",
                                     "action_id": "buy_shares",
@@ -1552,7 +1552,7 @@ def register_action_handlers(app: App, service_container: Optional['ServiceConta
                                     "type": "button",
                                     "text": {
                                         "type": "plain_text",
-                                        "text": "📉 Sell 10 Shares"
+                                        "text": "Sell 10 Shares"
                                     },
                                     "style": "danger",
                                     "action_id": "sell_shares",
@@ -1606,7 +1606,7 @@ def register_action_handlers(app: App, service_container: Optional['ServiceConta
                     fallback_response = client.chat_postEphemeral(
                         channel=channel_id,
                         user=user_id,
-                        text="🚀 Trade execution initiated! Your trading system is working. (This is a simulation)"
+                        text="Trade execution initiated! Your trading system is working. (This is a simulation)"
                     )
                     logger.info(f"Fallback message sent: {fallback_response.get('ok', False)}")
             except Exception as fallback_error:

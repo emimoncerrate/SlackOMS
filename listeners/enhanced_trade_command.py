@@ -209,7 +209,7 @@ class EnhancedTradeCommand:
                                 "type": "section",
                                 "text": {
                                     "type": "mrkdwn",
-                                    "text": f"💰 *Current Price:* ${current_price}\n📊 *Market Status:* Open\n⚡ *Data Quality:* Real-time{price_change_text}"
+                                    "text": f"*Current Price:* ${current_price}\n*Market Status:* Open\n*Data Quality:* Real-time{price_change_text}"
                                 }
                             },
                             {
@@ -291,43 +291,43 @@ class EnhancedTradeCommand:
                 print("-" * 50)
                 
                 # Update modal with real data
-                change_emoji = "📈" if price_change >= 0 else "📉"
-                price_change_text = f"\n{change_emoji} *Change:* ${price_change} ({price_change_percent}%)"
+                change_indicator = "+" if price_change >= 0 else ""
+                price_change_text = f"\n*Change:* {change_indicator}${price_change} ({price_change_percent}%)"
                 
                 # Get company info based on symbol
                 company_info = {
-                    "AAPL": ("📈", "Apple Inc."),
-                    "TSLA": ("🚗", "Tesla Inc."),
-                    "MSFT": ("💻", "Microsoft Corp."),
-                    "GOOGL": ("🔍", "Alphabet Inc."),
-                    "AMZN": ("📦", "Amazon.com Inc."),
-                    "NVDA": ("🎮", "NVIDIA Corp."),
-                    "META": ("👥", "Meta Platforms Inc."),
-                    "NFLX": ("🎬", "Netflix Inc."),
+                    "AAPL": "Apple Inc.",
+                    "TSLA": "Tesla Inc.",
+                    "MSFT": "Microsoft Corp.",
+                    "GOOGL": "Alphabet Inc.",
+                    "AMZN": "Amazon.com Inc.",
+                    "NVDA": "NVIDIA Corp.",
+                    "META": "Meta Platforms Inc.",
+                    "NFLX": "Netflix Inc.",
                 }
                 
-                emoji, company_name = company_info.get(symbol, ("📊", f"{symbol} Corp."))
+                company_name = company_info.get(symbol, f"{symbol} Corp.")
                 
                 return {
                     "type": "modal",
                     "callback_id": "enhanced_trade_modal",
                     "title": {
                         "type": "plain_text",
-                        "text": "📊 Live Market Data"
+                        "text": "Live Market Data"
                     },
                     "blocks": [
                         {
                             "type": "section",
                             "text": {
                                 "type": "mrkdwn",
-                                "text": f"*{emoji} {symbol} - {company_name}*\n\n✅ Live market data fetched successfully!"
+                                "text": f"*{symbol} - {company_name}*\n\nLive market data fetched successfully!"
                             }
                         },
                         {
                             "type": "section",
                             "text": {
                                 "type": "mrkdwn",
-                                "text": f"💰 *Current Price:* ${current_price}\n📊 *Market Status:* Open\n⚡ *Data Quality:* Real-time{price_change_text}"
+                                "text": f"*Current Price:* ${current_price}\n*Market Status:* Open\n*Data Quality:* Real-time{price_change_text}"
                             }
                         },
                         {
@@ -335,13 +335,13 @@ class EnhancedTradeCommand:
                             "elements": [
                                 {
                                     "type": "button",
-                                    "text": {"type": "plain_text", "text": "🔄 Refresh"},
+                                    "text": {"type": "plain_text", "text": "Refresh"},
                                     "action_id": "refresh_market_data",
                                     "style": "primary"
                                 },
                                 {
                                     "type": "button",
-                                    "text": {"type": "plain_text", "text": "💼 Start Trade"},
+                                    "text": {"type": "plain_text", "text": "Start Trade"},
                                     "action_id": "start_trade",
                                     "style": "primary"
                                 }
@@ -362,14 +362,14 @@ class EnhancedTradeCommand:
                     "callback_id": "enhanced_trade_modal",
                     "title": {
                         "type": "plain_text",
-                        "text": "📊 Live Market Data"
+                        "text": "Live Market Data"
                     },
                     "blocks": [
                         {
                             "type": "section",
                             "text": {
                                 "type": "mrkdwn",
-                                "text": f"*❌ {symbol}*\n\nError fetching market data. Please check the ticker symbol and try again."
+                                "text": f"*Error: {symbol}*\n\nError fetching market data. Please check the ticker symbol and try again."
                             }
                         }
                     ],

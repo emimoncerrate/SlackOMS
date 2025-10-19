@@ -415,7 +415,7 @@ class Dashboard:
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": "*📋 Recent Activity*"
+                    "text": "*Recent Activity*"
                 }
             })
             
@@ -667,7 +667,7 @@ class Dashboard:
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "*📋 Trade History*"
+                "text": "*Trade History*"
             },
             "accessory": {
                 "type": "button",

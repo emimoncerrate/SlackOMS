@@ -156,12 +156,9 @@ class CurrencyFormatter:
         
         # Handle negative values
         if is_negative:
-            if color_negative:
-                formatted = f":red_circle: -{formatted}"
-            else:
-                formatted = f"-{formatted}"
+            formatted = f"-{formatted}"
         elif color_negative and amount > 0:
-            formatted = f":green_circle: {formatted}"
+            formatted = f"+{formatted}"
         
         return formatted
     
@@ -264,14 +261,8 @@ class CurrencyFormatter:
             if show_sign and percentage > 0:
                 formatted = f"+{formatted}"
             
-            # Add color coding
-            if color_code:
-                if percentage > 0:
-                    formatted = f":green_circle: {formatted}"
-                elif percentage < 0:
-                    formatted = f":red_circle: {formatted}"
-                else:
-                    formatted = f":white_circle: {formatted}"
+            # Add color coding (removed emoji indicators, keeping sign)
+            # Color coding is now handled by the +/- sign in the formatted string
             
             return formatted
             
@@ -514,10 +505,9 @@ class SlackMessageFormatter:
                 return f"{action} {quantity:,} shares of {symbol} at {price_formatted} (Total: {total_value})"
             
             elif format_style == MessageFormat.RICH:
-                status_emoji = cls.STATUS_EMOJIS.get(status, ':question:')
-                action_emoji = ':arrow_up:' if trade_type.lower() == 'buy' else ':arrow_down:'
+                action_indicator = "+" if trade_type.lower() == 'buy' else "-"
                 
-                message = f"{status_emoji} *{action} Order* {action_emoji}\n"
+                message = f"*{action} Order* ({action_indicator})\n"
                 message += f"• Symbol: *{symbol}*\n"
                 message += f"• Quantity: {quantity:,} shares\n"
                 message += f"• Price: {price_formatted}\n"
@@ -569,12 +559,12 @@ class SlackMessageFormatter:
                        f"Positions: {position_count}")
             
             elif format_style == MessageFormat.RICH:
-                pnl_emoji = ':chart_with_upwards_trend:' if total_pnl >= 0 else ':chart_with_downwards_trend:'
+                pnl_indicator = "+" if total_pnl >= 0 else ""
                 
-                message = f":moneybag: *Portfolio Summary*\n"
+                message = f"*Portfolio Summary*\n"
                 message += f"• Total Value: *{value_formatted}*\n"
                 message += f"• Cash Balance: {cash_formatted}\n"
-                message += f"• Total P&L: {pnl_formatted} {pnl_emoji}\n"
+                message += f"• Total P&L: {pnl_formatted}\n"
                 message += f"• Day Change: {change_formatted}\n"
                 message += f"• Active Positions: {position_count}"
                 
@@ -604,17 +594,8 @@ class SlackMessageFormatter:
             analysis_summary = risk_data.get('analysis_summary', 'No analysis available')
             recommendations = risk_data.get('recommendations', [])
             
-            # Choose emoji based on risk level
-            risk_emojis = {
-                'low': ':green_circle:',
-                'medium': ':yellow_circle:',
-                'high': ':red_circle:',
-                'critical': ':rotating_light:'
-            }
-            
-            risk_emoji = risk_emojis.get(risk_level.lower(), ':question:')
-            
-            message = f"{risk_emoji} *Risk Analysis* - {risk_level.title()} Risk\n"
+            # Risk level indicator
+            message = f"*Risk Analysis* - {risk_level.title()} Risk\n"
             message += f"• Risk Score: {risk_score:.1f}/10\n\n"
             message += f"*Analysis:*\n{analysis_summary}\n"
             
@@ -643,7 +624,7 @@ class SlackMessageFormatter:
         Returns:
             Formatted error message string
         """
-        message = f":x: *Error*\n{error_message}"
+        message = f"*Error*\n{error_message}"
         
         if error_code:
             message += f"\n_Error Code: {error_code}_"

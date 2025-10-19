@@ -13,3 +13,4 @@ ALTER COLUMN trade_type DROP DEFAULT;
 -- Add comment for documentation
 COMMENT ON COLUMN trades.trade_type IS 'Trade action: buy or sell';
 
+

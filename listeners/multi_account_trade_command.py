@@ -2645,7 +2645,7 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                 client.chat_postEphemeral(
                     channel="general",
                     user=body["user"]["id"],
-                    text="❌ Error processing your trade. Please try again."
+                    text="Error processing your trade. Please try again."
                 )
             except:
                 pass

@@ -344,12 +344,12 @@ class NotificationService:
             # Create notification for portfolio manager if applicable
             if portfolio_manager and portfolio_manager.user_id != user.user_id:
                 pm_notification = NotificationMessage(
-                    notification_id=f"risk_alert_pm_{trade.trade_id}",
-                    user_id=portfolio_manager.user_id,
-                    notification_type=NotificationType.HIGH_RISK_ALERT,
-                    priority=NotificationPriority.HIGH,
-                    title=f"🚨 High-Risk Trade by {user.profile.display_name}",
-                    message=f"{user.profile.display_name} is attempting a high-risk trade in {trade.symbol}.",
+                notification_id=f"risk_alert_pm_{trade.trade_id}",
+                user_id=portfolio_manager.user_id,
+                notification_type=NotificationType.HIGH_RISK_ALERT,
+                priority=NotificationPriority.HIGH,
+                title=f"High-Risk Trade by {user.profile.display_name}",
+                message=f"{user.profile.display_name} is attempting a high-risk trade in {trade.symbol}.",
                     channels=self._get_user_preferences(portfolio_manager.user_id).risk_alerts,
                     context={
                         'trade_id': trade.trade_id,
@@ -819,7 +819,7 @@ class NotificationService:
                     "type": "button",
                     "text": {
                         "type": "plain_text",
-                        "text": "📋 Trade History"
+                        "text": "Trade History"
                     },
                     "action_id": "view_trade_history"
                 }
@@ -842,7 +842,7 @@ class NotificationService:
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": f"🚨 *HIGH-RISK TRADE ALERT*\n\nThe following trade requires your attention:"
+                "text": f"*HIGH-RISK TRADE ALERT*\n\nThe following trade requires your attention:"
             }
         })
         
@@ -936,7 +936,7 @@ class NotificationService:
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": f"🚨 *HIGH-RISK TRADE BY TEAM MEMBER*\n\n*{trader.profile.display_name}* ({trader.role.value.replace('_', ' ').title()}) is attempting a high-risk trade:"
+                "text": f"*HIGH-RISK TRADE BY TEAM MEMBER*\n\n*{trader.profile.display_name}* ({trader.role.value.replace('_', ' ').title()}) is attempting a high-risk trade:"
             }
         })
         
@@ -983,7 +983,7 @@ class NotificationService:
                     "type": "button",
                     "text": {
                         "type": "plain_text",
-                        "text": "👀 Monitor"
+                        "text": "Monitor"
                     },
                     "action_id": f"monitor_trade_{trade.trade_id}",
                     "style": "primary"
@@ -992,7 +992,7 @@ class NotificationService:
                     "type": "button",
                     "text": {
                         "type": "plain_text",
-                        "text": "🛑 Intervene"
+                        "text": "Intervene"
                     },
                     "action_id": f"intervene_trade_{trade.trade_id}",
                     "style": "danger"
@@ -1001,7 +1001,7 @@ class NotificationService:
                     "type": "button",
                     "text": {
                         "type": "plain_text",
-                        "text": "📞 Contact Trader"
+                        "text": "Contact Trader"
                     },
                     "action_id": f"contact_trader_{trader.user_id}"
                 }
@@ -1142,7 +1142,7 @@ class NotificationService:
                     "type": "button",
                     "text": {
                         "type": "plain_text",
-                        "text": "🆘 Get Help"
+                        "text": "Get Help"
                     },
                     "action_id": "get_help"
                 }
