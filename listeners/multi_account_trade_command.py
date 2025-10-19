@@ -2239,11 +2239,6 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                 pass
     
 
-    @app.view("stock_trade_modal_interactive")
-    async def handle_multi_account_trade_submission(ack, body, client, context):
-        """Handle multi-account interactive trade form submission."""
-        await multi_trade_command.handle_trade_submission(ack, body, client, context)
-    
     # Add app mention handler for testing
     @app.event("app_mention")
     def handle_app_mention(body, say, logger):
