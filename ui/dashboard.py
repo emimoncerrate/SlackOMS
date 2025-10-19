@@ -236,24 +236,24 @@ class Dashboard:
         portfolio = context.portfolio
         
         # Portfolio title and status
-        status_emoji = {
-            PortfolioStatus.ACTIVE: "🟢",
-            PortfolioStatus.INACTIVE: "🔴",
-            PortfolioStatus.FROZEN: "🟡",
-            PortfolioStatus.LIQUIDATING: "🟠"
-        }.get(portfolio.status, "❓")
+        status_text = {
+            PortfolioStatus.ACTIVE: "ACTIVE",
+            PortfolioStatus.INACTIVE: "INACTIVE",
+            PortfolioStatus.FROZEN: "FROZEN",
+            PortfolioStatus.LIQUIDATING: "LIQUIDATING"
+        }.get(portfolio.status, "UNKNOWN")
         
         blocks.append({
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": f"*📊 {portfolio.name}* {status_emoji}\n_{context.user.profile.display_name} • {context.user.role.value.replace('_', ' ').title()}_"
+                "text": f"*{portfolio.name}*\n_{context.user.profile.display_name} • {context.user.role.value.replace('_', ' ').title()}_"
             },
             "accessory": {
                 "type": "button",
                 "text": {
                     "type": "plain_text",
-                    "text": "⚡ Quick Trade"
+                    "text": "Quick Trade"
                 },
                 "action_id": "quick_trade_button",
                 "style": "primary"
@@ -265,8 +265,8 @@ class Dashboard:
         pnl_color = self.color_schemes['positive'] if portfolio.total_pnl >= 0 else self.color_schemes['negative']
         day_change_color = self.color_schemes['positive'] if portfolio.day_change >= 0 else self.color_schemes['negative']
         
-        pnl_emoji = "📈" if portfolio.total_pnl >= 0 else "📉"
-        day_emoji = "⬆️" if portfolio.day_change >= 0 else "⬇️"
+        pnl_indicator = "+" if portfolio.total_pnl >= 0 else ""
+        day_indicator = "+" if portfolio.day_change >= 0 else ""
         
         blocks.append({
             "type": "section",
@@ -281,20 +281,20 @@ class Dashboard:
                 },
                 {
                     "type": "mrkdwn",
-                    "text": f"*Total P&L* {pnl_emoji}\n{format_currency(portfolio.total_pnl)} ({format_percentage(performance['total_pnl_pct'])})"
+                    "text": f"*Total P&L*\n{pnl_indicator}{format_currency(portfolio.total_pnl)} ({pnl_indicator}{format_percentage(performance['total_pnl_pct'])})"
                 },
                 {
                     "type": "mrkdwn",
-                    "text": f"*Day Change* {day_emoji}\n{format_currency(portfolio.day_change)} ({format_percentage(portfolio.day_change_percent)})"
+                    "text": f"*Day Change*\n{day_indicator}{format_currency(portfolio.day_change)} ({day_indicator}{format_percentage(portfolio.day_change_percent)})"
                 }
             ]
         })
         
         # Market status and last update
-        market_status = "🟢 Open" if any(
+        market_status = "OPEN" if any(
             quote.market_status == MarketStatus.OPEN 
             for quote in context.market_quotes.values()
-        ) else "🔴 Closed"
+        ) else "CLOSED"
         
         blocks.append({
             "type": "context",
@@ -321,18 +321,18 @@ class Dashboard:
         role_customization = self.role_customizations.get(context.user.role, {})
         
         view_configs = [
-            (DashboardView.OVERVIEW, "📊 Overview", "primary" if context.view == DashboardView.OVERVIEW else None),
-            (DashboardView.POSITIONS, "💼 Positions", "primary" if context.view == DashboardView.POSITIONS else None),
-            (DashboardView.PERFORMANCE, "📈 Performance", "primary" if context.view == DashboardView.PERFORMANCE else None),
-            (DashboardView.TRADES, "📋 Trades", "primary" if context.view == DashboardView.TRADES else None),
+            (DashboardView.OVERVIEW, "Overview", "primary" if context.view == DashboardView.OVERVIEW else None),
+            (DashboardView.POSITIONS, "Positions", "primary" if context.view == DashboardView.POSITIONS else None),
+            (DashboardView.PERFORMANCE, "Performance", "primary" if context.view == DashboardView.PERFORMANCE else None),
+            (DashboardView.TRADES, "Trades", "primary" if context.view == DashboardView.TRADES else None),
         ]
         
         # Add analytics view for research analysts and portfolio managers
         if context.user.role in [UserRole.RESEARCH_ANALYST, UserRole.PORTFOLIO_MANAGER]:
-            view_configs.append((DashboardView.ANALYTICS, "🔍 Analytics", "primary" if context.view == DashboardView.ANALYTICS else None))
+            view_configs.append((DashboardView.ANALYTICS, "Analytics", "primary" if context.view == DashboardView.ANALYTICS else None))
         
         # Add settings view
-        view_configs.append((DashboardView.SETTINGS, "⚙️ Settings", "primary" if context.view == DashboardView.SETTINGS else None))
+        view_configs.append((DashboardView.SETTINGS, "Settings", "primary" if context.view == DashboardView.SETTINGS else None))
         
         for view, text, style in view_configs:
             nav_buttons.append({
@@ -368,7 +368,7 @@ class Dashboard:
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "*📊 Portfolio Overview*"
+                "text": "*Portfolio Overview*"
             }
         })
         
@@ -388,14 +388,14 @@ class Dashboard:
             })
             
             for i, position in enumerate(top_positions, 1):
-                pnl_emoji = "📈" if position.get_total_pnl() >= 0 else "📉"
+                position_pnl_indicator = "+" if position.get_total_pnl() >= 0 else ""
                 allocation = portfolio.get_portfolio_allocation().get(position.symbol, Decimal('0'))
                 
                 blocks.append({
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": f"*{i}. {position.symbol}* ({format_percentage(allocation)})\n{format_currency(position.current_value)} • {pnl_emoji} {format_currency(position.get_total_pnl())} ({format_percentage(position.get_pnl_percentage())})"
+                        "text": f"*{i}. {position.symbol}* ({format_percentage(allocation)})\n{format_currency(position.current_value)} • {position_pnl_indicator}{format_currency(position.get_total_pnl())} ({position_pnl_indicator}{format_percentage(position.get_pnl_percentage())})"
                     },
                     "accessory": {
                         "type": "button",
@@ -420,18 +420,18 @@ class Dashboard:
             })
             
             for trade in context.recent_trades[:3]:
-                trade_emoji = "🟢" if trade.trade_type.value == "buy" else "🔴"
-                status_emoji = {
-                    TradeStatus.EXECUTED: "✅",
-                    TradeStatus.PENDING: "⏳",
-                    TradeStatus.FAILED: "❌"
-                }.get(trade.status, "❓")
+                trade_type_text = "BUY" if trade.trade_type.value == "buy" else "SELL"
+                status_text = {
+                    TradeStatus.EXECUTED: "EXECUTED",
+                    TradeStatus.PENDING: "PENDING",
+                    TradeStatus.FAILED: "FAILED"
+                }.get(trade.status, "UNKNOWN")
                 
                 blocks.append({
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": f"{trade_emoji} *{trade.trade_type.value.upper()}* {format_number(trade.quantity)} {trade.symbol} @ {format_currency(trade.price)} {status_emoji}\n_{format_datetime(trade.timestamp)}_"
+                        "text": f"*{trade_type_text}* {format_number(trade.quantity)} {trade.symbol} @ {format_currency(trade.price)} [{status_text}]\n_{format_datetime(trade.timestamp)}_"
                     }
                 })
         
@@ -451,7 +451,7 @@ class Dashboard:
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "*💼 Portfolio Positions*"
+                "text": "*Portfolio Positions*"
             },
             "accessory": {
                 "type": "static_select",
@@ -552,7 +552,7 @@ class Dashboard:
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "*📈 Performance Analysis*"
+                "text": "*Performance Analysis*"
             },
             "accessory": {
                 "type": "static_select",
@@ -631,7 +631,7 @@ class Dashboard:
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": f"📈 *{position.symbol}*: {format_currency(position.get_total_pnl())} ({format_percentage(pnl_pct)})"
+                        "text": f"*{position.symbol}*: {format_currency(position.get_total_pnl())} ({format_percentage(pnl_pct)})"
                     }
                 })
             
@@ -641,7 +641,7 @@ class Dashboard:
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": "*📉 Underperformers*"
+                        "text": "*Underperformers*"
                     }
                 })
                 
@@ -652,7 +652,7 @@ class Dashboard:
                             "type": "section",
                             "text": {
                                 "type": "mrkdwn",
-                                "text": f"📉 *{position.symbol}*: {format_currency(position.get_total_pnl())} ({format_percentage(pnl_pct)})"
+                                "text": f"*{position.symbol}*: {format_currency(position.get_total_pnl())} ({format_percentage(pnl_pct)})"
                             }
                         })
         
@@ -673,7 +673,7 @@ class Dashboard:
                 "type": "button",
                 "text": {
                     "type": "plain_text",
-                    "text": "📊 Export"
+                    "text": "Export"
                 },
                 "action_id": "export_trades"
             }
@@ -752,7 +752,7 @@ class Dashboard:
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "*🔍 Portfolio Analytics*"
+                "text": "*Portfolio Analytics*"
             }
         })
         
@@ -763,7 +763,7 @@ class Dashboard:
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "*📊 Risk Metrics*"
+                "text": "*Risk Metrics*"
             }
         })
         
@@ -820,7 +820,7 @@ class Dashboard:
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "*⚙️ Portfolio Settings*"
+                "text": "*Portfolio Settings*"
             }
         })
         
@@ -875,7 +875,7 @@ class Dashboard:
             "type": "button",
             "text": {
                 "type": "plain_text",
-                "text": f"📊 Charts: {'On' if context.show_charts else 'Off'}"
+                "text": f"Charts: {'On' if context.show_charts else 'Off'}"
             },
             "action_id": "toggle_charts"
         }
@@ -888,7 +888,7 @@ class Dashboard:
             "type": "button",
             "text": {
                 "type": "plain_text",
-                "text": f"🔍 Risk Metrics: {'On' if context.show_risk_metrics else 'Off'}"
+                "text": f"Risk Metrics: {'On' if context.show_risk_metrics else 'Off'}"
             },
             "action_id": "toggle_risk_metrics"
         }
@@ -966,7 +966,7 @@ class Dashboard:
             },
             {
                 "type": "mrkdwn",
-                "text": f"📊 Jain Global Trading Bot"
+                "text": f"Jain Global Trading Bot"
             }
         ]
         
@@ -990,7 +990,7 @@ class Dashboard:
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "*📊 Portfolio Allocation*"
+                "text": "*Portfolio Allocation*"
             }
         })
         
@@ -1029,7 +1029,7 @@ class Dashboard:
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "*⚠️ Risk Summary*"
+                "text": "*Risk Summary*"
             }
         })
         
@@ -1039,18 +1039,18 @@ class Dashboard:
         # Concentration risk
         max_position = risk_metrics.get('max_position_weight', Decimal('0'))
         if max_position > 15:
-            risk_indicators.append("🔴 High concentration risk")
+            risk_indicators.append("High concentration risk")
         elif max_position > 10:
-            risk_indicators.append("🟡 Moderate concentration risk")
+            risk_indicators.append("Moderate concentration risk")
         else:
-            risk_indicators.append("🟢 Low concentration risk")
+            risk_indicators.append("Low concentration risk")
         
         # Cash allocation
         cash_allocation = risk_metrics.get('cash_allocation', Decimal('0'))
         if cash_allocation > 20:
-            risk_indicators.append("💰 High cash allocation")
+            risk_indicators.append("High cash allocation")
         elif cash_allocation < 5:
-            risk_indicators.append("⚠️ Low cash reserves")
+            risk_indicators.append("Low cash reserves")
         
         if risk_indicators:
             risk_text = "\n".join([f"• {indicator}" for indicator in risk_indicators])
@@ -1069,21 +1069,21 @@ class Dashboard:
         blocks = []
         
         # Position header
-        pnl_emoji = "📈" if position.get_total_pnl() >= 0 else "📉"
-        position_type_emoji = "🟢" if position.position_type.value == "long" else "🔴"
+        position_pnl_indicator = "+" if position.get_total_pnl() >= 0 else ""
+        position_type_text = "LONG" if position.position_type.value == "long" else "SHORT"
         
         # Get current market quote if available
         current_quote = context.market_quotes.get(position.symbol)
         price_change_text = ""
         if current_quote and current_quote.price_change_percent:
-            change_emoji = "⬆️" if current_quote.price_change_percent > 0 else "⬇️"
-            price_change_text = f" {change_emoji} {format_percentage(current_quote.price_change_percent)}"
+            change_indicator = "+" if current_quote.price_change_percent > 0 else ""
+            price_change_text = f" {change_indicator}{format_percentage(current_quote.price_change_percent)}"
         
         blocks.append({
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": f"{position_type_emoji} *{position.symbol}* {price_change_text}\n{format_number(position.quantity)} shares @ {format_currency(position.current_price)}"
+                "text": f"*{position.symbol}* [{position_type_text}] {price_change_text}\n{format_number(position.quantity)} shares @ {format_currency(position.current_price)}"
             },
             "fields": [
                 {
@@ -1092,7 +1092,7 @@ class Dashboard:
                 },
                 {
                     "type": "mrkdwn",
-                    "text": f"*P&L:* {pnl_emoji}\n{format_currency(position.get_total_pnl())} ({format_percentage(position.get_pnl_percentage())})"
+                    "text": f"*P&L:*\n{position_pnl_indicator}{format_currency(position.get_total_pnl())} ({position_pnl_indicator}{format_percentage(position.get_pnl_percentage())})"
                 }
             ],
             "accessory": {
@@ -1122,19 +1122,19 @@ class Dashboard:
         blocks = []
         
         # Trade header
-        trade_emoji = "🟢" if trade.trade_type.value == "buy" else "🔴"
-        status_emoji = {
-            TradeStatus.EXECUTED: "✅",
-            TradeStatus.PENDING: "⏳",
-            TradeStatus.FAILED: "❌",
-            TradeStatus.CANCELLED: "🚫"
-        }.get(trade.status, "❓")
+        trade_type_text = "BUY" if trade.trade_type.value == "buy" else "SELL"
+        status_text = {
+            TradeStatus.EXECUTED: "EXECUTED",
+            TradeStatus.PENDING: "PENDING",
+            TradeStatus.FAILED: "FAILED",
+            TradeStatus.CANCELLED: "CANCELLED"
+        }.get(trade.status, "UNKNOWN")
         
-        risk_emoji = {
-            RiskLevel.LOW: "🟢",
-            RiskLevel.MEDIUM: "🟡",
-            RiskLevel.HIGH: "🟠",
-            RiskLevel.CRITICAL: "🔴"
+        risk_text = {
+            RiskLevel.LOW: "LOW RISK",
+            RiskLevel.MEDIUM: "MEDIUM RISK",
+            RiskLevel.HIGH: "HIGH RISK",
+            RiskLevel.CRITICAL: "CRITICAL RISK"
         }.get(trade.risk_level, "")
         
         trade_value = abs(trade.quantity * trade.price)
@@ -1143,7 +1143,7 @@ class Dashboard:
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": f"{trade_emoji} *{trade.trade_type.value.upper()}* {format_number(trade.quantity)} {trade.symbol} @ {format_currency(trade.price)} {status_emoji}\n{format_currency(trade_value)} • {format_datetime(trade.timestamp)} {risk_emoji}"
+                "text": f"*{trade_type_text}* {format_number(trade.quantity)} {trade.symbol} @ {format_currency(trade.price)} [{status_text}]\n{format_currency(trade_value)} • {format_datetime(trade.timestamp)} {risk_text}"
             },
             "accessory": {
                 "type": "button",
@@ -1170,7 +1170,7 @@ class Dashboard:
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "*📈 Performance Chart (Last 30 Days)*"
+                "text": "*Performance Chart (Last 30 Days)*"
             }
         })
         
@@ -1309,7 +1309,7 @@ class Dashboard:
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": f"*❌ Dashboard Error*\n\nAn error occurred while loading your dashboard:\n\n```{error_message}```\n\nPlease try refreshing or contact support if the problem persists."
+                        "text": f"*Dashboard Error*\n\nAn error occurred while loading your dashboard:\n\n```{error_message}```\n\nPlease try refreshing or contact support if the problem persists."
                     }
                 },
                 {
@@ -1319,7 +1319,7 @@ class Dashboard:
                             "type": "button",
                             "text": {
                                 "type": "plain_text",
-                                "text": "🔄 Refresh Dashboard"
+                                "text": "Refresh Dashboard"
                             },
                             "action_id": "refresh_dashboard",
                             "style": "primary"
@@ -1344,14 +1344,14 @@ class Dashboard:
             blocks = []
             
             # Position header
-            pnl_emoji = "📈" if position.get_total_pnl() >= 0 else "📉"
-            position_type_emoji = "🟢" if position.position_type.value == "long" else "🔴"
+            position_pnl_indicator = "+" if position.get_total_pnl() >= 0 else ""
+            position_type_text = "LONG" if position.position_type.value == "long" else "SHORT"
             
             blocks.append({
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": f"{position_type_emoji} *{position.symbol} Position Details*"
+                    "text": f"*{position.symbol} Position Details* [{position_type_text}]"
                 }
             })
             
@@ -1377,7 +1377,7 @@ class Dashboard:
                     },
                     {
                         "type": "mrkdwn",
-                        "text": f"*Total P&L:* {pnl_emoji}\n{format_currency(position.get_total_pnl())}"
+                        "text": f"*Total P&L:*\n{position_pnl_indicator}{format_currency(position.get_total_pnl())}"
                     },
                     {
                         "type": "mrkdwn",
@@ -1393,14 +1393,14 @@ class Dashboard:
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": "*📊 Current Market Data*"
+                        "text": "*Current Market Data*"
                     }
                 })
                 
                 price_change_text = ""
                 if market_quote.price_change and market_quote.price_change_percent:
-                    change_emoji = "📈" if market_quote.price_change > 0 else "📉"
-                    price_change_text = f"{change_emoji} {format_currency(market_quote.price_change)} ({format_percentage(market_quote.price_change_percent)})"
+                    change_indicator = "+" if market_quote.price_change > 0 else ""
+                    price_change_text = f"{change_indicator}{format_currency(market_quote.price_change)} ({change_indicator}{format_percentage(market_quote.price_change_percent)})"
                 
                 blocks.append({
                     "type": "section",
@@ -1428,7 +1428,7 @@ class Dashboard:
                         "type": "button",
                         "text": {
                             "type": "plain_text",
-                            "text": "📈 Trade"
+                            "text": "Trade"
                         },
                         "action_id": f"trade_position_{position.symbol}",
                         "style": "primary"
@@ -1445,7 +1445,7 @@ class Dashboard:
                         "type": "button",
                         "text": {
                             "type": "plain_text",
-                            "text": "📊 Analysis"
+                            "text": "Analysis"
                         },
                         "action_id": f"analyze_position_{position.symbol}"
                     }
@@ -1477,7 +1477,7 @@ class Dashboard:
             "callback_id": "dashboard_error_modal",
             "title": {
                 "type": "plain_text",
-                "text": "❌ Dashboard Error"
+                "text": "Dashboard Error"
             },
             "blocks": [
                 {

@@ -605,7 +605,7 @@ class InteractiveActionHandler:
                 processing_msg = await asyncio.to_thread(
                     client.chat_postMessage,
                     channel=context.channel_id,
-                    text=f"⏳ Processing trade: {context.trade_side.upper()} {context.shares:,} {context.symbol} shares..."
+                    text=f"Processing trade: {context.trade_side.upper()} {context.shares:,} {context.symbol} shares..."
                 )
                 print(f"✅ PROCESSING MESSAGE: Sent successfully, ts={processing_msg.get('ts')}")
             except Exception as proc_error:
@@ -868,11 +868,11 @@ class InteractiveActionHandler:
             try:
                 print(f"🔄 SUCCESS NOTIFICATION: Trying final fallback message")
                 fallback_message = (
-                    f"✅ *Trade Executed Successfully*\n\n"
-                    f"**{trade.symbol} {trade.trade_type.value.upper()} {abs(trade.quantity)} shares**\n"
+                    f"*Trade Executed Successfully*\n\n"
+                    f"*{trade.symbol} {trade.trade_type.value.upper()} {abs(trade.quantity)} shares*\n"
                     f"Order ID: `{execution_result.alpaca_order_id or 'N/A'}`\n\n"
-                    f"✅ **Your trade was executed successfully!**\n"
-                    f"📊 Use `/portfolio` to see your updated positions."
+                    f"*Your trade was executed successfully!*\n"
+                    f"Use `/portfolio` to see your updated positions."
                 )
                 
                 # Try synchronous call as last resort
@@ -915,7 +915,6 @@ class InteractiveActionHandler:
                 cost_basis = float(symbol_position.quantity) * float(symbol_position.average_cost)
                 pnl = current_value - cost_basis
                 pnl_percent = (pnl / cost_basis * 100) if cost_basis > 0 else 0
-                pnl_indicator = "🟢" if pnl >= 0 else "🔴"
                 pnl_sign = "+" if pnl >= 0 else ""
                 
                 return (
@@ -923,7 +922,7 @@ class InteractiveActionHandler:
                     f"• *{symbol}:* {symbol_position.quantity:,} shares\n"
                     f"• *Avg Cost:* ${symbol_position.average_cost:.2f}\n"
                     f"• *Current Value:* ${current_value:,.2f}\n"
-                    f"• *P&L:* {pnl_indicator} {pnl_sign}${pnl:.2f} ({pnl_sign}{pnl_percent:.1f}%)"
+                    f"• *P&L:* {pnl_sign}${pnl:.2f} ({pnl_sign}{pnl_percent:.1f}%)"
                 )
             else:
                 return f"*Position:* {symbol} position updated successfully"
@@ -941,21 +940,21 @@ class InteractiveActionHandler:
             
             if is_system_failure:
                 failure_message = (
-                    f"🚨 *TRADING SYSTEM ERROR*\n\n"
-                    f"❌ The trading system is currently experiencing technical difficulties.\n\n"
+                    f"*TRADING SYSTEM ERROR*\n\n"
+                    f"The trading system is currently experiencing technical difficulties.\n\n"
                     f"*Your Trade:*\n"
                     f"• *Symbol:* {trade.symbol}\n"
                     f"• *Type:* {trade.trade_type.value.upper()}\n"
                     f"• *Quantity:* {abs(trade.quantity):,} shares\n"
-                    f"• *Status:* ❌ **NOT EXECUTED**\n\n"
-                    f"🔧 *Technical Issue:*\n"
+                    f"• *Status:* *NOT EXECUTED*\n\n"
+                    f"*Technical Issue:*\n"
                     f"• Alpaca Paper Trading service is unavailable\n"
                     f"• No trades are being executed to prevent data inconsistency\n\n"
-                    f"⚠️ *Important:*\n"
-                    f"• **Your trade was NOT executed**\n"
-                    f"• **No money was spent**\n"
-                    f"• **Your portfolio is unchanged**\n\n"
-                    f"🛠️ *Next Steps:*\n"
+                    f"*Important:*\n"
+                    f"• *Your trade was NOT executed*\n"
+                    f"• *No money was spent*\n"
+                    f"• *Your portfolio is unchanged*\n\n"
+                    f"*Next Steps:*\n"
                     f"• Wait for system recovery\n"
                     f"• Try again in a few minutes\n"
                     f"• Contact support if issue persists\n"
@@ -963,7 +962,7 @@ class InteractiveActionHandler:
                 )
             else:
                 failure_message = (
-                    f"❌ *Trade Execution Failed*\n\n"
+                    f"*Trade Execution Failed*\n\n"
                     f"*Trade Details:*\n"
                     f"• *Symbol:* {trade.symbol}\n"
                     f"• *Type:* {trade.trade_type.value.upper()}\n"
@@ -971,7 +970,7 @@ class InteractiveActionHandler:
                     f"• *Trade ID:* `{trade.trade_id}`\n\n"
                     f"*Error Information:*\n"
                     f"• *Error:* {execution_result.error_message}\n\n"
-                    f"💡 *Next Steps:*\n"
+                    f"*Next Steps:*\n"
                     f"• Check your trade parameters and try again\n"
                     f"• Contact support if the issue persists\n"
                     f"• Reference Trade ID: `{trade.trade_id}`"

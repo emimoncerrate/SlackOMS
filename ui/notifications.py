@@ -787,12 +787,12 @@ class NotificationService:
         
         # Risk analysis summary if available and user wants details
         if risk_analysis and preferences.include_risk_details:
-            risk_emoji = {
-                RiskLevel.LOW: "🟢",
-                RiskLevel.MEDIUM: "🟡",
-                RiskLevel.HIGH: "🟠",
-                RiskLevel.CRITICAL: "🔴"
-            }.get(risk_analysis.overall_risk_level, "❓")
+            risk_text = {
+                RiskLevel.LOW: "LOW",
+                RiskLevel.MEDIUM: "MEDIUM",
+                RiskLevel.HIGH: "HIGH",
+                RiskLevel.CRITICAL: "CRITICAL"
+            }.get(risk_analysis.overall_risk_level, "UNKNOWN")
             
             blocks.append({
                 "type": "section",
@@ -879,7 +879,7 @@ class NotificationService:
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": f"*Risk Level:* 🔴 {risk_analysis.overall_risk_level.value.upper()}\n*Risk Score:* {risk_analysis.overall_risk_score:.1%} `{risk_score_bar}`"
+                "text": f"*Risk Level:* {risk_analysis.overall_risk_level.value.upper()}\n*Risk Score:* {risk_analysis.overall_risk_score:.1%} `{risk_score_bar}`"
             }
         })
         
@@ -961,7 +961,7 @@ class NotificationService:
                 },
                 {
                     "type": "mrkdwn",
-                    "text": f"*Risk Level:*\n🔴 {risk_analysis.overall_risk_level.value.upper()}"
+                    "text": f"*Risk Level:*\n{risk_analysis.overall_risk_level.value.upper()}"
                 }
             ]
         })
@@ -1133,7 +1133,7 @@ class NotificationService:
                     "type": "button",
                     "text": {
                         "type": "plain_text",
-                        "text": "🔄 Retry"
+                        "text": "Retry"
                     },
                     "action_id": "retry_action",
                     "style": "primary"

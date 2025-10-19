@@ -583,7 +583,7 @@ class CommandHandler:
             
             if positions:
                 # Build portfolio summary
-                portfolio_text = "📊 *Your Portfolio*\n\n"
+                portfolio_text = "*Your Portfolio*\n\n"
                 total_value = 0
                 total_cost = 0
                 
@@ -632,9 +632,9 @@ class CommandHandler:
                 print(f"🔍 PORTFOLIO DEBUG: Total value: ${total_value:.2f}")
             else:
                 portfolio_text = (
-                    "📊 *Your Portfolio*\n\n"
+                    "*Your Portfolio*\n\n"
                     "You don't have any positions yet.\n\n"
-                    "💡 *Get Started:*\n"
+                    "*Get Started:*\n"
                     "• Use `/buy AAPL` to buy Apple stock\n"
                     "• Try `/buy TSLA` for Tesla\n"
                     "• Use `/buy MSFT` for Microsoft\n\n"
@@ -1066,7 +1066,7 @@ def register_command_handlers(app: App, service_container: Optional['ServiceCont
                 client.chat_postEphemeral(
                     channel=body.get("channel_id"),
                     user=body.get("user_id"),
-                    text=f"❌ Help command failed: {str(e)}\n\nPlease contact support."
+                    text=f"Help command failed: {str(e)}\n\nPlease contact support."
                 )
             except Exception as post_error:
                 print(f"❌ Failed to send error message: {post_error}")
@@ -1083,12 +1083,12 @@ def register_command_handlers(app: App, service_container: Optional['ServiceCont
             
             # Simple status response
             status_text = (
-                "🤖 *Trading Bot Status*\n\n"
-                "✅ **System Status**: Online\n"
-                "✅ **Environment**: Production\n"
-                "✅ **Database**: Connected\n"
-                "✅ **Market Data**: Available (Finnhub)\n"
-                "⚠️ **Trading**: Paper Trading Mode\n\n"
+                "*Trading Bot Status*\n\n"
+                "*System Status*: Online\n"
+                "*Environment*: Production\n"
+                "*Database*: Connected\n"
+                "*Market Data*: Available (Finnhub)\n"
+                "*Trading*: Paper Trading Mode\n\n"
                 "*Available Commands*: `/buy`, `/sell`, `/help`, `/positions`\n"
                 "*Approved Channels*: This channel is approved for trading\n\n"
                 "🚀 Ready to trade!"
@@ -1102,18 +1102,18 @@ def register_command_handlers(app: App, service_container: Optional['ServiceCont
             print("🔍 STATUS COMMAND DEBUG: Command processed successfully")
             
         except Exception as e:
-            print(f"❌ STATUS COMMAND ERROR: {e}")
-            logger.error(f"❌ STATUS COMMAND ERROR: {e}")
-            logger.error(f"❌ STATUS COMMAND TRACEBACK: {traceback.format_exc()}")
+            print(f"STATUS COMMAND ERROR: {e}")
+            logger.error(f"STATUS COMMAND ERROR: {e}")
+            logger.error(f"STATUS COMMAND TRACEBACK: {traceback.format_exc()}")
             
             try:
                 client.chat_postEphemeral(
                     channel=body.get("channel_id"),
                     user=body.get("user_id"),
-                    text=f"❌ Status command failed: {str(e)}\n\nPlease contact support."
+                    text=f"Status command failed: {str(e)}\n\nPlease contact support."
                 )
             except Exception as post_error:
-                print(f"❌ Failed to send error message: {post_error}")
+                print(f"Failed to send error message: {post_error}")
 
     @app.command("/positions")
     def handle_positions_command(ack, body, client, context):
@@ -1138,7 +1138,7 @@ def register_command_handlers(app: App, service_container: Optional['ServiceCont
                     positions = await command_handler.db_service.get_user_positions(user.user_id)
                     
                     if positions:
-                        position_text = "📊 *Your Current Positions:*\n\n"
+                        position_text = "*Your Current Positions:*\n\n"
                         total_value = 0
                         
                         for pos in positions:
@@ -1153,7 +1153,7 @@ def register_command_handlers(app: App, service_container: Optional['ServiceCont
                         
                         position_text += f"*Total Portfolio Value: ${total_value:,.2f}*"
                     else:
-                        position_text = "📊 You don't have any positions yet.\n\nUse `/buy AAPL` to make your first trade!"
+                        position_text = "You don't have any positions yet.\n\nUse `/buy AAPL` to make your first trade!"
                     
                     return position_text
                     
@@ -1179,7 +1179,7 @@ def register_command_handlers(app: App, service_container: Optional['ServiceCont
             client.chat_postEphemeral(
                 channel=body.get('channel_id'),
                 user=body.get('user_id'),
-                text="❌ Error checking positions. Please try again."
+                text="Error checking positions. Please try again."
             )
     
     # Old trade command registration removed - now using multi-account system only
@@ -1214,7 +1214,7 @@ def register_command_handlers(app: App, service_container: Optional['ServiceCont
                         client.chat_postEphemeral(
                             channel=body.get('channel_id'),
                             user=body.get('user_id'),
-                            text=f"❌ Portfolio command failed: {str(e)}"
+                            text=f"Portfolio command failed: {str(e)}"
                         )
                     except Exception:
                         pass
@@ -1230,7 +1230,7 @@ def register_command_handlers(app: App, service_container: Optional['ServiceCont
                 client.chat_postEphemeral(
                     channel=body.get('channel_id'),
                     user=body.get('user_id'),
-                    text=f"❌ Portfolio command failed: {str(e)}"
+                    text=f"Portfolio command failed: {str(e)}"
                 )
             except Exception:
                 pass
@@ -1240,10 +1240,10 @@ def register_command_handlers(app: App, service_container: Optional['ServiceCont
                 client.chat_postEphemeral(
                     channel=body.get("channel_id"),
                     user=body.get("user_id"),
-                    text=f"❌ Status command failed: {str(e)}\n\nPlease contact support."
+                    text=f"Status command failed: {str(e)}\n\nPlease contact support."
                 )
             except Exception as post_error:
-                print(f"❌ Failed to send error message: {post_error}")
+                print(f"Failed to send error message: {post_error}")
     
     # Store handler globally for metrics access
     global _command_handler
@@ -1348,7 +1348,7 @@ def register_command_handlers(app: App, service_container: Optional['ServiceCont
                         "type": "header",
                         "text": {
                             "type": "plain_text",
-                            "text": "🚀 Trading Interface"
+                            "text": "Trading Interface"
                         }
                     },
                     {
@@ -1403,9 +1403,9 @@ def register_command_handlers(app: App, service_container: Optional['ServiceCont
                 ]
                 
                 try:
-                    say(blocks=trade_blocks, text="🚀 Trading Interface")
+                    say(blocks=trade_blocks, text="Trading Interface")
                 except Exception as e:
-                    say(f"🚀 *Trading Interface*\n\nUse: `@TestingTradingBot quote AAPL` for quotes\n\nError: {str(e)}")
+                    say(f"*Trading Interface*\n\nUse: `@TestingTradingBot quote AAPL` for quotes\n\nError: {str(e)}")
                 
             elif command_text == 'dashboard':
                 # Create a simple Block Kit dashboard
@@ -1414,7 +1414,7 @@ def register_command_handlers(app: App, service_container: Optional['ServiceCont
                         "type": "header",
                         "text": {
                             "type": "plain_text",
-                            "text": "📊 Trading Dashboard"
+                            "text": "Trading Dashboard"
                         }
                     },
                     {
@@ -1505,9 +1505,9 @@ def register_command_handlers(app: App, service_container: Optional['ServiceCont
                 ]
                 
                 try:
-                    say(blocks=dashboard_blocks, text="📊 Trading Dashboard")
+                    say(blocks=dashboard_blocks, text="Trading Dashboard")
                 except Exception as e:
-                    say(f"📊 *Trading Dashboard*\n\nPortfolio Value: $10,000.00\nCash: $10,000.00\nPositions: 0\n\nError: {str(e)}")
+                    say(f"*Trading Dashboard*\n\nPortfolio Value: $10,000.00\nCash: $10,000.00\nPositions: 0\n\nError: {str(e)}")
                 
             elif command_text.startswith('quote'):
                 # Extract symbol from command like "quote AAPL"
