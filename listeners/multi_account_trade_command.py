@@ -1426,8 +1426,8 @@ def _create_instant_buy_modal(symbol: str = "", quantity: str = "1") -> Dict[str
                 "element": {
                     "type": "plain_text_input",
                     "action_id": "symbol_input",
-                    "placeholder": {"type": "plain_text", "text": "Enter the stock ticker"},
-                    "initial_value": symbol if symbol else "AAPL",
+                    "placeholder": {"type": "plain_text", "text": "Enter stock ticker (e.g., AAPL, TSLA)"},
+                    "initial_value": symbol if symbol else "",
                     "dispatch_action_config": {
                         "trigger_actions_on": ["on_enter_pressed", "on_character_entered"]
                     }
@@ -1550,8 +1550,8 @@ def _create_instant_sell_modal(symbol: str = "", quantity: str = "1") -> Dict[st
                 "element": {
                     "type": "plain_text_input",
                     "action_id": "symbol_input",
-                    "placeholder": {"type": "plain_text", "text": "Enter the stock ticker"},
-                    "initial_value": symbol if symbol else "AAPL",
+                    "placeholder": {"type": "plain_text", "text": "Enter stock ticker (e.g., AAPL, TSLA)"},
+                    "initial_value": symbol if symbol else "",
                     "dispatch_action_config": {
                         "trigger_actions_on": ["on_enter_pressed", "on_character_entered"]
                     }
@@ -1912,13 +1912,29 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
         logger.info("🚀 Opening modal IMMEDIATELY...")
         logger.info("=" * 60)
         
-        # Parse command immediately
+        # Parse command immediately with validation
         parse_start = time.time()
         parts = command_text.split() if command_text else []
+        
+        # Parse symbol: only accept valid letters, 1-5 chars
         symbol = next((p.upper() for p in parts if p.isalpha() and len(p) <= 5 and p.lower() not in ['buy', 'sell']), "")
-        quantity = next((p for p in parts if p.isdigit()), "1")
+        
+        # Parse quantity: ONLY accept positive integers (reject negative, decimals, text)
+        quantity_raw = next((p for p in parts if p.lstrip('-').isdigit()), "1")
+        # Validate quantity is positive
+        try:
+            qty_int = int(quantity_raw)
+            if qty_int <= 0:
+                quantity = "1"  # Default to 1 if negative or zero
+                logger.warning(f"Negative/zero quantity {qty_int} rejected, defaulting to 1")
+            else:
+                quantity = str(qty_int)
+        except:
+            quantity = "1"
+        
         parse_time = time.time()
         logger.info(f"⚡ Parse took: {(parse_time - parse_start)*1000:.2f}ms")
+        logger.info(f"Parsed values: symbol='{symbol}', quantity='{quantity}'")
         
         # Send immediate ephemeral response, then open modal
         try:
@@ -2047,13 +2063,29 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
         logger.info("🚀 Opening modal IMMEDIATELY...")
         logger.info("=" * 60)
         
-        # Parse command immediately
+        # Parse command immediately with validation
         parse_start = time.time()
         parts = command_text.split() if command_text else []
+        
+        # Parse symbol: only accept valid letters, 1-5 chars
         symbol = next((p.upper() for p in parts if p.isalpha() and len(p) <= 5 and p.lower() not in ['buy', 'sell']), "")
-        quantity = next((p for p in parts if p.isdigit()), "1")
+        
+        # Parse quantity: ONLY accept positive integers (reject negative, decimals, text)
+        quantity_raw = next((p for p in parts if p.lstrip('-').isdigit()), "1")
+        # Validate quantity is positive
+        try:
+            qty_int = int(quantity_raw)
+            if qty_int <= 0:
+                quantity = "1"  # Default to 1 if negative or zero
+                logger.warning(f"Negative/zero quantity {qty_int} rejected, defaulting to 1")
+            else:
+                quantity = str(qty_int)
+        except:
+            quantity = "1"
+        
         parse_time = time.time()
         logger.info(f"⚡ Parse took: {(parse_time - parse_start)*1000:.2f}ms")
+        logger.info(f"Parsed values: symbol='{symbol}', quantity='{quantity}'")
         
         # Send immediate ephemeral response, then open modal
         try:
