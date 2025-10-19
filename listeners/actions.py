@@ -1565,7 +1565,7 @@ def register_action_handlers(app: App, service_container: Optional['ServiceConta
                             "elements": [
                                 {
                                     "type": "mrkdwn",
-                                    "text": "💡 This is a *simulation* - no real money involved!"
+                                    "text": "This is a *simulation* - no real money involved!"
                                 }
                             ]
                         },
