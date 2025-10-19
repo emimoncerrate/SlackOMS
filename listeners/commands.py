@@ -1191,19 +1191,38 @@ def register_command_handlers(app: App, service_container: Optional['ServiceCont
         print("📊 PORTFOLIO COMMAND CALLED!")
         
         try:
-            # Process the command using asyncio
+            # Process the command using asyncio in a thread to avoid event loop conflicts
             import asyncio
+            import threading
             
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            try:
-                loop.run_until_complete(
-                    command_handler.process_command(
-                        CommandType.PORTFOLIO, body, client, ack, context
-                    )
-                )
-            finally:
-                loop.close()
+            def run_portfolio_command():
+                """Run portfolio command in a separate thread with its own event loop."""
+                try:
+                    loop = asyncio.new_event_loop()
+                    asyncio.set_event_loop(loop)
+                    try:
+                        loop.run_until_complete(
+                            command_handler.process_command(
+                                CommandType.PORTFOLIO, body, client, ack, context
+                            )
+                        )
+                    finally:
+                        loop.close()
+                except Exception as e:
+                    logger.error(f"Portfolio thread error: {e}")
+                    try:
+                        client.chat_postEphemeral(
+                            channel=body.get('channel_id'),
+                            user=body.get('user_id'),
+                            text=f"❌ Portfolio command failed: {str(e)}"
+                        )
+                    except Exception:
+                        pass
+            
+            # Run in background thread
+            thread = threading.Thread(target=run_portfolio_command)
+            thread.daemon = True
+            thread.start()
                 
         except Exception as e:
             logger.error(f"Portfolio command error: {e}")
