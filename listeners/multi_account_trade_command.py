@@ -1398,23 +1398,28 @@ async def _fetch_and_update_buy_price(symbol: str, view_id: str, client: WebClie
             if response.get("ok"):
                 print(f"✅ BUY PRICE FETCH: Modal updated with ${current_price:.2f} (qty: {current_quantity}, GMV: ${calculated_gmv:.2f})")
             else:
-                print(f"❌ BUY PRICE FETCH: Modal update failed: {response}")
+                print(f"❌ BUY PRICE FETCH: Modal update failed (Slack API error): {response}")
+                # This is a modal format error, not an invalid symbol error
                 
         except Exception as price_error:
+            # This is actually an invalid symbol error (market data API failed)
             print(f"❌ BUY PRICE FETCH: Invalid symbol '{symbol}': {price_error}")
             
             # Create error modal for invalid symbol
             error_modal = _create_error_modal(symbol, f"Invalid ticker symbol '{symbol}'. Please try a valid stock symbol like AAPL, TSLA, MSFT.")
             
-            response = client.views_update(
-                view_id=view_id,
-                view=error_modal
-            )
-            
-            if response.get("ok"):
-                print(f"✅ BUY PRICE FETCH: Error modal displayed for invalid symbol '{symbol}'")
-            else:
-                print(f"❌ BUY PRICE FETCH: Error modal update failed: {response}")
+            try:
+                response = client.views_update(
+                    view_id=view_id,
+                    view=error_modal
+                )
+                
+                if response.get("ok"):
+                    print(f"✅ BUY PRICE FETCH: Error modal displayed for invalid symbol '{symbol}'")
+                else:
+                    print(f"❌ BUY PRICE FETCH: Error modal update failed: {response}")
+            except Exception as modal_error:
+                print(f"❌ BUY PRICE FETCH: Failed to show error modal: {modal_error}")
             
     except Exception as e:
         print(f"❌ BUY PRICE FETCH: Error: {e}")
@@ -1562,7 +1567,7 @@ def _create_instant_buy_modal_with_price_and_gmv(symbol: str = "", quantity: str
     if gmv is not None:
         for block in modal["blocks"]:
             if block.get("block_id") == "gmv_block":
-                block["element"]["initial_value"] = f"{gmv:.2f}"
+                block["element"]["initial_value"] = str(round(gmv, 2))
                 break
     
     return modal
