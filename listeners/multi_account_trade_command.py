@@ -1874,15 +1874,15 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
         
         # Send immediate ephemeral response, then open modal
         try:
-            # Send instant confirmation message
-            ephemeral_start = time.time()
-            client.chat_postEphemeral(
-                channel=body.get("channel_id"),
-                user=user_id,
-                text=f"Opening buy modal for {symbol.upper() if symbol else 'stock'} (qty: {quantity})..."
-            )
-            ephemeral_time = time.time()
-            logger.info(f"⚡ Ephemeral message took: {(ephemeral_time - ephemeral_start)*1000:.2f}ms")
+            # Removed ephemeral confirmation message - users don't need to see it
+            # ephemeral_start = time.time()
+            # client.chat_postEphemeral(
+            #     channel=body.get("channel_id"),
+            #     user=user_id,
+            #     text=f"Opening buy modal for {symbol.upper() if symbol else 'stock'} (qty: {quantity})..."
+            # )
+            # ephemeral_time = time.time()
+            # logger.info(f"⚡ Ephemeral message took: {(ephemeral_time - ephemeral_start)*1000:.2f}ms")
             
             # Create modal
             modal_start = time.time()
@@ -2009,15 +2009,15 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
         
         # Send immediate ephemeral response, then open modal
         try:
-            # Send instant confirmation message
-            ephemeral_start = time.time()
-            client.chat_postEphemeral(
-                channel=body.get("channel_id"),
-                user=user_id,
-                text=f"Opening sell modal for {symbol.upper() if symbol else 'stock'} (qty: {quantity})..."
-            )
-            ephemeral_time = time.time()
-            logger.info(f"⚡ Ephemeral message took: {(ephemeral_time - ephemeral_start)*1000:.2f}ms")
+            # Removed ephemeral confirmation message - users don't need to see it
+            # ephemeral_start = time.time()
+            # client.chat_postEphemeral(
+            #     channel=body.get("channel_id"),
+            #     user=user_id,
+            #     text=f"Opening sell modal for {symbol.upper() if symbol else 'stock'} (qty: {quantity})..."
+            # )
+            # ephemeral_time = time.time()
+            # logger.info(f"⚡ Ephemeral message took: {(ephemeral_time - ephemeral_start)*1000:.2f}ms")
             
             # Create modal
             modal_start = time.time()
