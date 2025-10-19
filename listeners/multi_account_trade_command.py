@@ -2316,6 +2316,9 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
             
             logger.info(f"🎯 TRADE SUBMISSION: {trade_side.upper()} {quantity} {symbol} ({order_type})")
             
+            # Get channel from private metadata or use approved channel
+            channel_id = body.get("view", {}).get("private_metadata") or "C09H1R7KKP1"  # Use first approved channel as fallback
+            
             # Execute the actual trade with Alpaca in background thread
             def execute_trade_async():
                 """Execute trade in background thread."""
@@ -2383,14 +2386,16 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                             success_msg += f"• Status: {status}\n"
                             success_msg += f"\n🎯 **This is paper trading - no real money involved**"
                             
-                            client.chat_postMessage(
-                                channel=user_id,  # Send DM to user
+                            client.chat_postEphemeral(
+                                channel=channel_id,
+                                user=user_id,
                                 text=success_msg
                             )
                         else:
                             logger.error(f"❌ TRADE FAILED: No order ID returned")
-                            client.chat_postMessage(
-                                channel=user_id,  # Send DM to user
+                            client.chat_postEphemeral(
+                                channel=channel_id,
+                                user=user_id,
                                 text=f"❌ **Trade Failed**\n\nUnable to execute {trade_side} order for {symbol}. Please try again."
                             )
                             
@@ -2407,8 +2412,9 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                         error_msg += f"\nPlease check your inputs and try again."
                         
                         try:
-                            client.chat_postMessage(
-                                channel=user_id,  # Send DM to user
+                            client.chat_postEphemeral(
+                                channel=channel_id,
+                                user=user_id,
                                 text=error_msg
                             )
                         except Exception as msg_error:
@@ -2423,11 +2429,11 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                 thread.start()
             
             # Send immediate confirmation and start background execution
-            # Try to send DM to user instead of channel message
             try:
-                # Send direct message to user
-                client.chat_postMessage(
-                    channel=user_id,  # Send DM to user
+                # Send ephemeral message in channel
+                client.chat_postEphemeral(
+                    channel=channel_id,
+                    user=user_id,
                     text=f"🔄 **Processing Trade...**\n\n"
                          f"📊 **Order Details:**\n"
                          f"• Symbol: {symbol}\n"
