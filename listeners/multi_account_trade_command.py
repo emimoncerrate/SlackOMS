@@ -2479,6 +2479,7 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
             
             # Get channel from private metadata or use approved channel
             channel_id = body.get("view", {}).get("private_metadata") or "C09H1R7KKP1"  # Use first approved channel as fallback
+            logger.info(f"📍 CHANNEL ID for messages: {channel_id}")
             
             # Execute the actual trade with Alpaca in background thread
             def execute_trade_async():
@@ -2559,11 +2560,13 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                                 }
                             ]
                             
-                            client.chat_postMessage(
+                            logger.info(f"📤 SENDING SUCCESS MESSAGE to channel: {channel_id}")
+                            result = client.chat_postMessage(
                                 channel=channel_id,
                                 blocks=success_blocks,
                                 text="Trade Executed Successfully!"
                             )
+                            logger.info(f"✅ SUCCESS MESSAGE SENT: {result.get('ok', False)}, ts={result.get('ts', 'N/A')}")
                         else:
                             logger.error(f"❌ TRADE FAILED: No order ID returned")
                             failure_blocks = [
@@ -2650,11 +2653,13 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                     }
                 ]
                 
-                client.chat_postMessage(
+                logger.info(f"📤 SENDING PROCESSING MESSAGE to channel: {channel_id}")
+                proc_result = client.chat_postMessage(
                     channel=channel_id,
                     blocks=processing_blocks,
                     text="Processing Trade..."
                 )
+                logger.info(f"✅ PROCESSING MESSAGE SENT: {proc_result.get('ok', False)}, ts={proc_result.get('ts', 'N/A')}")
                 
                 # Execute trade in background
                 execute_trade_async()
