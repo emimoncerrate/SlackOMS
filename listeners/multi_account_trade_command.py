@@ -2365,8 +2365,8 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                             raise ValueError(f"Unsupported order type: {order_type}")
                         
                         # Send success message
-                        if result and result.get("id"):
-                            order_id = result.get("id")
+                        if result and (result.get("id") or result.get("order_id")):
+                            order_id = result.get("id") or result.get("order_id")
                             status = result.get("status", "submitted")
                             
                             logger.info(f"✅ TRADE EXECUTED: Order ID {order_id}, Status: {status}")
@@ -2383,16 +2383,14 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                             success_msg += f"• Status: {status}\n"
                             success_msg += f"\n🎯 **This is paper trading - no real money involved**"
                             
-                            client.chat_postEphemeral(
-                                channel="general",  # Use general as fallback
-                                user=user_id,
+                            client.chat_postMessage(
+                                channel=user_id,  # Send DM to user
                                 text=success_msg
                             )
                         else:
                             logger.error(f"❌ TRADE FAILED: No order ID returned")
-                            client.chat_postEphemeral(
-                                channel="general",
-                                user=user_id,
+                            client.chat_postMessage(
+                                channel=user_id,  # Send DM to user
                                 text=f"❌ **Trade Failed**\n\nUnable to execute {trade_side} order for {symbol}. Please try again."
                             )
                             
@@ -2409,9 +2407,8 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                         error_msg += f"\nPlease check your inputs and try again."
                         
                         try:
-                            client.chat_postEphemeral(
-                                channel="general",
-                                user=user_id,
+                            client.chat_postMessage(
+                                channel=user_id,  # Send DM to user
                                 text=error_msg
                             )
                         except Exception as msg_error:
@@ -2426,10 +2423,11 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                 thread.start()
             
             # Send immediate confirmation and start background execution
+            # Try to send DM to user instead of channel message
             try:
-                client.chat_postEphemeral(
-                    channel="general",
-                    user=user_id,
+                # Send direct message to user
+                client.chat_postMessage(
+                    channel=user_id,  # Send DM to user
                     text=f"🔄 **Processing Trade...**\n\n"
                          f"📊 **Order Details:**\n"
                          f"• Symbol: {symbol}\n"
