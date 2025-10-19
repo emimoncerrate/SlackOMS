@@ -2281,8 +2281,23 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
     @app.view("stock_trade_modal_interactive")
     def handle_trade_modal_submission(ack, body, client, logger):
         """Handle trade modal submission."""
-        # Acknowledge and close the modal (empty ack closes the modal)
-        ack()
+        logger.info("🔍 MODAL SUBMISSION: Handler started")
+        
+        try:
+            # Acknowledge and close the modal (empty ack closes the modal)
+            logger.info("🔍 MODAL SUBMISSION: About to call ack()")
+            ack()
+            logger.info("✅ MODAL SUBMISSION: ack() called successfully")
+        except Exception as ack_error:
+            logger.error(f"❌ MODAL SUBMISSION: ack() failed: {ack_error}")
+            # Try alternative ack format
+            try:
+                logger.info("🔍 MODAL SUBMISSION: Trying alternative ack format")
+                ack({"response_action": "clear"})
+                logger.info("✅ MODAL SUBMISSION: Alternative ack() successful")
+            except Exception as alt_ack_error:
+                logger.error(f"❌ MODAL SUBMISSION: Alternative ack() failed: {alt_ack_error}")
+                return
         
         try:
             # Extract values from modal
@@ -2455,6 +2470,9 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
             
         except Exception as e:
             logger.error(f"❌ Error processing trade submission: {e}")
+            logger.error(f"🚨 MODAL SUBMISSION: Exception in main handler: {e}")
+            import traceback
+            logger.error(f"🚨 MODAL SUBMISSION: Traceback: {traceback.format_exc()}")
             # Send error message to user
             try:
                 client.chat_postEphemeral(
@@ -2464,6 +2482,8 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                 )
             except:
                 pass
+        
+        logger.info("✅ MODAL SUBMISSION: Handler completed successfully")
     
     logger.info("✅ MULTI-ACCOUNT BUY/SELL COMMANDS REGISTERED SUCCESSFULLY")
     return multi_trade_command
