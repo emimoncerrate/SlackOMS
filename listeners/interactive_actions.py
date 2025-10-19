@@ -79,32 +79,32 @@ class InteractiveActionHandler:
         def handle_limit_price_input_wrapper(ack, body, client):
             asyncio.create_task(self.handle_limit_price_input(ack, body, client))
         
-        # Modal submission handler - the most important one for trade execution
-        @app.view("stock_trade_modal_interactive")
-        def handle_modal_submission_wrapper(ack, body, client):
-            print(f"🎯 MODAL SUBMISSION: Handler called successfully")
-            
-            try:
-                # Acknowledge with clear response to close the modal
-                ack({
-                    "response_action": "clear"
-                })
-                print(f"✅ MODAL: Acknowledged with clear action")
-            except Exception as ack_error:
-                # Fallback to simple ack
-                ack()
-                print(f"✅ MODAL: Acknowledged with simple ack (fallback)")
-            
-            # Execute the trade in a new thread to avoid event loop issues
-            import threading
-            thread = threading.Thread(
-                target=self._run_async_trade_execution,
-                args=(body, client),
-                daemon=True
-            )
-            thread.start()
-            
-            print(f"✅ MODAL: Trade executing in background")
+        # Modal submission handler - DISABLED (now handled by multi_account_trade_command.py)
+        # This was causing duplicate responses and the {"message":""} issue
+        # @app.view("stock_trade_modal_interactive")
+        # def handle_modal_submission_wrapper(ack, body, client):
+        #     print(f"🎯 MODAL SUBMISSION: Handler called successfully")
+        #     
+        #     try:
+        #         # Acknowledge with clear response to close the modal
+        #         ack({
+        #             "response_action": "clear"
+        #         })
+        #         print(f"✅ MODAL: Acknowledged with clear action")
+        #     except Exception as ack_error:
+        #         # Fallback to simple ack
+        #         ack()
+        #         print(f"✅ MODAL: Acknowledged with simple ack (fallback)")
+        #     
+        #     # Execute the trade in a new thread to avoid event loop issues
+        #     import threading
+        #     thread = threading.Thread(
+        #         target=self._run_async_trade_execution,
+        #         args=(body, client),
+        #         daemon=True
+        #     )
+        #     thread.start()
+        #     print(f"✅ MODAL: Trade executing in background")
         
         self.logger.info("Interactive action handlers registered")
     
