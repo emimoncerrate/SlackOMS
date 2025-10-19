@@ -2279,9 +2279,9 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
     
     # Handle modal submission (when user clicks "Execute Trade")
     @app.view("stock_trade_modal_interactive")
-    def handle_trade_modal_submission(ack, body, client, logger):
+    async def handle_trade_modal_submission(ack, body, client, logger):
         """Handle trade modal submission."""
-        ack()
+        await ack()
         
         try:
             # Extract values from modal
@@ -2316,14 +2316,97 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
             
             logger.info(f"🎯 TRADE SUBMISSION: {trade_side.upper()} {quantity} {symbol} ({order_type})")
             
-            # Send confirmation message
-            client.chat_postEphemeral(
-                channel=body["view"]["private_metadata"] if body["view"].get("private_metadata") else "general",
-                user=user_id,
-                text=f"✅ Trade submitted: {trade_side.upper()} {quantity} shares of {symbol} ({order_type} order)" + 
-                     (f" at ${limit_price:.2f}" if limit_price else "") + 
-                     "\n🔄 Processing your trade..."
-            )
+            # Execute the actual trade with Alpaca
+            try:
+                from services.service_container import get_alpaca_service
+                alpaca_service = get_alpaca_service()
+                
+                # Validate inputs
+                if not symbol or not quantity:
+                    raise ValueError("Missing symbol or quantity")
+                
+                qty_int = int(quantity)
+                if qty_int <= 0:
+                    raise ValueError("Quantity must be positive")
+                
+                # Execute trade
+                logger.info(f"🚀 EXECUTING TRADE: {trade_side.upper()} {qty_int} {symbol}")
+                
+                if order_type == "market":
+                    # Market order
+                    result = await alpaca_service.submit_order(
+                        symbol=symbol,
+                        quantity=qty_int,
+                        side=trade_side,
+                        order_type="market",
+                        time_in_force="day"
+                    )
+                elif order_type == "limit" and limit_price:
+                    # Limit order - need to check if Alpaca service supports limit_price parameter
+                    result = await alpaca_service.submit_order(
+                        symbol=symbol,
+                        quantity=qty_int,
+                        side=trade_side,
+                        order_type="limit",
+                        time_in_force="day"
+                    )
+                else:
+                    raise ValueError(f"Unsupported order type: {order_type}")
+                
+                if result and result.get("id"):
+                    # Trade executed successfully
+                    order_id = result.get("id")
+                    filled_price = result.get("filled_avg_price", "pending")
+                    status = result.get("status", "submitted")
+                    
+                    logger.info(f"✅ TRADE EXECUTED: Order ID {order_id}, Status: {status}")
+                    
+                    success_msg = f"✅ **Trade Executed Successfully!**\n\n"
+                    success_msg += f"📊 **Order Details:**\n"
+                    success_msg += f"• Symbol: {symbol}\n"
+                    success_msg += f"• Action: {trade_side.upper()}\n"
+                    success_msg += f"• Quantity: {qty_int} shares\n"
+                    success_msg += f"• Order Type: {order_type.title()}\n"
+                    if limit_price:
+                        success_msg += f"• Limit Price: ${limit_price:.2f}\n"
+                    success_msg += f"• Order ID: {order_id}\n"
+                    success_msg += f"• Status: {status}\n"
+                    if filled_price != "pending":
+                        success_msg += f"• Fill Price: ${float(filled_price):.2f}\n"
+                    success_msg += f"\n🎯 **This is paper trading - no real money involved**"
+                    
+                    client.chat_postEphemeral(
+                        channel=body["view"]["private_metadata"] if body["view"].get("private_metadata") else "general",
+                        user=user_id,
+                        text=success_msg
+                    )
+                else:
+                    # Trade failed
+                    logger.error(f"❌ TRADE FAILED: No order ID returned")
+                    client.chat_postEphemeral(
+                        channel=body["view"]["private_metadata"] if body["view"].get("private_metadata") else "general",
+                        user=user_id,
+                        text=f"❌ **Trade Failed**\n\nUnable to execute {trade_side} order for {symbol}. Please try again."
+                    )
+                    
+            except Exception as trade_error:
+                logger.error(f"❌ TRADE EXECUTION ERROR: {trade_error}")
+                
+                # Send error message to user
+                error_msg = f"❌ **Trade Execution Failed**\n\n"
+                error_msg += f"Error: {str(trade_error)}\n\n"
+                error_msg += f"**Attempted Trade:**\n"
+                error_msg += f"• {trade_side.upper()} {quantity} {symbol}\n"
+                error_msg += f"• Order Type: {order_type}\n"
+                if limit_price:
+                    error_msg += f"• Limit Price: ${limit_price:.2f}\n"
+                error_msg += f"\nPlease check your inputs and try again."
+                
+                client.chat_postEphemeral(
+                    channel=body["view"]["private_metadata"] if body["view"].get("private_metadata") else "general",
+                    user=user_id,
+                    text=error_msg
+                )
             
         except Exception as e:
             logger.error(f"❌ Error processing trade submission: {e}")
