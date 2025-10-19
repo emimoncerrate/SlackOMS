@@ -435,7 +435,7 @@ class InteractiveActionHandler:
                 client.chat_postEphemeral(
                     channel=context.channel_id,
                     user=context.user.slack_user_id,
-                    text=f"❌ Trade validation failed: {', '.join(validation_errors.values())}"
+                    text=f"Trade validation failed: {', '.join(validation_errors.values())}"
                 )
                 return
             
@@ -455,7 +455,7 @@ class InteractiveActionHandler:
                 client.chat_postEphemeral(
                     channel=body.get("view", {}).get("private_metadata", {}).get("channel_id", ""),
                     user=body.get("user", {}).get("id", ""),
-                    text=f"❌ Trade execution failed: {str(e)}"
+                    text=f"Trade execution failed: {str(e)}"
                 )
             except Exception:
                 pass
@@ -534,7 +534,7 @@ class InteractiveActionHandler:
                 client.chat_postEphemeral(
                     channel=context.channel_id,
                     user=context.user.slack_user_id,
-                    text=f"❌ Trade validation failed: {', '.join(validation_errors.values())}"
+                    text=f"Trade validation failed: {', '.join(validation_errors.values())}"
                 )
                 return
             
@@ -558,7 +558,7 @@ class InteractiveActionHandler:
                     client.chat_postEphemeral(
                         channel=channel_id,
                         user=user_id,
-                        text=f"❌ Trade execution failed: {str(e)}"
+                        text=f"Trade execution failed: {str(e)}"
                     )
             except Exception as notify_error:
                 self.logger.error(f"Failed to send error notification: {notify_error}")
@@ -702,7 +702,7 @@ class InteractiveActionHandler:
             # Send error message
             client.chat_postMessage(
                 channel=context.channel_id,
-                text=f"❌ Trade execution failed: {str(e)}\n"
+                text=f"Trade execution failed: {str(e)}\n"
                      f"Please try again or contact support if the issue persists."
             )
     
@@ -816,7 +816,7 @@ class InteractiveActionHandler:
             portfolio_info = await self._get_portfolio_summary(trade.user_id, trade.symbol)
             
             success_message = (
-                f"✅ *Trade Executed Successfully*\n\n"
+                f"*Trade Executed Successfully*\n\n"
                 f"*Trade Details:*\n"
                 f"• *Symbol:* {trade.symbol}\n"
                 f"• *Type:* {trade.trade_type.value.upper()}\n"
@@ -826,7 +826,7 @@ class InteractiveActionHandler:
                 f"• *Method:* {execution_method}\n"
                 + "\n".join(f"• {detail}" for detail in execution_details) + "\n\n"
                 + portfolio_info +
-                f"\n📊 Use `/portfolio` to see your complete portfolio."
+                f"\nUse `/portfolio` to see your complete portfolio."
             )
             
             # Try to update the processing message first

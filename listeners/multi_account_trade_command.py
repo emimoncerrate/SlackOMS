@@ -904,19 +904,19 @@ class MultiAccountTradeCommand(EnhancedTradeCommand):
             account_info: Account information
         """
         try:
-            message = f"✅ *Trade Executed Successfully*\n\n"
-            message += f"🏦 Account: {account_info['account_name']}\n"
-            message += f"📈 {trade_result['side'].upper()} {trade_result['qty']} shares of {trade_result['symbol']}\n"
-            message += f"📋 Order ID: {trade_result['order_id']}\n"
-            message += f"⏰ Submitted: {trade_result['submitted_at']}\n"
+            message = f"*Trade Executed Successfully*\n\n"
+            message += f"Account: {account_info['account_name']}\n"
+            message += f"{trade_result['side'].upper()} {trade_result['qty']} shares of {trade_result['symbol']}\n"
+            message += f"Order ID: {trade_result['order_id']}\n"
+            message += f"Submitted: {trade_result['submitted_at']}\n"
             
             if trade_result.get('filled_avg_price'):
-                message += f"💰 Filled Price: ${trade_result['filled_avg_price']:.2f}\n"
+                message += f"Filled Price: ${trade_result['filled_avg_price']:.2f}\n"
             
             # Get updated account balance
             updated_account = self.multi_alpaca.get_account_info(trade_result['account_id'])
             if updated_account:
-                message += f"\n💳 Updated Cash: ${updated_account['cash']:,.2f}"
+                message += f"\nUpdated Cash: ${updated_account['cash']:,.2f}"
             
             client.chat_postMessage(
                 channel=body["user"]["id"],  # Send as DM

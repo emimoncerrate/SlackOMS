@@ -939,7 +939,7 @@ class ActionHandler:
         """Send trade success notification."""
         try:
             message = (
-                f"✅ *Trade Executed Successfully*\n\n"
+                f"*Trade Executed Successfully*\n\n"
                 f"• Symbol: {trade.symbol}\n"
                 f"• Type: {trade.trade_type.value.title()}\n"
                 f"• Quantity: {trade.quantity:,}\n"
@@ -1313,14 +1313,14 @@ def register_action_handlers(app: App, service_container: Optional['ServiceConta
                     "callback_id": "trade_confirmation_modal",
                     "title": {
                         "type": "plain_text",
-                        "text": "✅ Trade Executed"
+                        "text": "Trade Executed"
                     },
                     "blocks": [
                         {
                             "type": "section",
                             "text": {
                                 "type": "mrkdwn",
-                                "text": f"🎉 *Trade Executed Successfully!*\n\n📊 *Stock:* {trade.symbol}\n📈 *Action:* BUY\n💰 *Quantity:* {trade.quantity} shares\n💵 *Avg Price:* ${execution_report.average_fill_price}\n💸 *Total:* ${execution_report.total_value}"
+                                "text": f"*Trade Executed Successfully*\n\n*Stock:* {trade.symbol}\n*Action:* BUY\n*Quantity:* {trade.quantity} shares\n*Avg Price:* ${execution_report.average_fill_price}\n*Total:* ${execution_report.total_value}"
                             }
                         },
                         {
@@ -1330,7 +1330,7 @@ def register_action_handlers(app: App, service_container: Optional['ServiceConta
                             "type": "section",
                             "text": {
                                 "type": "mrkdwn",
-                                "text": f"✅ *Order Status:* {execution_report.status.value}\n⏰ *Execution Time:* Just now\n🏢 *Method:* {execution_method}\n📋 *Order ID:* {execution_report.order_id[:8]}..."
+                                "text": f"*Order Status:* {execution_report.status.value}\n*Execution Time:* Just now\n*Method:* {execution_method}\n*Order ID:* {execution_report.order_id[:8]}..."
                             }
                         }
                     ],

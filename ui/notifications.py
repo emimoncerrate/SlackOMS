@@ -328,7 +328,7 @@ class NotificationService:
                 user_id=user.user_id,
                 notification_type=NotificationType.HIGH_RISK_ALERT,
                 priority=NotificationPriority.HIGH,
-                title=f"⚠️ High-Risk Trade Alert: {trade.symbol}",
+                title=f"High-Risk Trade Alert: {trade.symbol}",
                 message=f"Your proposed trade for {trade.symbol} has been flagged as high-risk and requires confirmation.",
                 channels=self._get_user_preferences(user.user_id).risk_alerts,
                 context={
@@ -411,7 +411,7 @@ class NotificationService:
                 user_id=user.user_id,
                 notification_type=NotificationType.PORTFOLIO_ALERT,
                 priority=priority,
-                title=f"📊 Portfolio Alert: {alert_type.replace('_', ' ').title()}",
+                title=f"Portfolio Alert: {alert_type.replace('_', ' ').title()}",
                 message=message,
                 channels=self._get_user_preferences(user.user_id).portfolio_updates,
                 context=context or {}
@@ -456,7 +456,7 @@ class NotificationService:
                 user_id=user.user_id,
                 notification_type=NotificationType.ERROR_NOTIFICATION,
                 priority=NotificationPriority.HIGH,
-                title=f"❌ Error: {error_type.replace('_', ' ').title()}",
+                title=f"Error: {error_type.replace('_', ' ').title()}",
                 message=error_message,
                 channels=self._get_user_preferences(user.user_id).error_notifications,
                 context=context or {}
@@ -750,8 +750,8 @@ class NotificationService:
         blocks = []
         
         # Trade summary
-        trade_emoji = "🟢" if trade.trade_type == TradeType.BUY else "🔴"
-        status_emoji = "✅" if trade.status == TradeStatus.EXECUTED else "⏳"
+        trade_emoji = "" 
+        status_emoji = ""
         
         blocks.append({
             "type": "section",
@@ -810,7 +810,7 @@ class NotificationService:
                     "type": "button",
                     "text": {
                         "type": "plain_text",
-                        "text": "📊 View Portfolio"
+                        "text": "View Portfolio"
                     },
                     "action_id": "view_portfolio",
                     "style": "primary"
@@ -904,7 +904,7 @@ class NotificationService:
                     "type": "button",
                     "text": {
                         "type": "plain_text",
-                        "text": "⚠️ Review Trade"
+                        "text": "Review Trade"
                     },
                     "action_id": f"review_trade_{trade.trade_id}",
                     "style": "danger"
@@ -913,7 +913,7 @@ class NotificationService:
                     "type": "button",
                     "text": {
                         "type": "plain_text",
-                        "text": "📊 Full Analysis"
+                        "text": "Full Analysis"
                     },
                     "action_id": f"full_analysis_{trade.trade_id}"
                 }
@@ -1021,15 +1021,7 @@ class NotificationService:
         blocks = []
         
         # Alert header with appropriate emoji
-        alert_emojis = {
-            'concentration_risk': '⚠️',
-            'large_loss': '📉',
-            'margin_call': '🚨',
-            'rebalance_needed': '⚖️',
-            'performance_milestone': '🎯'
-        }
-        
-        emoji = alert_emojis.get(alert_type, '📊')
+        emoji = ""
         
         blocks.append({
             "type": "section",
@@ -1083,7 +1075,7 @@ class NotificationService:
                     "type": "button",
                     "text": {
                         "type": "plain_text",
-                        "text": "📊 View Portfolio"
+                        "text": "View Portfolio"
                     },
                     "action_id": "view_portfolio",
                     "style": "primary"
@@ -1107,7 +1099,7 @@ class NotificationService:
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": f"❌ *Error Occurred*\n*Type:* {error_type.replace('_', ' ').title()}\n*Message:* {error_message}"
+                "text": f"*Error Occurred*\n*Type:* {error_type.replace('_', ' ').title()}\n*Message:* {error_message}"
             }
         })
         
@@ -1173,7 +1165,7 @@ class NotificationService:
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": f"🔔 *{title}*\n{message}"
+                "text": f"*{title}*\n{message}"
             }
         })
         
