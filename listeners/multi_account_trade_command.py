@@ -1357,28 +1357,14 @@ async def _fetch_and_update_sell_price(symbol: str, view_id: str, client: WebCli
         print(f"🚨 SELL PRICE FETCH: Traceback: {traceback.format_exc()}")
 
 
-async def _fetch_and_update_buy_price(symbol: str, view_id: str, client: WebClient) -> None:
+async def _fetch_and_update_buy_price(symbol: str, view_id: str, client: WebClient, quantity: str = "1") -> None:
     """Fetch price and update buy modal in background."""
     try:
-        print(f"🔄 BUY PRICE FETCH: Starting for {symbol}")
+        print(f"🔄 BUY PRICE FETCH: Starting for {symbol} (qty: {quantity})")
         
-        # Get the current view to extract quantity
-        try:
-            view_info = client.views_info(view=view_id)
-            current_view = view_info.get("view", {})
-            values = current_view.get("state", {}).get("values", {})
-            
-            # Extract current quantity from modal state
-            # Check both 'value' (user typed) and 'initial_value' (pre-filled)
-            qty_block = values.get("qty_shares_block", {})
-            shares_input = qty_block.get("shares_input", {})
-            current_quantity = shares_input.get("value") or shares_input.get("initial_value", "1")
-            if not current_quantity or str(current_quantity).strip() == "":
-                current_quantity = "1"
-            print(f"✅ BUY PRICE FETCH: Current quantity in modal: {current_quantity}")
-        except Exception as e:
-            print(f"⚠️ BUY PRICE FETCH: Could not extract quantity, using default: {e}")
-            current_quantity = "1"
+        # Use the passed quantity parameter
+        current_quantity = quantity
+        print(f"✅ BUY PRICE FETCH: Using quantity: {current_quantity}")
         
         # Import here to avoid circular imports
         from services.service_container import get_market_data_service
