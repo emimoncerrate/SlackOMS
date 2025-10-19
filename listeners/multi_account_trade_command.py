@@ -251,6 +251,10 @@ class MultiAccountTradeCommand(EnhancedTradeCommand):
                 logger.info(f"🔍 MODAL DEBUG: No symbol found, using basic modal")
                 modal = await self._create_quick_modal(quick_context)
             
+            # Add channel_id to private_metadata for later use
+            if 'private_metadata' not in modal:
+                modal['private_metadata'] = quick_context.channel_id
+            
             # Open modal immediately
             client.views_open(
                 trigger_id=quick_context.trigger_id,
@@ -1002,22 +1006,31 @@ class MultiAccountTradeCommand(EnhancedTradeCommand):
             account_info: Account information
         """
         try:
+            # Get channel from private_metadata or fallback to approved channel
+            channel_id = body.get("view", {}).get("private_metadata") or "C09H1R7KKP1"
+            
             message = f"*Trade Executed Successfully*\n\n"
-            message += f"Account: {account_info['account_name']}\n"
-            message += f"{trade_result['side'].upper()} {trade_result['qty']} shares of {trade_result['symbol']}\n"
-            message += f"Order ID: {trade_result['order_id']}\n"
-            message += f"Submitted: {trade_result['submitted_at']}\n"
+            message += f"*Trade Details:*\n"
+            message += f"• *Symbol:* {trade_result['symbol']}\n"
+            message += f"• *Type:* {trade_result['side'].upper()}\n"
+            message += f"• *Quantity:* {trade_result['qty']:,} shares\n"
+            message += f"• *Order ID:* `{trade_result['order_id']}`\n"
+            message += f"• *Submitted:* {trade_result['submitted_at']}\n"
             
             if trade_result.get('filled_avg_price'):
-                message += f"Filled Price: ${trade_result['filled_avg_price']:.2f}\n"
+                message += f"• *Filled Price:* ${trade_result['filled_avg_price']:.2f}\n"
             
             # Get updated account balance
             updated_account = self.multi_alpaca.get_account_info(trade_result['account_id'])
             if updated_account:
-                message += f"\nUpdated Cash: ${updated_account['cash']:,.2f}"
+                message += f"\n*Account Update:*\n"
+                message += f"• *Cash Balance:* ${float(updated_account['cash']):,.2f}\n"
+                message += f"• *Buying Power:* ${float(updated_account.get('buying_power', updated_account['cash'])):,.2f}"
+            
+            message += f"\n\nUse `/portfolio` to see your complete portfolio."
             
             client.chat_postMessage(
-                channel=body["user"]["id"],  # Send as DM
+                channel=channel_id,
                 text=message
             )
             
@@ -2144,6 +2157,10 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
             modal_create_time = time.time()
             logger.info(f"⚡ Modal creation took: {(modal_create_time - modal_start)*1000:.2f}ms")
             
+            # Add channel_id to private_metadata
+            if 'private_metadata' not in modal_view:
+                modal_view['private_metadata'] = body.get("channel_id", "C09H1R7KKP1")
+            
             # Try to open modal (this might fail due to timing, but we already gave feedback)
             api_start = time.time()
             try:
@@ -2295,6 +2312,10 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
             modal_create_time = time.time()
             logger.info(f"⚡ Modal creation took: {(modal_create_time - modal_start)*1000:.2f}ms")
             
+            # Add channel_id to private_metadata
+            if 'private_metadata' not in modal_view:
+                modal_view['private_metadata'] = body.get("channel_id", "C09H1R7KKP1")
+            
             # Try to open modal (this might fail due to timing, but we already gave feedback)
             api_start = time.time()
             try:
@@ -2409,7 +2430,7 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                             "type": "section",
                             "text": {
                                 "type": "mrkdwn",
-                                "text": "✅ *Trade submitted successfully!*\n\nYour order is being processed. Check the channel for confirmation details."
+                                "text": "*Trade submitted successfully!*\n\nYour order is being processed. Check the channel for confirmation details."
                             }
                         }
                     ]
