@@ -312,7 +312,7 @@ class TradeWidget:
                 "callback_id": "trade_confirmation_modal",
                 "title": {
                     "type": "plain_text",
-                    "text": "⚠️ High-Risk Trade Confirmation"
+                    "text": "High-Risk Trade Confirmation"
                 },
                 "blocks": self._build_confirmation_blocks(context),
                 "submit": {
@@ -363,10 +363,10 @@ class TradeWidget:
             base_config['title'] = 'Analyzing Risk...'
             base_config['submit_text'] = 'Please Wait'
         elif context.state == WidgetState.HIGH_RISK_CONFIRMATION:
-            base_config['title'] = '⚠️ High-Risk Trade'
+            base_config['title'] = 'High-Risk Trade'
             base_config['submit_text'] = 'Confirm High-Risk Trade'
         elif context.state == WidgetState.ERROR:
-            base_config['title'] = '❌ Trade Error'
+            base_config['title'] = 'Trade Error'
             base_config['submit_text'] = 'Retry'
         
         return base_config
@@ -544,8 +544,8 @@ class TradeWidget:
         if context.market_quote and context.market_quote.current_price:
             price_text = f"*Current Price:* ${context.market_quote.current_price:.2f}"
             if context.market_quote.price_change:
-                change_symbol = "📈" if context.market_quote.price_change >= 0 else "📉"
-                price_text += f"\n{change_symbol} Change: ${context.market_quote.price_change:.2f}"
+                change_indicator = "+" if context.market_quote.price_change >= 0 else ""
+                price_text += f"\nChange: {change_indicator}${context.market_quote.price_change:.2f}"
             if hasattr(context.market_quote, 'percent_change') and context.market_quote.percent_change:
                 price_text += f" ({context.market_quote.percent_change:.2f}%)"
         else:
@@ -567,7 +567,7 @@ class TradeWidget:
             "type": "button",
             "text": {
                 "type": "plain_text",
-                "text": "📊 Get Market Data"
+                "text": "Get Market Data"
             },
             "action_id": "get_market_data"
         }
@@ -581,7 +581,7 @@ class TradeWidget:
                 "type": "button",
                 "text": {
                     "type": "plain_text",
-                    "text": "🔍 Analyze Risk"
+                    "text": "Analyze Risk"
                 },
                 "action_id": "analyze_risk"
             }
@@ -611,16 +611,16 @@ class TradeWidget:
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": f"*📊 Market Data for {quote.symbol}*"
+                "text": f"*Market Data for {quote.symbol}*"
             }
         })
         
         # Price information
-        price_change_emoji = "📈" if quote.price_change and quote.price_change > 0 else "📉" if quote.price_change and quote.price_change < 0 else "➡️"
+        price_change_indicator = "+" if quote.price_change and quote.price_change > 0 else "" if quote.price_change and quote.price_change < 0 else ""
         price_change_text = ""
         
         if quote.price_change and quote.price_change_percent:
-            price_change_text = f" ({price_change_emoji} {format_money(quote.price_change)} / {format_percent(quote.price_change_percent)})"
+            price_change_text = f" ({price_change_indicator}{format_money(quote.price_change)} / {price_change_indicator}{format_percent(quote.price_change_percent)})"
         
         price_fields = [
             {
@@ -654,15 +654,15 @@ class TradeWidget:
         })
         
         # Market status and data quality
-        status_emoji = "🟢" if quote.market_status == MarketStatus.OPEN else "🔴"
-        quality_emoji = "⚡" if quote.data_quality == DataQuality.REAL_TIME else "⏰" if quote.data_quality == DataQuality.DELAYED else "⚠️"
+        status_text = "OPEN" if quote.market_status == MarketStatus.OPEN else "CLOSED"
+        quality_text = "REAL-TIME" if quote.data_quality == DataQuality.REAL_TIME else "DELAYED" if quote.data_quality == DataQuality.DELAYED else "LIMITED"
         
         blocks.append({
             "type": "context",
             "elements": [
                 {
                     "type": "mrkdwn",
-                    "text": f"{status_emoji} Market: {quote.market_status.value.title()} | {quality_emoji} Data: {quote.data_quality.value.title()}"
+                    "text": f"Market: {status_text} | Data: {quality_text}"
                 }
             ]
         })
@@ -674,7 +674,7 @@ class TradeWidget:
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": f"*💰 Estimated Trade Value:* {format_money(trade_value)}"
+                    "text": f"*Estimated Trade Value:* {format_money(trade_value)}"
                 }
             })
         
@@ -689,18 +689,18 @@ class TradeWidget:
             return blocks
         
         # Risk analysis header with risk level indicator
-        risk_emoji = {
-            RiskLevel.LOW: "🟢",
-            RiskLevel.MEDIUM: "🟡", 
-            RiskLevel.HIGH: "🟠",
-            RiskLevel.CRITICAL: "🔴"
-        }.get(analysis.overall_risk_level, "❓")
+        risk_text = {
+            RiskLevel.LOW: "LOW",
+            RiskLevel.MEDIUM: "MEDIUM", 
+            RiskLevel.HIGH: "HIGH",
+            RiskLevel.CRITICAL: "CRITICAL"
+        }.get(analysis.overall_risk_level, "UNKNOWN")
         
         blocks.append({
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": f"*🔍 Risk Analysis* {risk_emoji} *{analysis.overall_risk_level.value.upper()} RISK*"
+                "text": f"*Risk Analysis* *{analysis.overall_risk_level.value.upper()} RISK*"
             }
         })
         
@@ -754,18 +754,18 @@ class TradeWidget:
                 })
                 
                 for factor in high_risk_factors:
-                    factor_emoji = {
-                        RiskLevel.LOW: "🟢",
-                        RiskLevel.MEDIUM: "🟡",
-                        RiskLevel.HIGH: "🟠", 
-                        RiskLevel.CRITICAL: "🔴"
-                    }.get(factor.level, "❓")
+                    factor_risk_text = {
+                        RiskLevel.LOW: "LOW",
+                        RiskLevel.MEDIUM: "MEDIUM",
+                        RiskLevel.HIGH: "HIGH", 
+                        RiskLevel.CRITICAL: "CRITICAL"
+                    }.get(factor.level, "UNKNOWN")
                     
                     blocks.append({
                         "type": "section",
                         "text": {
                             "type": "mrkdwn",
-                            "text": f"{factor_emoji} *{factor.category.value.title()}:* {factor.description}"
+                            "text": f"*{factor.category.value.title()}:* {factor.description} [{factor_risk_text}]"
                         }
                     })
         
@@ -794,7 +794,7 @@ class TradeWidget:
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "⚠️ *HIGH-RISK TRADE CONFIRMATION REQUIRED*\n\nThis trade has been flagged as high-risk. Please review the analysis above and type `confirm` below to proceed."
+                "text": "*HIGH-RISK TRADE CONFIRMATION REQUIRED*\n\nThis trade has been flagged as high-risk. Please review the analysis above and type `confirm` below to proceed."
             }
         })
         
@@ -894,7 +894,7 @@ class TradeWidget:
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "⚠️ *By confirming this trade, you acknowledge that you have reviewed the risk analysis and accept responsibility for this high-risk transaction.*"
+                "text": "*By confirming this trade, you acknowledge that you have reviewed the risk analysis and accept responsibility for this high-risk transaction.*"
             }
         })
         
@@ -930,7 +930,7 @@ class TradeWidget:
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "❌ *Errors Found:*"
+                "text": "*Errors Found:*"
             }
         })
         
@@ -958,7 +958,7 @@ class TradeWidget:
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "⚠️ *Warnings:*"
+                "text": "*Warnings:*"
             }
         })
         
@@ -1031,7 +1031,7 @@ class TradeWidget:
             "callback_id": "trade_error_modal",
             "title": {
                 "type": "plain_text",
-                "text": "❌ Trade Error"
+                "text": "Trade Error"
             },
             "blocks": [
                 {

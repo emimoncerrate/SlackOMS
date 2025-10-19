@@ -818,7 +818,7 @@ class EnhancedTradeCommand:
         # Add latency information if available
         latency_text = ""
         if quote.api_latency_ms:
-            latency_text = f" • ⚡ {quote.api_latency_ms:.0f}ms"
+            latency_text = f" • {quote.api_latency_ms:.0f}ms"
         
         blocks.append({
             "type": "context",
@@ -846,7 +846,7 @@ class EnhancedTradeCommand:
         control_elements = []
         
         # Auto-refresh toggle
-        refresh_text = "🔴 Auto-Refresh: ON" if context.auto_refresh else "⏸️ Auto-Refresh: OFF"
+        refresh_text = "Auto-Refresh: ON" if context.auto_refresh else "Auto-Refresh: OFF"
         refresh_button = {
             "type": "button",
             "text": {"type": "plain_text", "text": refresh_text},
@@ -1043,7 +1043,7 @@ class EnhancedTradeCommand:
             response = client.chat_postEphemeral(
                 channel=body.get("channel_id"),
                 user=body.get("user_id"),
-                text=f"❌ Error: {error_message}"
+                text=f"Error: {error_message}"
             )
             # No need to await - WebClient methods are synchronous
         except Exception as e:

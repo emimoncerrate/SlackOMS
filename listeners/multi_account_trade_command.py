@@ -154,21 +154,21 @@ class MultiAccountTradeCommand(EnhancedTradeCommand):
                                      client: WebClient, context: BoltContext) -> None:
         """Handle /buy command with format: /buy [quantity] [symbol]"""
         try:
-            logger.info("🔍 BUY COMMAND: Starting async handler")
+            logger.info("BUY COMMAND: Starting async handler")
             await self._handle_trade_command_async(body, client, context, trade_action="buy")
-            logger.info("🔍 BUY COMMAND: Handler completed")
+            logger.info("BUY COMMAND: Handler completed")
         except Exception as e:
-            logger.error(f"🚨 BUY COMMAND ERROR: {e}")
+            logger.error(f"BUY COMMAND ERROR: {e}")
     
     async def handle_sell_command_async(self, body: Dict[str, Any], 
                                       client: WebClient, context: BoltContext) -> None:
         """Handle /sell command with format: /sell [quantity] [symbol]"""
         try:
-            logger.info("🔍 SELL COMMAND: Starting async handler")
+            logger.info("SELL COMMAND: Starting async handler")
             await self._handle_trade_command_async(body, client, context, trade_action="sell")
-            logger.info("🔍 SELL COMMAND: Handler completed")
+            logger.info("SELL COMMAND: Handler completed")
         except Exception as e:
-            logger.error(f"🚨 SELL COMMAND ERROR: {e}")
+            logger.error(f"SELL COMMAND ERROR: {e}")
 
     async def _handle_trade_command_async(self, body: Dict[str, Any], 
                                         client: WebClient, context: BoltContext, trade_action: str = None) -> None:
@@ -191,7 +191,7 @@ class MultiAccountTradeCommand(EnhancedTradeCommand):
                 client.chat_postEphemeral(
                     channel=body.get("channel_id"),
                     user=body.get("user_id"),
-                    text="❌ Multi-account trading service is currently unavailable. Please try again later."
+                    text="Multi-account trading service is currently unavailable. Please try again later."
                 )
                 return
             
@@ -223,7 +223,7 @@ class MultiAccountTradeCommand(EnhancedTradeCommand):
                     client.chat_postEphemeral(
                         channel=body.get("channel_id"),
                         user=body.get("user_id"),
-                        text="❌ No trading accounts available. Please contact an administrator."
+                        text="No trading accounts available. Please contact an administrator."
                     )
                     return
             
@@ -263,7 +263,7 @@ class MultiAccountTradeCommand(EnhancedTradeCommand):
                 client.chat_postEphemeral(
                     channel=body.get("channel_id"),
                     user=body.get("user_id"),
-                    text=f"❌ Error processing trade command. Please try again."
+                    text=f"Error processing trade command. Please try again."
                 )
             except:
                 pass  # Don't fail on error message
@@ -323,7 +323,7 @@ class MultiAccountTradeCommand(EnhancedTradeCommand):
             "callback_id": "trade_form_submission",
             "title": {
                 "type": "plain_text",
-                "text": f"🏦 Trade - {context.account_info.get('account_name', 'Account') if context.account_info else 'Account'}"
+                "text": f"Trade - {context.account_info.get('account_name', 'Account') if context.account_info else 'Account'}"
             },
             "submit": {
                 "type": "plain_text",
@@ -516,7 +516,7 @@ class MultiAccountTradeCommand(EnhancedTradeCommand):
             "callback_id": "trade_form_submission",
             "title": {
                 "type": "plain_text",
-                "text": f"🏦 Trade {symbol} - {context.account_info.get('account_name', 'Account') if context.account_info else 'Account'}"
+                "text": f"Trade {symbol} - {context.account_info.get('account_name', 'Account') if context.account_info else 'Account'}"
             },
             "submit": {
                 "type": "plain_text",
@@ -548,14 +548,14 @@ class MultiAccountTradeCommand(EnhancedTradeCommand):
                 # Add market data section
                 price_change = market_data.get('change', 0)
                 price_change_pct = market_data.get('change_percent', 0)
-                change_emoji = "📈" if price_change >= 0 else "📉"
+                change_indicator = "+" if price_change >= 0 else ""
                 
-                market_text = f"📊 *{symbol} Market Data*\n"
-                market_text += f"💰 Current Price: ${current_price:.2f}\n"
-                market_text += f"{change_emoji} Change: ${price_change:.2f} ({price_change_pct:.2f}%)\n"
-                market_text += f"📈 High: ${market_data.get('high', 0):.2f}\n"
-                market_text += f"📉 Low: ${market_data.get('low', 0):.2f}\n"
-                market_text += f"📊 Volume: {market_data.get('volume', 0):,}"
+                market_text = f"*{symbol} Market Data*\n"
+                market_text += f"Current Price: ${current_price:.2f}\n"
+                market_text += f"Change: {change_indicator}${price_change:.2f} ({change_indicator}{price_change_pct:.2f}%)\n"
+                market_text += f"High: ${market_data.get('high', 0):.2f}\n"
+                market_text += f"Low: ${market_data.get('low', 0):.2f}\n"
+                market_text += f"Volume: {market_data.get('volume', 0):,}"
                 
                 modal["blocks"].extend([
                     {
@@ -575,7 +575,7 @@ class MultiAccountTradeCommand(EnhancedTradeCommand):
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": f"📊 *Trading {symbol}*\n_Live market data unavailable_"
+                        "text": f"*Trading {symbol}*\n_Live market data unavailable_"
                     }
                 },
                 {"type": "divider"}
@@ -751,7 +751,7 @@ class MultiAccountTradeCommand(EnhancedTradeCommand):
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": "⚠️ *Account Information Unavailable*"
+                    "text": "*Account Information Unavailable*"
                 }
             }
         
@@ -760,10 +760,10 @@ class MultiAccountTradeCommand(EnhancedTradeCommand):
         buying_power = account_info.get('buying_power', 0)
         portfolio_value = account_info.get('portfolio_value', 0)
         
-        account_text = f"🏦 *{account_info['account_name']}*\n"
-        account_text += f"💰 Cash: ${cash:,.2f}\n"
-        account_text += f"⚡ Buying Power: ${buying_power:,.2f}\n"
-        account_text += f"📊 Portfolio Value: ${portfolio_value:,.2f}"
+        account_text = f"*{account_info['account_name']}*\n"
+        account_text += f"Cash: ${cash:,.2f}\n"
+        account_text += f"Buying Power: ${buying_power:,.2f}\n"
+        account_text += f"Portfolio Value: ${portfolio_value:,.2f}"
         
         return {
             "type": "section",
@@ -931,8 +931,8 @@ class MultiAccountTradeCommand(EnhancedTradeCommand):
             ack(response_action="clear")
             
             # Log trade details
-            logger.info(f"🎯 Executing trade for user {user_id} on account {user_account}")
-            logger.info(f"📊 Trade: {action.upper()} {quantity} {symbol} ({order_type})")
+            logger.info(f"Executing trade for user {user_id} on account {user_account}")
+            logger.info(f"Trade: {action.upper()} {quantity} {symbol} ({order_type})")
             
             # Execute trade on the user's assigned account
             trade_kwargs = {}
@@ -1037,7 +1037,7 @@ class MultiAccountTradeCommand(EnhancedTradeCommand):
         try:
             client.chat_postMessage(
                 channel=body["user"]["id"],  # Send as DM
-                text=f"❌ *Trade Error*\n\n{error_message}"
+                text=f"*Trade Error*\n\n{error_message}"
             )
         except Exception as e:
             logger.error(f"Error sending error message: {e}")
@@ -1057,7 +1057,7 @@ class MultiAccountTradeCommand(EnhancedTradeCommand):
             "callback_id": "trade_form_submission",
             "title": {
                 "type": "plain_text",
-                "text": f"📈 {context.action.title()} - Multi-Account" if hasattr(context, 'action') and context.action else "🏦 Trade - Multi-Account"
+                "text": f"{context.action.title()} - Multi-Account" if hasattr(context, 'action') and context.action else "Trade - Multi-Account"
             },
             "submit": {
                 "type": "plain_text",
@@ -1075,7 +1075,7 @@ class MultiAccountTradeCommand(EnhancedTradeCommand):
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": f"🏦 *Account:* {context.account_id}\n_Account details loading..._"
+                "text": f"*Account:* {context.account_id}\n_Account details loading..._"
             }
         })
         
@@ -1103,7 +1103,7 @@ class MultiAccountTradeCommand(EnhancedTradeCommand):
             "callback_id": "trade_form_submission",
             "title": {
                 "type": "plain_text",
-                "text": f"📈 {context.action.title()} {symbol}" if hasattr(context, 'action') and context.action else f"🏦 Trade {symbol}"
+                "text": f"{context.action.title()} {symbol}" if hasattr(context, 'action') and context.action else f"Trade {symbol}"
             },
             "submit": {
                 "type": "plain_text",
@@ -1121,7 +1121,7 @@ class MultiAccountTradeCommand(EnhancedTradeCommand):
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": f"🏦 *Account:* {context.account_id}\n📊 *Symbol:* {symbol}\n_Market data loading..._"
+                "text": f"*Account:* {context.account_id}\n*Symbol:* {symbol}\n_Market data loading..._"
             }
         })
         
@@ -1299,6 +1299,73 @@ class MultiAccountTradeCommand(EnhancedTradeCommand):
             action_select,
             order_type_select
         ])
+    
+    async def _get_company_description(self, symbol: str) -> str:
+        """
+        Get company description from Finnhub API.
+        
+        Args:
+            symbol: Stock symbol (e.g., 'AAPL')
+            
+        Returns:
+            Company description or symbol if not found
+        """
+        try:
+            from services.service_container import get_market_data_service
+            market_service = get_market_data_service()
+            
+            # Search for the symbol to get company description
+            search_results = await market_service.search_symbols(symbol, limit=1)
+            
+            if search_results and len(search_results) > 0:
+                # Find exact match for the symbol
+                for result in search_results:
+                    if result.symbol.upper() == symbol.upper():
+                        return result.description
+                
+                # If no exact match, return the first result's description
+                return search_results[0].description
+            
+            # Fallback to just the symbol if no description found
+            return symbol.upper()
+            
+        except Exception as e:
+            logger.warning(f"Could not fetch company description for {symbol}: {e}")
+            return symbol.upper()
+
+
+async def _get_company_description_standalone(symbol: str) -> str:
+    """
+    Standalone function to get company description from Finnhub API.
+    
+    Args:
+        symbol: Stock symbol (e.g., 'AAPL')
+        
+    Returns:
+        Company description or symbol if not found
+    """
+    try:
+        from services.service_container import get_market_data_service
+        market_service = get_market_data_service()
+        
+        # Search for the symbol to get company description
+        search_results = await market_service.search_symbols(symbol, limit=1)
+        
+        if search_results and len(search_results) > 0:
+            # Find exact match for the symbol
+            for result in search_results:
+                if result.symbol.upper() == symbol.upper():
+                    return result.description
+            
+            # If no exact match, return the first result's description
+            return search_results[0].description
+        
+        # Fallback to just the symbol if no description found
+        return symbol.upper()
+        
+    except Exception as e:
+        print(f"Could not fetch company description for {symbol}: {e}")
+        return symbol.upper()
 
 
 async def _fetch_and_update_price(symbol: str, view_id: str, client: WebClient) -> None:
@@ -1407,28 +1474,14 @@ async def _fetch_and_update_sell_price(symbol: str, view_id: str, client: WebCli
         print(f"🚨 SELL PRICE FETCH: Traceback: {traceback.format_exc()}")
 
 
-async def _fetch_and_update_buy_price(symbol: str, view_id: str, client: WebClient) -> None:
+async def _fetch_and_update_buy_price(symbol: str, view_id: str, client: WebClient, quantity: str = "1") -> None:
     """Fetch price and update buy modal in background."""
     try:
-        print(f"🔄 BUY PRICE FETCH: Starting for {symbol}")
+        print(f"🔄 BUY PRICE FETCH: Starting for {symbol} (qty: {quantity})")
         
-        # Get the current view to extract quantity
-        try:
-            view_info = client.views_info(view=view_id)
-            current_view = view_info.get("view", {})
-            values = current_view.get("state", {}).get("values", {})
-            
-            # Extract current quantity from modal state
-            # Check both 'value' (user typed) and 'initial_value' (pre-filled)
-            qty_block = values.get("qty_shares_block", {})
-            shares_input = qty_block.get("shares_input", {})
-            current_quantity = shares_input.get("value") or shares_input.get("initial_value", "1")
-            if not current_quantity or str(current_quantity).strip() == "":
-                current_quantity = "1"
-            print(f"✅ BUY PRICE FETCH: Current quantity in modal: {current_quantity}")
-        except Exception as e:
-            print(f"⚠️ BUY PRICE FETCH: Could not extract quantity, using default: {e}")
-            current_quantity = "1"
+        # Use the passed quantity parameter
+        current_quantity = quantity
+        print(f"✅ BUY PRICE FETCH: Using quantity: {current_quantity}")
         
         # Import here to avoid circular imports
         from services.service_container import get_market_data_service
@@ -1436,23 +1489,54 @@ async def _fetch_and_update_buy_price(symbol: str, view_id: str, client: WebClie
         market_service = get_market_data_service()
         print(f"✅ BUY PRICE FETCH: Market service obtained")
         
-        # Get current price
-        quote = await market_service.get_quote(symbol)
-        current_price = float(quote.current_price)
-        print(f"✅ BUY PRICE FETCH: Got price ${current_price:.2f} for {symbol}")
-        
-        # Update the modal with the new price (buy modal) using actual quantity
-        updated_modal = _create_instant_buy_modal_with_price(symbol, current_quantity, current_price)
-        
-        response = client.views_update(
-            view_id=view_id,
-            view=updated_modal
-        )
-        
-        if response.get("ok"):
-            print(f"✅ BUY PRICE FETCH: Modal updated with ${current_price:.2f} (qty: {current_quantity})")
-        else:
-            print(f"❌ BUY PRICE FETCH: Modal update failed: {response}")
+        # Validate symbol and get current price
+        try:
+            quote = await market_service.get_quote(symbol)
+            current_price = float(quote.current_price)
+            print(f"✅ BUY PRICE FETCH: Got price ${current_price:.2f} for {symbol}")
+            
+            # Calculate GMV with the actual quantity
+            try:
+                qty_num = int(current_quantity)
+                calculated_gmv = qty_num * current_price
+                print(f"✅ BUY PRICE FETCH: Calculated GMV: {qty_num} × ${current_price:.2f} = ${calculated_gmv:.2f}")
+            except:
+                calculated_gmv = current_price
+                print(f"⚠️ BUY PRICE FETCH: Invalid quantity '{current_quantity}', using 1 share")
+            
+            # Update the modal with the new price and calculated GMV
+            updated_modal = _create_instant_buy_modal_with_price_and_gmv(symbol, current_quantity, current_price, calculated_gmv)
+            
+            response = client.views_update(
+                view_id=view_id,
+                view=updated_modal
+            )
+            
+            if response.get("ok"):
+                print(f"✅ BUY PRICE FETCH: Modal updated with ${current_price:.2f} (qty: {current_quantity}, GMV: ${calculated_gmv:.2f})")
+            else:
+                print(f"❌ BUY PRICE FETCH: Modal update failed (Slack API error): {response}")
+                # This is a modal format error, not an invalid symbol error
+                
+        except Exception as price_error:
+            # This is actually an invalid symbol error (market data API failed)
+            print(f"❌ BUY PRICE FETCH: Invalid symbol '{symbol}': {price_error}")
+            
+            # Create error modal for invalid symbol
+            error_modal = _create_error_modal(symbol, f"Invalid ticker symbol '{symbol}'. Please try a valid stock symbol like AAPL, TSLA, MSFT.")
+            
+            try:
+                response = client.views_update(
+                    view_id=view_id,
+                    view=error_modal
+                )
+                
+                if response.get("ok"):
+                    print(f"✅ BUY PRICE FETCH: Error modal displayed for invalid symbol '{symbol}'")
+                else:
+                    print(f"❌ BUY PRICE FETCH: Error modal update failed: {response}")
+            except Exception as modal_error:
+                print(f"❌ BUY PRICE FETCH: Failed to show error modal: {modal_error}")
             
     except Exception as e:
         print(f"❌ BUY PRICE FETCH: Error: {e}")
@@ -1582,6 +1666,62 @@ def _create_instant_buy_modal_with_price(symbol: str = "", quantity: str = "1", 
                 pass
     
     return modal
+
+
+def _create_instant_buy_modal_with_price_and_gmv(symbol: str = "", quantity: str = "1", price: float = None, gmv: float = None) -> Dict[str, Any]:
+    """Create an instant buy modal with price and GMV pre-calculated."""
+    modal = _create_instant_buy_modal(symbol, quantity)
+    
+    # Update the price display block
+    if price is not None:
+        for block in modal["blocks"]:
+            if block.get("block_id") == "current_price_display":
+                change_emoji = "📈"  # Default to positive for buy
+                block["text"]["text"] = f"*Current Stock Price:* *${price:.2f}* {change_emoji}"
+                break
+    
+    # Update the GMV field with calculated value
+    if gmv is not None:
+        for block in modal["blocks"]:
+            if block.get("block_id") == "gmv_block":
+                block["element"]["initial_value"] = str(round(gmv, 2))
+                break
+    
+    return modal
+
+
+def _create_error_modal(symbol: str, error_message: str) -> Dict[str, Any]:
+    """Create an error modal for invalid symbols or other errors."""
+    return {
+        "type": "modal",
+        "callback_id": "error_modal",
+        "title": {"type": "plain_text", "text": "Invalid Input"},
+        "close": {"type": "plain_text", "text": "Close"},
+        "blocks": [
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": f"❌ *Error*\n\n{error_message}"
+                }
+            },
+            {"type": "divider"},
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": "*Valid Examples:*\n• `/buy AAPL 10` - Buy 10 shares of Apple\n• `/buy TSLA 5` - Buy 5 shares of Tesla\n• `/buy MSFT 2` - Buy 2 shares of Microsoft\n• `/sell GOOGL 3` - Sell 3 shares of Google"
+                }
+            },
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": "*Tips:*\n• Use valid stock ticker symbols (3-5 letters)\n• Quantity must be a positive number\n• Try again with a correct symbol"
+                }
+            }
+        ]
+    }
 
 
 def _create_instant_sell_modal(symbol: str = "", quantity: str = "1") -> Dict[str, Any]:
@@ -1922,16 +2062,16 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
         start_time = time.time()
         
         try:
-            print("🔍 BUY COMMAND DEBUG: Starting buy command")
-            logger.info("🔍 BUY COMMAND DEBUG: Starting buy command")
+            print("BUY COMMAND DEBUG: Starting buy command")
+            logger.info("BUY COMMAND DEBUG: Starting buy command")
             
             # Immediate acknowledgment and terminal feedback
             ack()
             ack_time = time.time()
-            print("🔍 BUY COMMAND DEBUG: ACK sent successfully")
+            print("BUY COMMAND DEBUG: ACK sent successfully")
         except Exception as e:
-            print(f"❌ BUY COMMAND ACK ERROR: {e}")
-            logger.error(f"❌ BUY COMMAND ACK ERROR: {e}")
+            print(f"BUY COMMAND ACK ERROR: {e}")
+            logger.error(f"BUY COMMAND ACK ERROR: {e}")
             return
         
         user_id = body.get("user_id", "Unknown")
@@ -1946,7 +2086,7 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                 client.chat_postEphemeral(
                     channel=channel_id,
                     user=user_id,
-                    text="⚠️ This bot is only available in the designated trading channel."
+                    text="This bot is only available in the designated trading channel."
                 )
             except Exception as e:
                 logger.error(f"Error sending channel restriction message: {e}")
@@ -1954,12 +2094,12 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
         
         # Immediate terminal feedback
         logger.info("=" * 60)
-        logger.info("🚀 BUY COMMAND RECEIVED!")
-        logger.info(f"👤 User: {user_id}")
-        logger.info(f"📝 Command: /buy {command_text}")
-        logger.info(f"⏰ Time: {datetime.now()}")
-        logger.info(f"⚡ ACK took: {(ack_time - start_time)*1000:.2f}ms")
-        logger.info("🚀 Opening modal IMMEDIATELY...")
+        logger.info("BUY COMMAND RECEIVED")
+        logger.info(f"User: {user_id}")
+        logger.info(f"Command: /buy {command_text}")
+        logger.info(f"Time: {datetime.now()}")
+        logger.info(f"ACK took: {(ack_time - start_time)*1000:.2f}ms")
+        logger.info("Opening modal immediately...")
         logger.info("=" * 60)
         
         # Parse command immediately with validation
@@ -1983,7 +2123,7 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
             quantity = "1"
         
         parse_time = time.time()
-        logger.info(f"⚡ Parse took: {(parse_time - parse_start)*1000:.2f}ms")
+        logger.info(f"Parse took: {(parse_time - parse_start)*1000:.2f}ms")
         logger.info(f"Parsed values: symbol='{symbol}', quantity='{quantity}'")
         
         # Send immediate ephemeral response, then open modal
@@ -1996,7 +2136,7 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
             #     text=f"Opening buy modal for {symbol.upper() if symbol else 'stock'} (qty: {quantity})..."
             # )
             # ephemeral_time = time.time()
-            # logger.info(f"⚡ Ephemeral message took: {(ephemeral_time - ephemeral_start)*1000:.2f}ms")
+            # logger.info(f"Ephemeral message took: {(ephemeral_time - ephemeral_start)*1000:.2f}ms")
             
             # Create modal
             modal_start = time.time()
@@ -2023,7 +2163,7 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                         
                         def fetch_and_update_price():
                             try:
-                                asyncio.run(_fetch_and_update_buy_price(symbol, response["view"]["id"], client))
+                                asyncio.run(_fetch_and_update_buy_price(symbol, response["view"]["id"], client, quantity))
                             except Exception as e:
                                 logger.error(f"❌ Background price fetch failed: {e}")
                         
@@ -2038,7 +2178,7 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                     client.chat_postEphemeral(
                         channel=body.get("channel_id"),
                         user=user_id,
-                        text=f"⚠️ Modal timed out. Use `/buy {symbol} {quantity}` as alternative."
+                        text=f"Modal timed out. Use `/buy {symbol} {quantity}` as alternative."
                     )
                     
             except Exception as modal_error:
@@ -2048,7 +2188,7 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                 client.chat_postEphemeral(
                     channel=body.get("channel_id"),
                     user=user_id,
-                    text=f"⚠️ Modal failed to open. Use `/buy {symbol} {quantity}` as alternative."
+                    text=f"Modal failed to open. Use `/buy {symbol} {quantity}` as alternative."
                 )
                 
         except Exception as e:
@@ -2059,7 +2199,7 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                 client.chat_postEphemeral(
                     channel=body.get("channel_id"),
                     user=user_id,
-                    text=f"🚀 Buy {symbol.upper() if symbol else 'stock'} - Quantity: {quantity}\nUse `/buy {symbol} {quantity}` to execute."
+                    text=f"Buy {symbol.upper() if symbol else 'stock'} - Quantity: {quantity}\nUse `/buy {symbol} {quantity}` to execute."
                 )
             except:
                 pass
@@ -2073,16 +2213,16 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
         start_time = time.time()
         
         try:
-            print("🔍 SELL COMMAND DEBUG: Starting sell command")
-            logger.info("🔍 SELL COMMAND DEBUG: Starting sell command")
+            print("SELL COMMAND DEBUG: Starting sell command")
+            logger.info("SELL COMMAND DEBUG: Starting sell command")
             
             # Immediate acknowledgment and terminal feedback
             ack()
             ack_time = time.time()
-            print("🔍 SELL COMMAND DEBUG: ACK sent successfully")
+            print("SELL COMMAND DEBUG: ACK sent successfully")
         except Exception as e:
-            print(f"❌ SELL COMMAND ACK ERROR: {e}")
-            logger.error(f"❌ SELL COMMAND ACK ERROR: {e}")
+            print(f"SELL COMMAND ACK ERROR: {e}")
+            logger.error(f"SELL COMMAND ACK ERROR: {e}")
             return
         
         user_id = body.get("user_id", "Unknown")
@@ -2097,7 +2237,7 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                 client.chat_postEphemeral(
                     channel=channel_id,
                     user=user_id,
-                    text="⚠️ This bot is only available in the designated trading channel."
+                    text="This bot is only available in the designated trading channel."
                 )
             except Exception as e:
                 logger.error(f"Error sending channel restriction message: {e}")
@@ -2105,12 +2245,12 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
         
         # Immediate terminal feedback
         logger.info("=" * 60)
-        logger.info("🚀 SELL COMMAND RECEIVED!")
-        logger.info(f"👤 User: {user_id}")
-        logger.info(f"📝 Command: /sell {command_text}")
-        logger.info(f"⏰ Time: {datetime.now()}")
-        logger.info(f"⚡ ACK took: {(ack_time - start_time)*1000:.2f}ms")
-        logger.info("🚀 Opening modal IMMEDIATELY...")
+        logger.info("SELL COMMAND RECEIVED")
+        logger.info(f"User: {user_id}")
+        logger.info(f"Command: /sell {command_text}")
+        logger.info(f"Time: {datetime.now()}")
+        logger.info(f"ACK took: {(ack_time - start_time)*1000:.2f}ms")
+        logger.info("Opening modal immediately...")
         logger.info("=" * 60)
         
         # Parse command immediately with validation
@@ -2134,7 +2274,7 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
             quantity = "1"
         
         parse_time = time.time()
-        logger.info(f"⚡ Parse took: {(parse_time - parse_start)*1000:.2f}ms")
+        logger.info(f"Parse took: {(parse_time - parse_start)*1000:.2f}ms")
         logger.info(f"Parsed values: symbol='{symbol}', quantity='{quantity}'")
         
         # Send immediate ephemeral response, then open modal
@@ -2147,7 +2287,7 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
             #     text=f"Opening sell modal for {symbol.upper() if symbol else 'stock'} (qty: {quantity})..."
             # )
             # ephemeral_time = time.time()
-            # logger.info(f"⚡ Ephemeral message took: {(ephemeral_time - ephemeral_start)*1000:.2f}ms")
+            # logger.info(f"Ephemeral message took: {(ephemeral_time - ephemeral_start)*1000:.2f}ms")
             
             # Create modal
             modal_start = time.time()
@@ -2189,7 +2329,7 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                     client.chat_postEphemeral(
                         channel=body.get("channel_id"),
                         user=user_id,
-                        text=f"⚠️ Modal timed out. Use `/sell {symbol} {quantity}` as alternative."
+                        text=f"Modal timed out. Use `/sell {symbol} {quantity}` as alternative."
                     )
                     
             except Exception as modal_error:
@@ -2199,7 +2339,7 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                 client.chat_postEphemeral(
                     channel=body.get("channel_id"),
                     user=user_id,
-                    text=f"⚠️ Modal timed out. Use `/sell {symbol} {quantity}` as alternative."
+                    text=f"Modal timed out. Use `/sell {symbol} {quantity}` as alternative."
                 )
                 
         except Exception as e:
@@ -2210,17 +2350,12 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                 client.chat_postEphemeral(
                     channel=body.get("channel_id"),
                     user=user_id,
-                    text=f"❌ Error processing command. Please try again."
+                    text=f"Error processing command. Please try again."
                 )
             except:
                 pass
     
 
-    @app.view("stock_trade_modal_interactive")
-    async def handle_multi_account_trade_submission(ack, body, client, context):
-        """Handle multi-account interactive trade form submission."""
-        await multi_trade_command.handle_trade_submission(ack, body, client, context)
-    
     # Add app mention handler for testing
     @app.event("app_mention")
     def handle_app_mention(body, say, logger):
@@ -2253,6 +2388,269 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
     @app.action("order_type_select")
     async def handle_order_type_change(ack, body, client, logger):
         await handle_modal_interactions(ack, body, client, logger)
+    
+    # Handle modal submission (when user clicks "Execute Trade")
+    @app.view("stock_trade_modal_interactive")
+    def handle_trade_modal_submission(ack, body, client, logger):
+        """Handle trade modal submission."""
+        logger.info("MODAL SUBMISSION: Handler started")
+        
+        # Try to close modal with success message
+        logger.info("MODAL SUBMISSION: About to ack with success modal")
+        try:
+            ack({
+                "response_action": "update",
+                "view": {
+                    "type": "modal",
+                    "title": {"type": "plain_text", "text": "Trade Submitted"},
+                    "close": {"type": "plain_text", "text": "Close"},
+                    "blocks": [
+                        {
+                            "type": "section",
+                            "text": {
+                                "type": "mrkdwn",
+                                "text": "✅ *Trade submitted successfully!*\n\nYour order is being processed. Check the channel for confirmation details."
+                            }
+                        }
+                    ]
+                }
+            })
+            logger.info("MODAL SUBMISSION: Success modal displayed")
+        except Exception as modal_error:
+            logger.error(f"MODAL SUBMISSION: Modal update failed: {modal_error}")
+            # Fallback to simple ack
+            ack()
+            logger.info("MODAL SUBMISSION: Fallback ack() called")
+        
+        # Now process the trade in background (after modal is closed)
+        try:
+            # Extract values from modal
+            values = body["view"]["state"]["values"]
+            
+            symbol_block = values.get("trade_symbol_block", {})
+            symbol = symbol_block.get("symbol_input", {}).get("value", "").upper()
+            
+            qty_block = values.get("qty_shares_block", {})
+            quantity = qty_block.get("shares_input", {}).get("value", "1")
+            
+            trade_side_block = values.get("trade_side_block", {})
+            trade_side = "buy"  # Default
+            if trade_side_block.get("trade_side_radio", {}).get("selected_option"):
+                trade_side = trade_side_block["trade_side_radio"]["selected_option"]["value"]
+            
+            order_type_block = values.get("order_type_block", {})
+            order_type = "market"  # Default
+            if order_type_block.get("order_type_select", {}).get("selected_option"):
+                order_type = order_type_block["order_type_select"]["selected_option"]["value"]
+            
+            limit_price = None
+            if order_type in ["limit", "stop_limit"]:
+                limit_price_block = values.get("limit_price_block", {})
+                if limit_price_block.get("limit_price_input", {}).get("value"):
+                    try:
+                        limit_price = float(limit_price_block["limit_price_input"]["value"])
+                    except:
+                        pass
+            
+            user_id = body["user"]["id"]
+            
+            logger.info(f"TRADE SUBMISSION: {trade_side.upper()} {quantity} {symbol} ({order_type})")
+            
+            # Get channel from private metadata or use approved channel
+            channel_id = body.get("view", {}).get("private_metadata") or "C09H1R7KKP1"  # Use first approved channel as fallback
+            
+            # Execute the actual trade with Alpaca in background thread
+            def execute_trade_async():
+                """Execute trade in background thread."""
+                import asyncio
+                import threading
+                
+                def run_trade():
+                    try:
+                        # Create new event loop for this thread
+                        loop = asyncio.new_event_loop()
+                        asyncio.set_event_loop(loop)
+                        
+                        # Import and get services
+                        from services.service_container import get_alpaca_service
+                        alpaca_service = get_alpaca_service()
+                        
+                        # Validate inputs
+                        if not symbol or not quantity:
+                            raise ValueError("Missing symbol or quantity")
+                        
+                        qty_int = int(quantity)
+                        if qty_int <= 0:
+                            raise ValueError("Quantity must be positive")
+                        
+                        # Execute trade
+                        logger.info(f"EXECUTING TRADE: {trade_side.upper()} {qty_int} {symbol}")
+                        
+                        if order_type == "market":
+                            # Market order
+                            result = loop.run_until_complete(alpaca_service.submit_order(
+                                symbol=symbol,
+                                quantity=qty_int,
+                                side=trade_side,
+                                order_type="market",
+                                time_in_force="day"
+                            ))
+                        elif order_type == "limit" and limit_price:
+                            # Limit order
+                            result = loop.run_until_complete(alpaca_service.submit_order(
+                                symbol=symbol,
+                                quantity=qty_int,
+                                side=trade_side,
+                                order_type="limit",
+                                time_in_force="day"
+                            ))
+                        else:
+                            raise ValueError(f"Unsupported order type: {order_type}")
+                        
+                        # Send success message
+                        if result and (result.get("id") or result.get("order_id")):
+                            order_id = result.get("id") or result.get("order_id")
+                            status = result.get("status", "submitted")
+                            
+                            logger.info(f"TRADE EXECUTED: Order ID {order_id}, Status: {status}")
+                            
+                            # Get company description from Finnhub API
+                            company_name = loop.run_until_complete(self._get_company_description(symbol))
+                            
+                            success_blocks = [
+                                {
+                                    "type": "section",
+                                    "text": {
+                                        "type": "mrkdwn",
+                                        "text": "*Trade Executed Successfully!*"
+                                    }
+                                },
+                                {
+                                    "type": "section",
+                                    "text": {
+                                        "type": "mrkdwn",
+                                        "text": f"*Order Details:*\n• {company_name} ({symbol})\n• Action: {trade_side.upper()}\n• Quantity: {qty_int} shares\n• Order Type: {order_type.title()}\n{f'• Limit Price: ${limit_price:.2f}' if limit_price else ''}• Order ID: {order_id}\n• Status: {status}"
+                                    }
+                                }
+                            ]
+                            
+                            client.chat_postMessage(
+                                channel=channel_id,
+                                blocks=success_blocks,
+                                text="Trade Executed Successfully!"
+                            )
+                        else:
+                            logger.error(f"❌ TRADE FAILED: No order ID returned")
+                            failure_blocks = [
+                                {
+                                    "type": "section",
+                                    "text": {
+                                        "type": "mrkdwn",
+                                        "text": f"*Trade Failed*\n\nUnable to execute {trade_side} order for {symbol}. Please try again."
+                                    }
+                                }
+                            ]
+                            
+                            client.chat_postMessage(
+                                channel=channel_id,
+                                blocks=failure_blocks,
+                                text="Trade Failed"
+                            )
+                            
+                    except Exception as trade_error:
+                        logger.error(f"❌ TRADE EXECUTION ERROR: {trade_error}")
+                        
+                        # Get company description from Finnhub API
+                        company_name = loop.run_until_complete(self._get_company_description(symbol))
+                        
+                        error_blocks = [
+                            {
+                                "type": "section",
+                                "text": {
+                                    "type": "mrkdwn",
+                                    "text": "*Trade Execution Failed*"
+                                }
+                            },
+                            {
+                                "type": "section",
+                                "text": {
+                                    "type": "mrkdwn",
+                                    "text": f"Error: {str(trade_error)}\n\n*Attempted Trade:*\n• {company_name} ({symbol})\n• Action: {trade_side.upper()}\n• Quantity: {quantity} shares\n• Order Type: {order_type}\n{f'• Limit Price: ${limit_price:.2f}' if limit_price else ''}Please check your inputs and try again."
+                                }
+                            }
+                        ]
+                        
+                        try:
+                            client.chat_postMessage(
+                                channel=channel_id,
+                                blocks=error_blocks,
+                                text="Trade Execution Failed"
+                            )
+                        except Exception as msg_error:
+                            logger.error(f"Failed to send error message: {msg_error}")
+                    
+                    finally:
+                        loop.close()
+                
+                # Start trade execution in background thread
+                thread = threading.Thread(target=run_trade)
+                thread.daemon = True
+                thread.start()
+            
+            # Send immediate confirmation and start background execution
+            try:
+                # Get company description from Finnhub API
+                import asyncio
+                company_name = asyncio.run(_get_company_description_standalone(symbol))
+                
+                # Send public message in channel
+                processing_blocks = [
+                    {
+                        "type": "section",
+                        "text": {
+                            "type": "mrkdwn",
+                            "text": "*Processing Trade...*"
+                        }
+                    },
+                    {
+                        "type": "section",
+                        "text": {
+                            "type": "mrkdwn",
+                            "text": f"*Order Details:*\n• {company_name} ({symbol})\n• Action: {trade_side.upper()}\n• Quantity: {quantity} shares\n• Order Type: {order_type.title()}\n{f'• Limit Price: ${limit_price:.2f}' if limit_price else ''}Submitting to Alpaca Paper Trading..."
+                        }
+                    }
+                ]
+                
+                client.chat_postMessage(
+                    channel=channel_id,
+                    blocks=processing_blocks,
+                    text="Processing Trade..."
+                )
+                
+                # Execute trade in background
+                execute_trade_async()
+                
+            except Exception as immediate_error:
+                logger.error(f"❌ Immediate response error: {immediate_error}")
+                # Still try to execute the trade
+                execute_trade_async()
+            
+        except Exception as e:
+            logger.error(f"❌ Error processing trade submission: {e}")
+            logger.error(f"🚨 MODAL SUBMISSION: Exception in main handler: {e}")
+            import traceback
+            logger.error(f"🚨 MODAL SUBMISSION: Traceback: {traceback.format_exc()}")
+            # Send error message to user
+            try:
+                client.chat_postEphemeral(
+                    channel="general",
+                    user=body["user"]["id"],
+                    text="❌ Error processing your trade. Please try again."
+                )
+            except:
+                pass
+        
+        logger.info("✅ MODAL SUBMISSION: Handler completed successfully")
     
     logger.info("✅ MULTI-ACCOUNT BUY/SELL COMMANDS REGISTERED SUCCESSFULLY")
     return multi_trade_command

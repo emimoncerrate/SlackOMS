@@ -417,7 +417,7 @@ class EnhancedMarketActions:
                 await client.chat_postEphemeral(
                     channel=channel_id,
                     user=user_id,
-                    text=f"❌ {error_message}"
+                    text=f"{error_message}"
                 )
         except Exception as e:
             logger.error(f"Failed to send error update: {str(e)}")

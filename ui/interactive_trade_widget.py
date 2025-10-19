@@ -354,7 +354,7 @@ class InteractiveTradeWidget:
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": f"⚠️ *Calculation Error:* {context.calculation_error}"
+                    "text": f"*Calculation Error:* {context.calculation_error}"
                 }
             })
         
@@ -551,7 +551,7 @@ class InteractiveTradeWidget:
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": f"❌ *Error:* {error_message}"
+                        "text": f"*Error:* {error_message}"
                     }
                 }
             ]
