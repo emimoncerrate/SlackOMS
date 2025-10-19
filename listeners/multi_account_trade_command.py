@@ -2278,22 +2278,34 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
         """Handle trade modal submission."""
         logger.info("🔍 MODAL SUBMISSION: Handler started")
         
+        # Try to close modal with success message
+        logger.info("🔍 MODAL SUBMISSION: About to ack with success modal")
         try:
-            # Acknowledge and close the modal (empty ack closes the modal)
-            logger.info("🔍 MODAL SUBMISSION: About to call ack()")
+            ack({
+                "response_action": "update",
+                "view": {
+                    "type": "modal",
+                    "title": {"type": "plain_text", "text": "Trade Submitted"},
+                    "close": {"type": "plain_text", "text": "Close"},
+                    "blocks": [
+                        {
+                            "type": "section",
+                            "text": {
+                                "type": "mrkdwn",
+                                "text": "✅ *Trade submitted successfully!*\n\nYour order is being processed. Check the channel for confirmation details."
+                            }
+                        }
+                    ]
+                }
+            })
+            logger.info("✅ MODAL SUBMISSION: Success modal displayed")
+        except Exception as modal_error:
+            logger.error(f"❌ MODAL SUBMISSION: Modal update failed: {modal_error}")
+            # Fallback to simple ack
             ack()
-            logger.info("✅ MODAL SUBMISSION: ack() called successfully")
-        except Exception as ack_error:
-            logger.error(f"❌ MODAL SUBMISSION: ack() failed: {ack_error}")
-            # Try alternative ack format
-            try:
-                logger.info("🔍 MODAL SUBMISSION: Trying alternative ack format")
-                ack({"response_action": "clear"})
-                logger.info("✅ MODAL SUBMISSION: Alternative ack() successful")
-            except Exception as alt_ack_error:
-                logger.error(f"❌ MODAL SUBMISSION: Alternative ack() failed: {alt_ack_error}")
-                return
+            logger.info("✅ MODAL SUBMISSION: Fallback ack() called")
         
+        # Now process the trade in background (after modal is closed)
         try:
             # Extract values from modal
             values = body["view"]["state"]["values"]
