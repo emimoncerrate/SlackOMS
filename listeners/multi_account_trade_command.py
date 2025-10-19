@@ -858,24 +858,74 @@ class MultiAccountTradeCommand(EnhancedTradeCommand):
                 except Exception as e:
                     logger.warning(f"Could not fetch current price for {symbol}: {e}")
             
-            # Perform comprehensive validation
-            validation_result = validation_service.validate_trade_inputs(
-                symbol=symbol,
-                quantity=quantity_str,
-                account_cash=float(account_info.get('cash', 0)) if action and action.upper() == 'BUY' else None,
-                current_price=current_price,
-                max_quantity=10000
-            )
-            
-            # If validation fails, return errors to modal
-            if not validation_result["valid"]:
-                logger.warning(f"Trade validation failed: {validation_result['errors']}")
-                ack(response_action="errors", errors=validation_result["errors"])
-                return
-            
-            # Extract validated data
-            symbol = validation_result["data"]["symbol"]
-            quantity = validation_result["data"]["quantity"]
+            # STEP 2.1: For SELL orders, validate position ownership
+            if action and action.upper() == 'SELL':
+                try:
+                    # Get user's current positions
+                    user_positions = self.multi_alpaca.get_positions(user_account)
+                    logger.info(f"Retrieved {len(user_positions) if user_positions else 0} positions for user {user_id}")
+                    
+                    # First validate basic inputs (symbol & quantity format)
+                    basic_validation = validation_service.validate_trade_inputs(
+                        symbol=symbol,
+                        quantity=quantity_str,
+                        account_cash=None,  # Not needed for sell
+                        current_price=None,  # Not needed for sell
+                        max_quantity=10000
+                    )
+                    
+                    if not basic_validation["valid"]:
+                        logger.warning(f"Basic validation failed for SELL: {basic_validation['errors']}")
+                        ack(response_action="errors", errors=basic_validation["errors"])
+                        return
+                    
+                    # Extract validated symbol and quantity
+                    validated_symbol = basic_validation["data"]["symbol"]
+                    validated_quantity = basic_validation["data"]["quantity"]
+                    
+                    # Validate sell order (position check)
+                    sell_validation = validation_service.validate_sell_order(
+                        symbol=validated_symbol,
+                        quantity=validated_quantity,
+                        user_positions=user_positions
+                    )
+                    
+                    if not sell_validation["valid"]:
+                        logger.warning(f"Sell validation failed: {sell_validation['error']}")
+                        ack(response_action="errors", errors={
+                            "qty_shares_block": sell_validation["error"]
+                        })
+                        return
+                    
+                    # Use validated data
+                    symbol = validated_symbol
+                    quantity = validated_quantity
+                    
+                except Exception as e:
+                    logger.error(f"Error validating sell order: {e}")
+                    ack(response_action="errors", errors={
+                        "trade_symbol_block": "Unable to validate your positions. Please try again."
+                    })
+                    return
+            else:
+                # For BUY orders, use existing validation
+                validation_result = validation_service.validate_trade_inputs(
+                    symbol=symbol,
+                    quantity=quantity_str,
+                    account_cash=float(account_info.get('cash', 0)) if action and action.upper() == 'BUY' else None,
+                    current_price=current_price,
+                    max_quantity=10000
+                )
+                
+                # If validation fails, return errors to modal
+                if not validation_result["valid"]:
+                    logger.warning(f"Trade validation failed: {validation_result['errors']}")
+                    ack(response_action="errors", errors=validation_result["errors"])
+                    return
+                
+                # Extract validated data
+                symbol = validation_result["data"]["symbol"]
+                quantity = validation_result["data"]["quantity"]
             
             # Acknowledge with clear to close modal (validation passed)
             ack(response_action="clear")

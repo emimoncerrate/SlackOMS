@@ -208,6 +208,66 @@ class ValidationService:
             "available": available_cash
         }
     
+    def validate_sell_order(
+        self,
+        symbol: str,
+        quantity: int,
+        user_positions: Optional[list] = None
+    ) -> Dict[str, Any]:
+        """
+        Validate if user has sufficient shares to sell.
+        
+        Args:
+            symbol: Stock ticker symbol
+            quantity: Number of shares to sell
+            user_positions: List of user's current positions
+            
+        Returns:
+            dict: {
+                "valid": bool,
+                "error": str or None,
+                "owned_quantity": int
+            }
+        """
+        # If no positions provided, we can't validate
+        if user_positions is None:
+            self.logger.warning("No positions provided for sell validation - skipping check")
+            return {
+                "valid": True,  # Allow sell to proceed if we can't check
+                "error": None,
+                "owned_quantity": 0
+            }
+        
+        # Find position for this symbol
+        owned_quantity = 0
+        for position in user_positions:
+            if position.get('symbol', '').upper() == symbol.upper():
+                owned_quantity = int(position.get('qty', 0))
+                break
+        
+        # Check if user owns any shares
+        if owned_quantity == 0:
+            return {
+                "valid": False,
+                "error": f"You don't own any shares of {symbol}. Cannot sell.",
+                "owned_quantity": 0
+            }
+        
+        # Check if user has enough shares
+        if quantity > owned_quantity:
+            return {
+                "valid": False,
+                "error": f"Insufficient shares. You only have {owned_quantity:,} shares of {symbol}, cannot sell {quantity:,}",
+                "owned_quantity": owned_quantity
+            }
+        
+        self.logger.info(f"✅ Sell validation passed: Selling {quantity} of {owned_quantity} {symbol} shares")
+        return {
+            "valid": True,
+            "error": None,
+            "owned_quantity": owned_quantity
+        }
+    
     def validate_trade_inputs(
         self,
         symbol: str,
