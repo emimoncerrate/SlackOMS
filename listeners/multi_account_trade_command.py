@@ -2281,7 +2281,8 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
     @app.view("stock_trade_modal_interactive")
     def handle_trade_modal_submission(ack, body, client, logger):
         """Handle trade modal submission."""
-        ack()
+        # Acknowledge and close the modal
+        ack(response_action="clear")
         
         try:
             # Extract values from modal
