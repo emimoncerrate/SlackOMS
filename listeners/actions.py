@@ -1303,7 +1303,7 @@ def register_action_handlers(app: App, service_container: Optional['ServiceConta
             execution_report = await trading_service.execute_trade(trade)
             
             # Determine execution method for display
-                execution_method = "Alpaca Paper Trading" if trading_service.alpaca_service.is_available() else "Simulation"
+            execution_method = "Alpaca Paper Trading" if trading_service.alpaca_service.is_available() else "Simulation"
             
             # Update modal to show trade confirmation
             view_id = body.get('view', {}).get('id')
@@ -1404,7 +1404,7 @@ def register_action_handlers(app: App, service_container: Optional['ServiceConta
             execution_report = await trading_service.execute_trade(trade)
             
             # Determine execution method for display
-                execution_method = "Alpaca Paper Trading" if trading_service.alpaca_service.is_available() else "Simulation"
+            execution_method = "Alpaca Paper Trading" if trading_service.alpaca_service.is_available() else "Simulation"
             
             # Update modal to show trade confirmation
             view_id = body.get('view', {}).get('id')
