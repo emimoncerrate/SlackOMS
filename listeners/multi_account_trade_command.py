@@ -1386,23 +1386,49 @@ async def _fetch_and_update_buy_price(symbol: str, view_id: str, client: WebClie
         market_service = get_market_data_service()
         print(f"✅ BUY PRICE FETCH: Market service obtained")
         
-        # Get current price
-        quote = await market_service.get_quote(symbol)
-        current_price = float(quote.current_price)
-        print(f"✅ BUY PRICE FETCH: Got price ${current_price:.2f} for {symbol}")
-        
-        # Update the modal with the new price (buy modal) using actual quantity
-        updated_modal = _create_instant_buy_modal_with_price(symbol, current_quantity, current_price)
-        
-        response = client.views_update(
-            view_id=view_id,
-            view=updated_modal
-        )
-        
-        if response.get("ok"):
-            print(f"✅ BUY PRICE FETCH: Modal updated with ${current_price:.2f} (qty: {current_quantity})")
-        else:
-            print(f"❌ BUY PRICE FETCH: Modal update failed: {response}")
+        # Validate symbol and get current price
+        try:
+            quote = await market_service.get_quote(symbol)
+            current_price = float(quote.current_price)
+            print(f"✅ BUY PRICE FETCH: Got price ${current_price:.2f} for {symbol}")
+            
+            # Calculate GMV with the actual quantity
+            try:
+                qty_num = int(current_quantity)
+                calculated_gmv = qty_num * current_price
+                print(f"✅ BUY PRICE FETCH: Calculated GMV: {qty_num} × ${current_price:.2f} = ${calculated_gmv:.2f}")
+            except:
+                calculated_gmv = current_price
+                print(f"⚠️ BUY PRICE FETCH: Invalid quantity '{current_quantity}', using 1 share")
+            
+            # Update the modal with the new price and calculated GMV
+            updated_modal = _create_instant_buy_modal_with_price_and_gmv(symbol, current_quantity, current_price, calculated_gmv)
+            
+            response = client.views_update(
+                view_id=view_id,
+                view=updated_modal
+            )
+            
+            if response.get("ok"):
+                print(f"✅ BUY PRICE FETCH: Modal updated with ${current_price:.2f} (qty: {current_quantity}, GMV: ${calculated_gmv:.2f})")
+            else:
+                print(f"❌ BUY PRICE FETCH: Modal update failed: {response}")
+                
+        except Exception as price_error:
+            print(f"❌ BUY PRICE FETCH: Invalid symbol '{symbol}': {price_error}")
+            
+            # Create error modal for invalid symbol
+            error_modal = _create_error_modal(symbol, f"Invalid ticker symbol '{symbol}'. Please try a valid stock symbol like AAPL, TSLA, MSFT.")
+            
+            response = client.views_update(
+                view_id=view_id,
+                view=error_modal
+            )
+            
+            if response.get("ok"):
+                print(f"✅ BUY PRICE FETCH: Error modal displayed for invalid symbol '{symbol}'")
+            else:
+                print(f"❌ BUY PRICE FETCH: Error modal update failed: {response}")
             
     except Exception as e:
         print(f"❌ BUY PRICE FETCH: Error: {e}")
@@ -1532,6 +1558,62 @@ def _create_instant_buy_modal_with_price(symbol: str = "", quantity: str = "1", 
                 pass
     
     return modal
+
+
+def _create_instant_buy_modal_with_price_and_gmv(symbol: str = "", quantity: str = "1", price: float = None, gmv: float = None) -> Dict[str, Any]:
+    """Create an instant buy modal with price and GMV pre-calculated."""
+    modal = _create_instant_buy_modal(symbol, quantity)
+    
+    # Update the price display block
+    if price is not None:
+        for block in modal["blocks"]:
+            if block.get("block_id") == "current_price_display":
+                change_emoji = "📈"  # Default to positive for buy
+                block["text"]["text"] = f"*Current Stock Price:* *${price:.2f}* {change_emoji}"
+                break
+    
+    # Update the GMV field with calculated value
+    if gmv is not None:
+        for block in modal["blocks"]:
+            if block.get("block_id") == "gmv_block":
+                block["element"]["initial_value"] = f"{gmv:.2f}"
+                break
+    
+    return modal
+
+
+def _create_error_modal(symbol: str, error_message: str) -> Dict[str, Any]:
+    """Create an error modal for invalid symbols or other errors."""
+    return {
+        "type": "modal",
+        "callback_id": "error_modal",
+        "title": {"type": "plain_text", "text": "Invalid Input"},
+        "close": {"type": "plain_text", "text": "Close"},
+        "blocks": [
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": f"❌ *Error*\n\n{error_message}"
+                }
+            },
+            {"type": "divider"},
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": "*Valid Examples:*\n• `/buy AAPL 10` - Buy 10 shares of Apple\n• `/buy TSLA 5` - Buy 5 shares of Tesla\n• `/buy MSFT 2` - Buy 2 shares of Microsoft\n• `/sell GOOGL 3` - Sell 3 shares of Google"
+                }
+            },
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": "*Tips:*\n• Use valid stock ticker symbols (3-5 letters)\n• Quantity must be a positive number\n• Try again with a correct symbol"
+                }
+            }
+        ]
+    }
 
 
 def _create_instant_sell_modal(symbol: str = "", quantity: str = "1") -> Dict[str, Any]:
@@ -1973,7 +2055,7 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                         
                         def fetch_and_update_price():
                             try:
-                                asyncio.run(_fetch_and_update_buy_price(symbol, response["view"]["id"], client))
+                                asyncio.run(_fetch_and_update_buy_price(symbol, response["view"]["id"], client, quantity))
                             except Exception as e:
                                 logger.error(f"❌ Background price fetch failed: {e}")
                         
@@ -2203,6 +2285,66 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
     @app.action("order_type_select")
     async def handle_order_type_change(ack, body, client, logger):
         await handle_modal_interactions(ack, body, client, logger)
+    
+    # Handle modal submission (when user clicks "Execute Trade")
+    @app.view("stock_trade_modal_interactive")
+    def handle_trade_modal_submission(ack, body, client, logger):
+        """Handle trade modal submission."""
+        ack()
+        
+        try:
+            # Extract values from modal
+            values = body["view"]["state"]["values"]
+            
+            symbol_block = values.get("trade_symbol_block", {})
+            symbol = symbol_block.get("symbol_input", {}).get("value", "").upper()
+            
+            qty_block = values.get("qty_shares_block", {})
+            quantity = qty_block.get("shares_input", {}).get("value", "1")
+            
+            trade_side_block = values.get("trade_side_block", {})
+            trade_side = "buy"  # Default
+            if trade_side_block.get("trade_side_radio", {}).get("selected_option"):
+                trade_side = trade_side_block["trade_side_radio"]["selected_option"]["value"]
+            
+            order_type_block = values.get("order_type_block", {})
+            order_type = "market"  # Default
+            if order_type_block.get("order_type_select", {}).get("selected_option"):
+                order_type = order_type_block["order_type_select"]["selected_option"]["value"]
+            
+            limit_price = None
+            if order_type in ["limit", "stop_limit"]:
+                limit_price_block = values.get("limit_price_block", {})
+                if limit_price_block.get("limit_price_input", {}).get("value"):
+                    try:
+                        limit_price = float(limit_price_block["limit_price_input"]["value"])
+                    except:
+                        pass
+            
+            user_id = body["user"]["id"]
+            
+            logger.info(f"🎯 TRADE SUBMISSION: {trade_side.upper()} {quantity} {symbol} ({order_type})")
+            
+            # Send confirmation message
+            client.chat_postEphemeral(
+                channel=body["view"]["private_metadata"] if body["view"].get("private_metadata") else "general",
+                user=user_id,
+                text=f"✅ Trade submitted: {trade_side.upper()} {quantity} shares of {symbol} ({order_type} order)" + 
+                     (f" at ${limit_price:.2f}" if limit_price else "") + 
+                     "\n🔄 Processing your trade..."
+            )
+            
+        except Exception as e:
+            logger.error(f"❌ Error processing trade submission: {e}")
+            # Send error message to user
+            try:
+                client.chat_postEphemeral(
+                    channel="general",
+                    user=body["user"]["id"],
+                    text="❌ Error processing your trade. Please try again."
+                )
+            except:
+                pass
     
     logger.info("✅ MULTI-ACCOUNT BUY/SELL COMMANDS REGISTERED SUCCESSFULLY")
     return multi_trade_command
