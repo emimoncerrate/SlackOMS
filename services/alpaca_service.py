@@ -278,6 +278,35 @@ class AlpacaService:
             logger.error(f"Error getting account: {e}")
             return None
     
+    def get_asset(self, symbol: str) -> Optional[Dict[str, Any]]:
+        """
+        Get asset information for a symbol.
+        
+        Args:
+            symbol: Stock symbol (e.g., 'AAPL')
+            
+        Returns:
+            Asset details or None if not found
+        """
+        if not self.is_available():
+            return None
+        
+        try:
+            asset = self.alpaca.get_asset(symbol.upper())
+            if not asset:
+                return None
+            
+            return {
+                'symbol': asset.get('symbol'),
+                'name': asset.get('name'),
+                'tradable': asset.get('tradable', False),
+                'status': asset.get('status'),
+                'exchange': asset.get('exchange')
+            }
+        except Exception as e:
+            logger.warning(f"Error getting asset {symbol}: {e}")
+            return None
+    
     async def submit_order(
         self,
         symbol: str,

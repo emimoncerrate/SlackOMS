@@ -793,9 +793,6 @@ class MultiAccountTradeCommand(EnhancedTradeCommand):
             client: Slack WebClient instance
             context: Bolt context
         """
-        # Acknowledge with clear to close modal without showing any message
-        ack(response_action="clear")
-        
         try:
             self._get_services()
             
@@ -814,24 +811,74 @@ class MultiAccountTradeCommand(EnhancedTradeCommand):
                     if user_account:
                         logger.info(f"✅ Auto-assigned user {user_id} to account {user_account}")
                     else:
-                        await self._send_error_message(client, body, "Failed to assign trading account")
+                        ack(response_action="errors", errors={
+                            "trade_symbol_block": "Failed to assign trading account. Please contact support."
+                        })
                         return
                 else:
-                    await self._send_error_message(client, body, "No trading accounts available")
+                    ack(response_action="errors", errors={
+                        "trade_symbol_block": "No trading accounts available. Please contact administrator."
+                    })
                     return
             
             # Parse trade parameters from new interactive modal format
-            symbol = self._get_form_value(values, "trade_symbol_block", "symbol_input")
-            quantity = int(self._get_form_value(values, "qty_shares_block", "shares_input", "1"))
+            symbol = self._get_form_value(values, "trade_symbol_block", "symbol_input", "")
+            quantity_str = self._get_form_value(values, "qty_shares_block", "shares_input", "1")
             action = self._get_form_value(values, "trade_side_block", "trade_side_radio")
             order_type = self._get_form_value(values, "order_type_block", "order_type_select", "market")
             limit_price = self._get_form_value(values, "limit_price_block", "limit_price_input")
             
-            # Validate account has sufficient funds
+            # STEP 2: Validate inputs using ValidationService
+            from services.validation_service import ValidationService
+            validation_service = ValidationService(
+                alpaca_service=self.multi_alpaca.get_account_client(user_account) if hasattr(self.multi_alpaca, 'get_account_client') else None
+            )
+            
+            # Get account info for buying power check
             account_info = self.multi_alpaca.get_account_info(user_account)
             if not account_info:
-                await self._send_error_message(client, body, "Unable to retrieve account information")
+                ack(response_action="errors", errors={
+                    "trade_symbol_block": "Unable to retrieve account information. Please try again."
+                })
                 return
+            
+            # Get current price for validation (only for BUY orders)
+            current_price = None
+            if action and action.upper() == 'BUY':
+                try:
+                    # Try to get current price from market data
+                    from services.service_container import ServiceContainer
+                    container = ServiceContainer.get_instance()
+                    market_service = container.get('MarketDataService')
+                    if market_service:
+                        quote = market_service.get_quote(symbol)
+                        if quote and 'price' in quote:
+                            current_price = float(quote['price'])
+                            logger.info(f"Current price for {symbol}: ${current_price}")
+                except Exception as e:
+                    logger.warning(f"Could not fetch current price for {symbol}: {e}")
+            
+            # Perform comprehensive validation
+            validation_result = validation_service.validate_trade_inputs(
+                symbol=symbol,
+                quantity=quantity_str,
+                account_cash=float(account_info.get('cash', 0)) if action and action.upper() == 'BUY' else None,
+                current_price=current_price,
+                max_quantity=10000
+            )
+            
+            # If validation fails, return errors to modal
+            if not validation_result["valid"]:
+                logger.warning(f"Trade validation failed: {validation_result['errors']}")
+                ack(response_action="errors", errors=validation_result["errors"])
+                return
+            
+            # Extract validated data
+            symbol = validation_result["data"]["symbol"]
+            quantity = validation_result["data"]["quantity"]
+            
+            # Acknowledge with clear to close modal (validation passed)
+            ack(response_action="clear")
             
             # Log trade details
             logger.info(f"🎯 Executing trade for user {user_id} on account {user_account}")
