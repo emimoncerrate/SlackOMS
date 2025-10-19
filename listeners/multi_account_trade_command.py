@@ -154,21 +154,21 @@ class MultiAccountTradeCommand(EnhancedTradeCommand):
                                      client: WebClient, context: BoltContext) -> None:
         """Handle /buy command with format: /buy [quantity] [symbol]"""
         try:
-            logger.info("🔍 BUY COMMAND: Starting async handler")
+            logger.info("BUY COMMAND: Starting async handler")
             await self._handle_trade_command_async(body, client, context, trade_action="buy")
-            logger.info("🔍 BUY COMMAND: Handler completed")
+            logger.info("BUY COMMAND: Handler completed")
         except Exception as e:
-            logger.error(f"🚨 BUY COMMAND ERROR: {e}")
+            logger.error(f"BUY COMMAND ERROR: {e}")
     
     async def handle_sell_command_async(self, body: Dict[str, Any], 
                                       client: WebClient, context: BoltContext) -> None:
         """Handle /sell command with format: /sell [quantity] [symbol]"""
         try:
-            logger.info("🔍 SELL COMMAND: Starting async handler")
+            logger.info("SELL COMMAND: Starting async handler")
             await self._handle_trade_command_async(body, client, context, trade_action="sell")
-            logger.info("🔍 SELL COMMAND: Handler completed")
+            logger.info("SELL COMMAND: Handler completed")
         except Exception as e:
-            logger.error(f"🚨 SELL COMMAND ERROR: {e}")
+            logger.error(f"SELL COMMAND ERROR: {e}")
 
     async def _handle_trade_command_async(self, body: Dict[str, Any], 
                                         client: WebClient, context: BoltContext, trade_action: str = None) -> None:
@@ -881,8 +881,8 @@ class MultiAccountTradeCommand(EnhancedTradeCommand):
             ack(response_action="clear")
             
             # Log trade details
-            logger.info(f"🎯 Executing trade for user {user_id} on account {user_account}")
-            logger.info(f"📊 Trade: {action.upper()} {quantity} {symbol} ({order_type})")
+            logger.info(f"Executing trade for user {user_id} on account {user_account}")
+            logger.info(f"Trade: {action.upper()} {quantity} {symbol} ({order_type})")
             
             # Execute trade on the user's assigned account
             trade_kwargs = {}
@@ -1945,16 +1945,16 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
         start_time = time.time()
         
         try:
-            print("🔍 BUY COMMAND DEBUG: Starting buy command")
-            logger.info("🔍 BUY COMMAND DEBUG: Starting buy command")
+            print("BUY COMMAND DEBUG: Starting buy command")
+            logger.info("BUY COMMAND DEBUG: Starting buy command")
             
             # Immediate acknowledgment and terminal feedback
             ack()
             ack_time = time.time()
-            print("🔍 BUY COMMAND DEBUG: ACK sent successfully")
+            print("BUY COMMAND DEBUG: ACK sent successfully")
         except Exception as e:
-            print(f"❌ BUY COMMAND ACK ERROR: {e}")
-            logger.error(f"❌ BUY COMMAND ACK ERROR: {e}")
+            print(f"BUY COMMAND ACK ERROR: {e}")
+            logger.error(f"BUY COMMAND ACK ERROR: {e}")
             return
         
         user_id = body.get("user_id", "Unknown")
@@ -1977,12 +1977,12 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
         
         # Immediate terminal feedback
         logger.info("=" * 60)
-        logger.info("🚀 BUY COMMAND RECEIVED!")
-        logger.info(f"👤 User: {user_id}")
-        logger.info(f"📝 Command: /buy {command_text}")
-        logger.info(f"⏰ Time: {datetime.now()}")
-        logger.info(f"⚡ ACK took: {(ack_time - start_time)*1000:.2f}ms")
-        logger.info("🚀 Opening modal IMMEDIATELY...")
+        logger.info("BUY COMMAND RECEIVED")
+        logger.info(f"User: {user_id}")
+        logger.info(f"Command: /buy {command_text}")
+        logger.info(f"Time: {datetime.now()}")
+        logger.info(f"ACK took: {(ack_time - start_time)*1000:.2f}ms")
+        logger.info("Opening modal immediately...")
         logger.info("=" * 60)
         
         # Parse command immediately with validation
@@ -2006,7 +2006,7 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
             quantity = "1"
         
         parse_time = time.time()
-        logger.info(f"⚡ Parse took: {(parse_time - parse_start)*1000:.2f}ms")
+        logger.info(f"Parse took: {(parse_time - parse_start)*1000:.2f}ms")
         logger.info(f"Parsed values: symbol='{symbol}', quantity='{quantity}'")
         
         # Send immediate ephemeral response, then open modal
@@ -2019,7 +2019,7 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
             #     text=f"Opening buy modal for {symbol.upper() if symbol else 'stock'} (qty: {quantity})..."
             # )
             # ephemeral_time = time.time()
-            # logger.info(f"⚡ Ephemeral message took: {(ephemeral_time - ephemeral_start)*1000:.2f}ms")
+            # logger.info(f"Ephemeral message took: {(ephemeral_time - ephemeral_start)*1000:.2f}ms")
             
             # Create modal
             modal_start = time.time()
@@ -2096,16 +2096,16 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
         start_time = time.time()
         
         try:
-            print("🔍 SELL COMMAND DEBUG: Starting sell command")
-            logger.info("🔍 SELL COMMAND DEBUG: Starting sell command")
+            print("SELL COMMAND DEBUG: Starting sell command")
+            logger.info("SELL COMMAND DEBUG: Starting sell command")
             
             # Immediate acknowledgment and terminal feedback
             ack()
             ack_time = time.time()
-            print("🔍 SELL COMMAND DEBUG: ACK sent successfully")
+            print("SELL COMMAND DEBUG: ACK sent successfully")
         except Exception as e:
-            print(f"❌ SELL COMMAND ACK ERROR: {e}")
-            logger.error(f"❌ SELL COMMAND ACK ERROR: {e}")
+            print(f"SELL COMMAND ACK ERROR: {e}")
+            logger.error(f"SELL COMMAND ACK ERROR: {e}")
             return
         
         user_id = body.get("user_id", "Unknown")
@@ -2128,12 +2128,12 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
         
         # Immediate terminal feedback
         logger.info("=" * 60)
-        logger.info("🚀 SELL COMMAND RECEIVED!")
-        logger.info(f"👤 User: {user_id}")
-        logger.info(f"📝 Command: /sell {command_text}")
-        logger.info(f"⏰ Time: {datetime.now()}")
-        logger.info(f"⚡ ACK took: {(ack_time - start_time)*1000:.2f}ms")
-        logger.info("🚀 Opening modal IMMEDIATELY...")
+        logger.info("SELL COMMAND RECEIVED")
+        logger.info(f"User: {user_id}")
+        logger.info(f"Command: /sell {command_text}")
+        logger.info(f"Time: {datetime.now()}")
+        logger.info(f"ACK took: {(ack_time - start_time)*1000:.2f}ms")
+        logger.info("Opening modal immediately...")
         logger.info("=" * 60)
         
         # Parse command immediately with validation
@@ -2157,7 +2157,7 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
             quantity = "1"
         
         parse_time = time.time()
-        logger.info(f"⚡ Parse took: {(parse_time - parse_start)*1000:.2f}ms")
+        logger.info(f"Parse took: {(parse_time - parse_start)*1000:.2f}ms")
         logger.info(f"Parsed values: symbol='{symbol}', quantity='{quantity}'")
         
         # Send immediate ephemeral response, then open modal
@@ -2170,7 +2170,7 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
             #     text=f"Opening sell modal for {symbol.upper() if symbol else 'stock'} (qty: {quantity})..."
             # )
             # ephemeral_time = time.time()
-            # logger.info(f"⚡ Ephemeral message took: {(ephemeral_time - ephemeral_start)*1000:.2f}ms")
+            # logger.info(f"Ephemeral message took: {(ephemeral_time - ephemeral_start)*1000:.2f}ms")
             
             # Create modal
             modal_start = time.time()
@@ -2276,10 +2276,10 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
     @app.view("stock_trade_modal_interactive")
     def handle_trade_modal_submission(ack, body, client, logger):
         """Handle trade modal submission."""
-        logger.info("🔍 MODAL SUBMISSION: Handler started")
+        logger.info("MODAL SUBMISSION: Handler started")
         
         # Try to close modal with success message
-        logger.info("🔍 MODAL SUBMISSION: About to ack with success modal")
+        logger.info("MODAL SUBMISSION: About to ack with success modal")
         try:
             ack({
                 "response_action": "update",
@@ -2298,12 +2298,12 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                     ]
                 }
             })
-            logger.info("✅ MODAL SUBMISSION: Success modal displayed")
+            logger.info("MODAL SUBMISSION: Success modal displayed")
         except Exception as modal_error:
-            logger.error(f"❌ MODAL SUBMISSION: Modal update failed: {modal_error}")
+            logger.error(f"MODAL SUBMISSION: Modal update failed: {modal_error}")
             # Fallback to simple ack
             ack()
-            logger.info("✅ MODAL SUBMISSION: Fallback ack() called")
+            logger.info("MODAL SUBMISSION: Fallback ack() called")
         
         # Now process the trade in background (after modal is closed)
         try:
@@ -2337,7 +2337,7 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
             
             user_id = body["user"]["id"]
             
-            logger.info(f"🎯 TRADE SUBMISSION: {trade_side.upper()} {quantity} {symbol} ({order_type})")
+            logger.info(f"TRADE SUBMISSION: {trade_side.upper()} {quantity} {symbol} ({order_type})")
             
             # Get channel from private metadata or use approved channel
             channel_id = body.get("view", {}).get("private_metadata") or "C09H1R7KKP1"  # Use first approved channel as fallback
@@ -2367,7 +2367,7 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                             raise ValueError("Quantity must be positive")
                         
                         # Execute trade
-                        logger.info(f"🚀 EXECUTING TRADE: {trade_side.upper()} {qty_int} {symbol}")
+                        logger.info(f"EXECUTING TRADE: {trade_side.upper()} {qty_int} {symbol}")
                         
                         if order_type == "market":
                             # Market order
@@ -2395,7 +2395,7 @@ def register_multi_account_trade_command(app: App, auth_service: AuthService) ->
                             order_id = result.get("id") or result.get("order_id")
                             status = result.get("status", "submitted")
                             
-                            logger.info(f"✅ TRADE EXECUTED: Order ID {order_id}, Status: {status}")
+                            logger.info(f"TRADE EXECUTED: Order ID {order_id}, Status: {status}")
                             
                             success_msg = f"✅ **Trade Executed Successfully!**\n\n"
                             success_msg += f"📊 **Order Details:**\n"
