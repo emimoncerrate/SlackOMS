@@ -1562,7 +1562,7 @@ def _create_instant_buy_modal(symbol: str = "", quantity: str = "1") -> Dict[str
     return {
         "type": "modal",
         "callback_id": "stock_trade_modal_interactive",
-        "title": {"type": "plain_text", "text": "Emily's Trading Bot"},
+        "title": {"type": "plain_text", "text": "KEMBot"},
         "submit": {"type": "plain_text", "text": "Execute Trade"},
         "close": {"type": "plain_text", "text": "Cancel"},
         "blocks": [
@@ -1742,7 +1742,7 @@ def _create_instant_sell_modal(symbol: str = "", quantity: str = "1") -> Dict[st
     return {
         "type": "modal",
         "callback_id": "stock_trade_modal_interactive",
-        "title": {"type": "plain_text", "text": "Emily's Trading Bot"},
+        "title": {"type": "plain_text", "text": "KEMBot"},
         "submit": {"type": "plain_text", "text": "Execute Trade"},
         "close": {"type": "plain_text", "text": "Cancel"},
         "blocks": [
